@@ -70,6 +70,32 @@ export default function Cadastro() {
           </div>
         )}
       </div>
+
+    {/* Inputs senha/email */}
+        <label className="flex flex-col">
+        Senha:
+        <input className="bg-gray-100 p-2 rounded" />
+        </label>
+
+        <label className="flex flex-col">
+        Confirmar Senha:
+        <input className="bg-gray-100 p-2 rounded" />
+        </label>
+
+        <label className="flex flex-col">
+        Email:
+        <input className="bg-gray-100 p-2 rounded" />
+        </label>
+
+        <button>
+            CADASTRAR
+        </button>
+
+
+
+
+
+
     </div>
   );
 }
