@@ -1,101 +1,142 @@
 import React, { useState } from "react";
 
 export default function Cadastro() {
-  const [open, setOpen] = useState(false);
   const [sexo, setSexo] = useState("");
 
-  const options = ["Masculino", "Feminino"];
-
   return (
-    <div className="p-4 space-y-4">
-      <div className="bg-red-200 p-2">
-        <h1>LOGO</h1>
-      </div>
-
-      <h2>Login</h2>
-      <h2>Cadastre-se</h2>
-
-      <h3>Bem-vindo</h3>
-      <p>Por favor, faça seu cadastro.</p>
-
-      {/* Inputs */}
-      <label className="flex flex-col">
-        Nome:
-        <input className="bg-gray-100 p-2 rounded" />
-      </label>
-
-      <label className="flex flex-col">
-        Sobrenome:
-        <input className="bg-gray-100 p-2 rounded" />
-      </label>
-
-      <label className="flex flex-col">
-        CPF:
-        <input className="bg-gray-100 p-2 rounded" />
-      </label>
-
-      <label className="flex flex-col">
-        Data de Nascimento:
-        <input type="date" className="bg-gray-100 p-2 rounded" />
-      </label>
-
-      {/* SELECT CUSTOMIZADO */}
-      <div className="flex flex-col">
-        <span className="text-sm text-gray-700">Sexo</span>
-
-        <div
-          onClick={() => setOpen(!open)}
-          className="bg-gray-100 p-3 rounded cursor-pointer flex justify-between"
-        >
-          <span className="text-gray-600">
-            {sexo || "Masculino/feminino"}
-          </span>
-          <span>▼</span>
+    <div
+      className="h-screen w-full overflow-hidden bg-[#07A9E9] text-gray-900"
+      style={{ fontFamily: "Poppins, sans-serif" }}
+    >
+      <div className="relative mx-auto flex h-full w-full max-w-[1440px] items-center justify-start overflow-hidden px-6 lg:px-10">
+        <div className="absolute right-0 top-0 hidden h-full w-1/2 overflow-hidden lg:block">
+          <img
+            src="/casa.jpg"
+            alt="Fachada de uma casa"
+            className="h-full w-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-l from-[#07A9E9]/95 via-[#07A9E9]/20 to-transparent"></div>
         </div>
 
-        {open && (
-          <div className="mt-1 bg-white border rounded shadow">
-            {options.map((opt) => (
-              <div
-                key={opt}
-                onClick={() => {
-                  setSexo(opt);
-                  setOpen(false);
-                }}
-                className="p-2 hover:bg-gray-100 cursor-pointer"
-              >
-                {opt}
+        <div className="relative z-10 w-[950px] h-[600px] rounded-[32px] bg-white/95 shadow-[0_40px_120px_rgba(0,0,0,0.18)]">
+          <div className="flex flex-col h-full p-8">
+            {/* Grid Principal */}
+            <div className="grid grid-cols-2 gap-8 flex-1">
+              {/* Coluna Esquerda */}
+              <div className="flex flex-col">
+                {/* Logo e Botões Login/Cadastro */}
+                <div className="flex flex-col items-center mb-6">
+                  <h1 className="text-5xl font-bold mb-6">LOGO</h1>
+                  
+                  {/* Botões Login/Cadastro */}
+                  <div className="flex bg-gray-200 rounded-lg p-1 gap-0">
+                    <button className="px-12 py-2.5 text-gray-500 text-sm font-medium rounded-sm hover:bg-gray-300">
+                      Login
+                    </button>
+                    <button className="px-12 py-2.5 text-gray-900 text-sm font-bold rounded-sm">
+                      Cadastre-se
+                    </button>
+                  </div>
+                </div>
+                <div className="mb-8">
+                  <h2 className="text-2xl font-bold mb-2">Bem vindo</h2>
+                  <p className="text-gray-500 text-sm">Por favor, faça seu cadastro.</p>
+                </div>
+
+                {/* Inputs esquerda */}
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1">Nome</label>
+                    <input
+                      type="text"
+                      placeholder="Primeiro nome"
+                      className="w-full px-4 py-2.5 bg-gray-100 rounded-lg text-sm text-gray-700 placeholder-gray-400 outline-none focus:bg-gray-50 focus:border border-gray-300"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1">Sobrenome</label>
+                    <input
+                      type="text"
+                      placeholder="Sobrenome"
+                      className="w-full px-4 py-2.5 bg-gray-100 rounded-lg text-sm text-gray-700 placeholder-gray-400 outline-none focus:bg-gray-50 focus:border border-gray-300"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1">CPF</label>
+                    <input
+                      type="text"
+                      placeholder="Digite apenas números"
+                      className="w-full px-4 py-2.5 bg-gray-100 rounded-lg text-sm text-gray-700 placeholder-gray-400 outline-none focus:bg-gray-50 focus:border border-gray-300"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1">Data de nascimento</label>
+                    <input
+                      type="text"
+                      placeholder="Digite apenas números"
+                      className="w-full px-4 py-2.5 bg-gray-100 rounded-lg text-sm text-gray-700 placeholder-gray-400 outline-none focus:bg-gray-50 focus:border border-gray-300"
+                    />
+                  </div>
+                </div>
               </div>
-            ))}
+
+              {/* Coluna Direita */}
+              <div className="flex flex-col justify-between">
+                <div className="pt-2"></div>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1">Sexo</label>
+                    <select
+                      value={sexo}
+                      onChange={(event) => setSexo(event.target.value)}
+                      className="w-full px-4 py-2.5 bg-gray-100 rounded-lg text-sm text-gray-700 outline-none focus:bg-gray-50 focus:border border-gray-300"
+                    >
+                      <option value="">Masculino/Feminino</option>
+                      <option value="Masculino">Masculino</option>
+                      <option value="Feminino">Feminino</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1">Profissão</label>
+                    <input
+                      type="text"
+                      placeholder="Informe sua profissão"
+                      className="w-full px-4 py-2.5 bg-gray-100 rounded-lg text-sm text-gray-700 placeholder-gray-400 outline-none focus:bg-gray-50 focus:border border-gray-300"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1">Senha</label>
+                    <input
+                      type="password"
+                      placeholder="Senha"
+                      className="w-full px-4 py-2.5 bg-gray-100 rounded-lg text-sm text-gray-700 placeholder-gray-400 outline-none focus:bg-gray-50 focus:border border-gray-300"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1">Confirme a senha</label>
+                    <input
+                      type="password"
+                      placeholder="Confirme senha"
+                      className="w-full px-4 py-2.5 bg-gray-100 rounded-lg text-sm text-gray-700 placeholder-gray-400 outline-none focus:bg-gray-50 focus:border border-gray-300"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1">Email</label>
+                    <input
+                      type="email"
+                      placeholder="usuario123@email.com"
+                      className="w-full px-4 py-2.5 bg-gray-100 rounded-lg text-sm text-gray-700 placeholder-gray-400 outline-none focus:bg-gray-50 focus:border border-gray-300"
+                    />
+                  </div>
+                </div>
+                <button className="w-full bg-cyan-500 text-white py-2.5 rounded-lg font-semibold text-sm uppercase tracking-wide hover:bg-cyan-600 -translate-y-3">
+                  Cadastrar
+                </button>
+              </div>
+            </div>
           </div>
-        )}
+        </div>
       </div>
-
-    {/* Inputs senha/email */}
-        <label className="flex flex-col">
-        Senha:
-        <input className="bg-gray-100 p-2 rounded" />
-        </label>
-
-        <label className="flex flex-col">
-        Confirmar Senha:
-        <input className="bg-gray-100 p-2 rounded" />
-        </label>
-
-        <label className="flex flex-col">
-        Email:
-        <input className="bg-gray-100 p-2 rounded" />
-        </label>
-
-        <button>
-            CADASTRAR
-        </button>
-
-
-
-
-
-
     </div>
   );
 }
