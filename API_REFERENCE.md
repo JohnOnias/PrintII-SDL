@@ -100,62 +100,25 @@ Content-Type: application/json
 
 ## Endpoints de Usuários
 
-### 1. Listar Todos os Usuários
+### 1. Perfil do Usuário Autenticado
+```http
+GET /usuarios/perfil
+Authorization: Bearer <access_token>
+```
+
+---
+
+### 2. Listar Todos os Usuários
 ```http
 GET /usuarios/all
 Authorization: Bearer <access_token>
 ```
 
-**Resposta 200 OK:**
-```json
-[
-  {
-    "id": 1,
-    "username": "john_doe",
-    "cpf": "12345678900",
-    "idade": "25",
-    "sexo": "M",
-    "profissao": "Desenvolvedor",
-    "rua": "Rua Principal",
-    "bairro": "Centro",
-    "cidade": "Cedro",
-    "estado": "CE",
-    "numero": 123,
-    "email": "john@example.com",
-    "tipo_de_usuario": "locador"
-  }
-]
-```
-
 ---
 
-### 2. Criar Usuário (alternativo)
+### 3. Atualizar Perfil
 ```http
-POST /usuarios/create
-Content-Type: application/json
-
-{
-  "username": "jane_doe",
-  "email": "jane@example.com",
-  "password": "senha_forte",
-  "cpf": "98765432100",
-  "idade": "28",
-  "sexo": "F",
-  "profissao": "Designer",
-  "rua": "Avenida Central",
-  "bairro": "Bairro Novo",
-  "cidade": "Cedro",
-  "estado": "CE",
-  "numero": 456,
-  "tipo_de_usuario": "locatario"
-}
-```
-
----
-
-### 3. Atualizar Usuário
-```http
-PUT /usuarios/update/<id>
+PUT /usuarios/update
 Authorization: Bearer <access_token>
 Content-Type: application/json
 
@@ -167,9 +130,64 @@ Content-Type: application/json
 
 ---
 
-### 4. Deletar Usuário
+## Endpoints de Imóveis
+
+### 1. Criar Imóvel
 ```http
-DELETE /usuarios/destroy/<id>
+POST /imoveis/
+Authorization: Bearer <access_token>
+Content-Type: application/json
+
+{
+  "tipo": "casa",
+  "categoria": "residencial",
+  "endereco": "Rua das Flores, 123, Jardim Botânico",
+  "descricao": "Casa ampla com quintal e 3 quartos.",
+  "valor": "2500.00"
+}
+```
+**Observações:**
+- Requer perfil de usuário `locador`.
+- Tipos válidos: `casa`, `apartamento`, `quarto`.
+- Categorias válidas: `residencial`, `comercial`.
+- Para enviar mídias, utilize `multipart/form-data` com o campo `midias_upload`.
+
+---
+
+### 2. Listar Imóveis
+```http
+GET /imoveis/
+Authorization: Bearer <access_token>
+```
+
+---
+
+### 3. Detalhes de um Imóvel
+```http
+GET /imoveis/<id>/
+Authorization: Bearer <access_token>
+```
+
+---
+
+### 4. Editar Imóvel
+```http
+PATCH /imoveis/<id>/
+Authorization: Bearer <access_token>
+Content-Type: application/json
+
+{
+  "valor": "2300.00",
+  "status": "indisponivel"
+}
+```
+**Status válidos:** `disponivel`, `indisponivel`, `oculto`.
+
+---
+
+### 5. Excluir Imóvel
+```http
+DELETE /imoveis/<id>/
 Authorization: Bearer <access_token>
 ```
 
