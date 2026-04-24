@@ -1,21 +1,21 @@
 import React, { useState } from "react";
 import bgImg from "../../assets/imgs/bg.png";
+import { cadastroAuth } from "../../services/authService";
 
 const initialForm = {
-  nome: "",
-  sobrenome: "",
+  username: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
   cpf: "",
-  nascimento: "",
   sexo: "",
   profissao: "",
-  senha: "",
-  confirmSenha: "",
-  email: "",
 };
 
 export default function Cadastro() {
   const [form, setForm] = useState(initialForm);
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (field, value) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -26,25 +26,44 @@ export default function Cadastro() {
     const newErrors = {};
 
     Object.entries(form).forEach(([key, value]) => {
-      if (!value.trim()) {
+      if (key !== "confirmPassword" && !value.toString().trim()) {
         newErrors[key] = "Campo obrigatório";
       }
     });
 
-    if (form.senha && form.confirmSenha && form.senha !== form.confirmSenha) {
-      newErrors.confirmSenha = "As senhas não coincidem";
+    if (form.password && form.confirmPassword && form.password !== form.confirmPassword) {
+      newErrors.confirmPassword = "As senhas não coincidem";
+    }
+
+    if (form.cpf && form.cpf.length !== 11) {
+      newErrors.cpf = "CPF deve ter 11 dígitos";
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     if (!validateForm()) return;
 
-    // Aqui você pode enviar o formulário ou avançar para a próxima etapa
-    console.log("Formulário válido", form);
+    setLoading(true);
+    try {
+      const result = await cadastroAuth(form);
+      console.log("Cadastro realizado com sucesso", result);
+      alert("Cadastro realizado com sucesso!");
+      // Armazenar tokens
+      localStorage.setItem("access_token", result.access);
+      localStorage.setItem("refresh_token", result.refresh);
+      // Limpar formulário
+      setForm(initialForm);
+      // Aqui você pode redirecionar para dashboard ou fazer login automático
+    } catch (error) {
+      console.error("Erro no cadastro", error);
+      alert("Erro no cadastro: " + error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const inputClass = (field) =>
@@ -91,26 +110,26 @@ export default function Cadastro() {
                 {/* Inputs esquerda */}
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-xs font-semibold text-gray-700 mb-1">Nome</label>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1">Nome de Usuário</label>
                     <input
                       type="text"
-                      value={form.nome}
-                      onChange={(event) => handleChange("nome", event.target.value)}
-                      placeholder="Primeiro nome"
-                      className={inputClass("nome")}
+                      value={form.username}
+                      onChange={(event) => handleChange("username", event.target.value)}
+                      placeholder="Nome de usuário"
+                      className={inputClass("username")}
                     />
-                    {errors.nome && <p className="mt-1 text-xs text-red-500">{errors.nome}</p>}
+                    {errors.username && <p className="mt-1 text-xs text-red-500">{errors.username}</p>}
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-gray-700 mb-1">Sobrenome</label>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1">Email</label>
                     <input
-                      type="text"
-                      value={form.sobrenome}
-                      onChange={(event) => handleChange("sobrenome", event.target.value)}
-                      placeholder="Sobrenome"
-                      className={inputClass("sobrenome")}
+                      type="email"
+                      value={form.email}
+                      onChange={(event) => handleChange("email", event.target.value)}
+                      placeholder="seu@email.com"
+                      className={inputClass("email")}
                     />
-                    {errors.sobrenome && <p className="mt-1 text-xs text-red-500">{errors.sobrenome}</p>}
+                    {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-gray-700 mb-1">CPF</label>
@@ -118,21 +137,10 @@ export default function Cadastro() {
                       type="text"
                       value={form.cpf}
                       onChange={(event) => handleChange("cpf", event.target.value)}
-                      placeholder="Digite apenas números"
+                      placeholder="11 dígitos"
                       className={inputClass("cpf")}
                     />
                     {errors.cpf && <p className="mt-1 text-xs text-red-500">{errors.cpf}</p>}
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-700 mb-1">Data de nascimento</label>
-                    <input
-                      type="text"
-                      value={form.nascimento}
-                      onChange={(event) => handleChange("nascimento", event.target.value)}
-                      placeholder="Digite apenas números"
-                      className={inputClass("nascimento")}
-                    />
-                    {errors.nascimento && <p className="mt-1 text-xs text-red-500">{errors.nascimento}</p>}
                   </div>
                 </div>
               </div>
@@ -148,9 +156,9 @@ export default function Cadastro() {
                       onChange={(event) => handleChange("sexo", event.target.value)}
                       className={inputClass("sexo")}
                     >
-                      <option value="">Masculino/Feminino</option>
-                      <option value="Masculino">Masculino</option>
-                      <option value="Feminino">Feminino</option>
+                      <option value="">Selecione</option>
+                      <option value="M">Masculino</option>
+                      <option value="F">Feminino</option>
                     </select>
                     {errors.sexo && <p className="mt-1 text-xs text-red-500">{errors.sexo}</p>}
                   </div>
@@ -160,7 +168,7 @@ export default function Cadastro() {
                       type="text"
                       value={form.profissao}
                       onChange={(event) => handleChange("profissao", event.target.value)}
-                      placeholder="Informe sua profissão"
+                      placeholder="Sua profissão"
                       className={inputClass("profissao")}
                     />
                     {errors.profissao && <p className="mt-1 text-xs text-red-500">{errors.profissao}</p>}
@@ -169,41 +177,31 @@ export default function Cadastro() {
                     <label className="block text-xs font-semibold text-gray-700 mb-1">Senha</label>
                     <input
                       type="password"
-                      value={form.senha}
-                      onChange={(event) => handleChange("senha", event.target.value)}
+                      value={form.password}
+                      onChange={(event) => handleChange("password", event.target.value)}
                       placeholder="Senha"
-                      className={inputClass("senha")}
+                      className={inputClass("password")}
                     />
-                    {errors.senha && <p className="mt-1 text-xs text-red-500">{errors.senha}</p>}
+                    {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password}</p>}
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-gray-700 mb-1">Confirme a senha</label>
                     <input
                       type="password"
-                      value={form.confirmSenha}
-                      onChange={(event) => handleChange("confirmSenha", event.target.value)}
-                      placeholder="Confirme senha"
-                      className={inputClass("confirmSenha")}
+                      value={form.confirmPassword}
+                      onChange={(event) => handleChange("confirmPassword", event.target.value)}
+                      placeholder="Confirme sua senha"
+                      className={inputClass("confirmPassword")}
                     />
-                    {errors.confirmSenha && <p className="mt-1 text-xs text-red-500">{errors.confirmSenha}</p>}
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-700 mb-1">Email</label>
-                    <input
-                      type="email"
-                      value={form.email}
-                      onChange={(event) => handleChange("email", event.target.value)}
-                      placeholder="usuario123@email.com"
-                      className={inputClass("email")}
-                    />
-                    {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
+                    {errors.confirmPassword && <p className="mt-1 text-xs text-red-500">{errors.confirmPassword}</p>}
                   </div>
                 </div>
                 <button
                   type="submit"
-                  className="w-full bg-cyan-500 text-white py-2.5 rounded-lg font-semibold text-sm uppercase tracking-wide hover:bg-cyan-600"
+                  disabled={loading}
+                  className="w-full bg-cyan-500 text-white py-2.5 rounded-lg font-semibold text-sm uppercase tracking-wide hover:bg-cyan-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
                 >
-                  Cadastrar
+                  {loading ? "Cadastrando..." : "Cadastrar"}
                 </button>
               </div>
             </div>

@@ -15,6 +15,9 @@ export default function CadastroImovel() {
   const [form, setForm] = useState(initialForm);
   const [errors, setErrors] = useState({});
   const [files, setFiles] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState("");
+  const [serverError, setServerError] = useState("");
   const fileInputRef = useRef(null);
 
   const handleChange = (field, value) => {
@@ -53,10 +56,56 @@ export default function CadastroImovel() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (event) => {
+  const clearForm = () => {
+    setForm(initialForm);
+    setFiles([]);
+    setErrors({});
+    setServerError("");
+    setSuccess("");
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    setServerError("");
+    setSuccess("");
     if (!validateForm()) return;
-    alert("Cadastro de imóvel enviado com sucesso!");
+
+    setLoading(true);
+    try {
+      const formData = new FormData();
+      Object.entries(form).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
+      files.forEach((file) => {
+        formData.append("files", file);
+      });
+
+      const response = await fetch("http://localhost:8000/imoveis/register", {
+        method: "POST",
+        body: formData,
+      });
+
+      let data = {};
+      const contentType = response.headers.get("content-type") || "";
+      if (contentType.includes("application/json")) {
+        data = await response.json();
+      }
+
+      if (!response.ok) {
+        throw new Error(data.detail || data.message || response.statusText || "Erro ao cadastrar imóvel");
+      }
+
+      setSuccess("Imóvel cadastrado com sucesso!");
+      clearForm();
+    } catch (error) {
+      setServerError(error.message || "Erro ao enviar cadastro");
+      console.error("Erro no cadastro de imóvel", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const inputClass = (field) =>
@@ -72,6 +121,17 @@ export default function CadastroImovel() {
             <h1 className="text-lg font-bold text-slate-900 sm:text-xl">Cadastro de Imóvel</h1>
             <div className="mx-auto mt-1 h-[1px] w-12 bg-slate-200 sm:w-16"></div>
           </div>
+
+          {success && (
+            <div className="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-800">
+              {success}
+            </div>
+          )}
+          {serverError && (
+            <div className="mb-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+              {serverError}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-2 sm:space-y-3">
             <div className="grid gap-2 sm:gap-3 sm:grid-cols-2">
@@ -225,11 +285,19 @@ export default function CadastroImovel() {
             </div>
 
             <div className="flex flex-col gap-2 pt-2 sm:flex-row sm:justify-end sm:gap-3 sm:pt-3">
-              <button type="button" className="w-full rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 sm:w-auto sm:px-4 sm:py-2">
+              <button
+                type="button"
+                onClick={clearForm}
+                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 sm:w-auto sm:px-4 sm:py-2"
+              >
                 Cancelar
               </button>
-              <button type="submit" className="w-full rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-emerald-700 sm:w-auto sm:px-4 sm:py-2">
-                Cadastrar
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-400 sm:w-auto sm:px-4 sm:py-2"
+              >
+                {loading ? "Cadastrando..." : "Cadastrar"}
               </button>
             </div>
           </form>
