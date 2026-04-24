@@ -17,6 +17,7 @@ export default function Login() {
   // declaro useState
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [showErro, setShowErro] = useState(false); 
 
 
 
@@ -24,8 +25,10 @@ export default function Login() {
   const navigate = useNavigate();
   // funcção de login auth
   const handleLogin = async () => {
+    setShowErro(false); 
 
     console.log("teste");
+    
 
     try {
       const data = await loginAuth(email, senha);
@@ -35,7 +38,9 @@ export default function Login() {
       navigate("/dashboard");
 
     } catch (error) {
+      
       console.error(error.message);
+      setShowErro(true); 
 
     }
 
@@ -59,7 +64,10 @@ export default function Login() {
               <h1 className="font-bold">Bem vindo</h1>
               <h5 className="font-regular text ">Por favor faça seu login!</h5>
             </div>
-            <form action="">
+           <form onSubmit={(e) => {
+  e.preventDefault();
+  handleLogin();
+}}>
               <br />
               <Input
                 placeholder={"Usuário@email.com"}
@@ -68,7 +76,13 @@ export default function Login() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
-
+                  {showErro && (
+                    <span className="flex justify-center font-[Poppins] text-red-600 text-center">
+                      Email ou Senha Invalidos!
+                    </span>
+                  )}
+                          
+        
               <br />
 
               <Input
@@ -80,7 +94,7 @@ export default function Login() {
               />
               <br />
 
-              <Entrar onClick={handleLogin} />
+              <Entrar  />
 
               <br />
             </form>
