@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import bgImg from "../../assets/imgs/bg.png";
 import { cadastroAuth } from "../../services/authService";
 
@@ -13,6 +14,7 @@ const initialForm = {
 };
 
 export default function Cadastro() {
+  const navigate = useNavigate();
   const [form, setForm] = useState(initialForm);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -94,7 +96,11 @@ export default function Cadastro() {
 
                   {/* Botões Login/Cadastro */}
                   <div className="flex bg-gray-200 rounded-lg p-1 gap-0">
-                    <button type="button" className="px-4 md:px-6 lg:px-12 py-2.5 text-gray-500 text-sm font-medium rounded-sm hover:bg-gray-300">
+                    <button 
+                      type="button" 
+                      onClick={() => navigate("/login")}
+                      className="px-4 md:px-6 lg:px-12 py-2.5 text-gray-500 text-sm font-medium rounded-sm hover:bg-gray-300"
+                    >
                       Login
                     </button>
                     <button type="button" className="px-4 md:px-6 lg:px-12 py-2.5 text-gray-900 text-sm font-bold rounded-sm">
