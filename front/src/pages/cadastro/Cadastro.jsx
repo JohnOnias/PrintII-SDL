@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import bgImg from "../../assets/imgs/bg.png";
 
 const initialForm = {
   nome: "",
@@ -55,19 +56,10 @@ export default function Cadastro() {
 
   return (
     <div
-      className="h-screen w-full overflow-y-auto bg-[#07A9E9] text-gray-900"
-      style={{ fontFamily: "Poppins, sans-serif" }}
+      className="h-screen w-full overflow-y-auto text-gray-900"
+      style={{ backgroundImage: `url(${bgImg})`, backgroundSize: 'cover', backgroundPosition: 'center', fontFamily: "Poppins, sans-serif" }}
     >
       <div className="relative mx-auto flex min-h-screen w-full max-w-[1440px] items-start md:items-center justify-center lg:justify-start px-4 md:px-6 lg:px-10">
-        <div className="absolute right-0 top-0 hidden lg:block h-full w-1/2 overflow-hidden">
-          <img
-            src="/casa.jpg"
-            alt="Fachada de uma casa"
-            className="h-full w-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-l from-[#07A9E9]/95 via-[#07A9E9]/20 to-transparent"></div>
-        </div>
-
         <form
           onSubmit={handleSubmit}
           className="relative z-10 w-full max-w-[950px] h-auto lg:min-h-[600px] rounded-[32px] bg-white/95 shadow-[0_40px_120px_rgba(0,0,0,0.18)]"
