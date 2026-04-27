@@ -114,7 +114,7 @@ export default function CadastroImovel() {
     }`;
 
   return (
-    <div className="min-h-screen bg-slate-100 px-3 py-2 sm:px-4 sm:py-3">
+      <div className="h-[100vh] w-[100vw] flex justify-center content-center items-center">
       <div className="mx-auto max-w-lg sm:max-w-xl md:max-w-2xl">
         <div className="rounded-xl bg-white p-3 shadow-xl sm:p-4 md:p-5">
           <div className="mb-3 text-center sm:mb-4 md:mb-5">
