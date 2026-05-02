@@ -37,3 +37,5 @@ class ImovelMidia(models.Model):
 
     def __str__(self):
         return f"Mídia {self.id} - Imóvel {self.imovel.id}"
+    
+

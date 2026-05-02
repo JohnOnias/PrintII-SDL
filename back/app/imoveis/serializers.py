@@ -27,3 +27,4 @@ class ImovelSerializer(serializers.ModelSerializer):
             ImovelMidia.objects.create(imovel=imovel, arquivo=midia)
             
         return imovel
+
