@@ -9,6 +9,7 @@ import CadastroImovel from './pages/cadastroImovel/CadastroImovel';
 import Perfil from './pages/perfil/Perfil';
 import EditarPerfil from "./pages/editarPerfil/EditarPerfil";
 import Inicio from "./pages/inicio/Inicio"; // ✅ corrigido
+import EscolhaTipo from "./pages/escolha/escolha";
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -35,6 +36,7 @@ createRoot(document.getElementById('root')).render(
         {/* Cadastro de imóvel */}
         <Route path="/cadastro-imovel" element={<CadastroImovel />} />
 
+<Route path="/escolha" element={<EscolhaTipo />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>
