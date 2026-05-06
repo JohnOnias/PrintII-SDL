@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginAuth } from "../../services/authService.js";
 import bg from '../../assets/imgs/bg.png';
-
+import { getUser } from "../../services/userService";
 import Input from "../../components/Input/Input.jsx";
 import Entrar from "../../components/Button/Entrar.jsx";
 

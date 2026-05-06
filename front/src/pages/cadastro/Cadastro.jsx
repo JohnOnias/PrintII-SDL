@@ -45,31 +45,48 @@ export default function Cadastro() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    if (!validateForm()) return;
+const handleSubmit = async (event) => {
+  event.preventDefault();
+  if (!validateForm()) return;
 
-    setLoading(true);
-    try {
-      const result = await cadastroAuth(form);
-      console.log("Cadastro realizado com sucesso", result);
-      alert("Cadastro realizado com sucesso!");
+  setLoading(true);
 
-      // mantém seu padrão
-      localStorage.setItem("access_token", result.access);
-      localStorage.setItem("refresh_token", result.refresh);
+  try {
+  const { confirmPassword, ...rest } = form;
 
-      // 🔥 ÚNICA ADIÇÃO
-      navigate("/dashboard");
+const dataToSend = {
+  ...rest,
 
-      setForm(initialForm);
-    } catch (error) {
-      console.error("Erro no cadastro", error);
-      alert("Erro no cadastro: " + error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // 🔥 CAMPOS OBRIGATÓRIOS DO BACKEND
+  idade: "25",
+  rua: "Não informado",
+  bairro: "Não informado",
+  numero: 0,
+  tipo_de_usuario: "locatario",
+};
+
+const result = await cadastroAuth(dataToSend);
+
+// 🔥 SALVAR USUÁRIO LOCAL
+localStorage.setItem("user", JSON.stringify(dataToSend));
+
+    console.log("Cadastro realizado com sucesso", result);
+
+    alert("Cadastro realizado com sucesso!");
+
+    localStorage.setItem("access_token", result.access);
+    localStorage.setItem("refresh_token", result.refresh);
+
+    navigate("/dashboard");
+
+    setForm(initialForm);
+  } catch (error) {
+    console.error("Erro no cadastro", error);
+    alert("Erro no cadastro: " + error.message);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const inputClass = (field) =>
     `w-full px-4 py-2.5 rounded-lg text-sm text-gray-700 placeholder-gray-400 outline-none focus:border-black ${
