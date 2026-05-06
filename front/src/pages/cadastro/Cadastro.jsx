@@ -54,12 +54,15 @@ export default function Cadastro() {
       const result = await cadastroAuth(form);
       console.log("Cadastro realizado com sucesso", result);
       alert("Cadastro realizado com sucesso!");
-      // Armazenar tokens
+
+      // mantém seu padrão
       localStorage.setItem("access_token", result.access);
       localStorage.setItem("refresh_token", result.refresh);
-      // Limpar formulário
+
+      // 🔥 ÚNICA ADIÇÃO
+      navigate("/dashboard");
+
       setForm(initialForm);
-      // Aqui você pode redirecionar para dashboard ou fazer login automático
     } catch (error) {
       console.error("Erro no cadastro", error);
       alert("Erro no cadastro: " + error.message);
@@ -78,7 +81,12 @@ export default function Cadastro() {
   return (
     <div
       className="h-screen w-full overflow-y-auto text-gray-900"
-      style={{ backgroundImage: `url(${bgImg})`, backgroundSize: 'cover', backgroundPosition: 'center', fontFamily: "Poppins, sans-serif" }}
+      style={{
+        backgroundImage: `url(${bgImg})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        fontFamily: "Poppins, sans-serif"
+      }}
     >
       <div className="relative mx-auto flex min-h-screen w-full max-w-[1440px] items-start md:items-center justify-center lg:justify-start px-4 md:px-6 lg:px-10">
         <form
@@ -86,15 +94,16 @@ export default function Cadastro() {
           className="relative z-10 w-full max-w-[950px] h-auto lg:min-h-[600px] rounded-[32px] bg-white/95 shadow-[0_40px_120px_rgba(0,0,0,0.18)]"
         >
           <div className="flex flex-col h-full p-4 md:p-6 lg:p-8">
+
             {/* Grid Principal */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 lg:gap-8 flex-1">
+
               {/* Coluna Esquerda */}
               <div className="flex flex-col">
-                {/* Logo e Botões Login/Cadastro */}
+
                 <div className="flex flex-col items-center mb-4 md:mb-6">
                   <h1 className="text-2xl md:text-3xl lg:text-5xl font-bold mb-4 md:mb-6">LOGO</h1>
 
-                  {/* Botões Login/Cadastro */}
                   <div className="flex bg-gray-200 rounded-lg p-1 gap-0">
                     <button 
                       type="button" 
@@ -108,12 +117,12 @@ export default function Cadastro() {
                     </button>
                   </div>
                 </div>
+
                 <div className="mb-6 md:mb-8">
                   <h2 className="text-xl md:text-2xl font-bold mb-2">Bem vindo</h2>
                   <p className="text-gray-500 text-sm">Por favor, faça seu cadastro.</p>
                 </div>
 
-                {/* Inputs esquerda */}
                 <div className="space-y-4">
                   <div>
                     <label className="block text-xs font-semibold text-gray-700 mb-1">Nome de Usuário</label>
@@ -126,6 +135,7 @@ export default function Cadastro() {
                     />
                     {errors.username && <p className="mt-1 text-xs text-red-500">{errors.username}</p>}
                   </div>
+
                   <div>
                     <label className="block text-xs font-semibold text-gray-700 mb-1">Email</label>
                     <input
@@ -137,6 +147,7 @@ export default function Cadastro() {
                     />
                     {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
                   </div>
+
                   <div>
                     <label className="block text-xs font-semibold text-gray-700 mb-1">CPF</label>
                     <input
@@ -154,7 +165,9 @@ export default function Cadastro() {
               {/* Coluna Direita */}
               <div className="flex flex-col justify-between">
                 <div className="pt-2"></div>
+
                 <div className="space-y-4">
+
                   <div>
                     <label className="block text-xs font-semibold text-gray-700 mb-1">Sexo</label>
                     <select
@@ -168,6 +181,7 @@ export default function Cadastro() {
                     </select>
                     {errors.sexo && <p className="mt-1 text-xs text-red-500">{errors.sexo}</p>}
                   </div>
+
                   <div>
                     <label className="block text-xs font-semibold text-gray-700 mb-1">Profissão</label>
                     <input
@@ -179,6 +193,7 @@ export default function Cadastro() {
                     />
                     {errors.profissao && <p className="mt-1 text-xs text-red-500">{errors.profissao}</p>}
                   </div>
+
                   <div>
                     <label className="block text-xs font-semibold text-gray-700 mb-1">Senha</label>
                     <input
@@ -190,6 +205,7 @@ export default function Cadastro() {
                     />
                     {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password}</p>}
                   </div>
+
                   <div>
                     <label className="block text-xs font-semibold text-gray-700 mb-1">Confirme a senha</label>
                     <input
@@ -202,14 +218,16 @@ export default function Cadastro() {
                     {errors.confirmPassword && <p className="mt-1 text-xs text-red-500">{errors.confirmPassword}</p>}
                   </div>
                 </div>
+
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-cyan-500 text-white py-2.5 rounded-lg font-semibold text-sm uppercase tracking-wide hover:bg-cyan-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  className="w-full bg-cyan-500 text-white py-2.5 rounded-lg font-semibold text-sm uppercase tracking-wide hover:bg-cyan-600 disabled:bg-gray-400"
                 >
                   {loading ? "Cadastrando..." : "Cadastrar"}
                 </button>
               </div>
+
             </div>
           </div>
         </form>

@@ -1,13 +1,12 @@
-import React from 'react'
+import React from 'react';
 
-export default function Entrar({ onClick}) {
-
+export default function Entrar({ type = "button" }) {
   return (
-
-
-    <button onClick={onClick} type="submit" className='bg-print2 flex h-[4.9vh] w-[15vw] justify-center justify-items-center items-center rounded-lg font-[Poppins] font-bold text-base hover:bg-blue-600 text-white hover:cursor-pointer'>
+    <button
+      type={type}
+      className='bg-print2 flex h-[4.9vh] w-[15vw] justify-center items-center rounded-lg font-[Poppins] font-bold text-base hover:bg-blue-600 text-white cursor-pointer'
+    >
       Entrar
     </button>
-
-  )
+  );
 }
