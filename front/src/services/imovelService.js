@@ -1,11 +1,19 @@
-const API_URL = "http://localhost:8000/imoveis/";
+const API_URL = `${import.meta.env.VITE_API_URL || "http://localhost:8000"}/imoveis/`;
 
-const getHeaders = () => {
+const getHeaders = (isFormData = false) => {
   const token = localStorage.getItem("token") || localStorage.getItem("access_token");
-  return {
-    "Content-Type": "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
+  const headers = {};
+  
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+  
+  // Se for FormData, o navegador define o Content-Type automaticamente com o boundary correto
+  if (!isFormData) {
+    headers["Content-Type"] = "application/json";
+  }
+  
+  return headers;
 };
 
 export async function getImoveis() {
@@ -35,10 +43,12 @@ export async function getImovel(id) {
 }
 
 export async function createImovel(imovelData) {
+  const isFormData = imovelData instanceof FormData;
+  
   const response = await fetch(API_URL, {
     method: "POST",
-    headers: getHeaders(),
-    body: JSON.stringify(imovelData),
+    headers: getHeaders(isFormData),
+    body: isFormData ? imovelData : JSON.stringify(imovelData),
   });
 
   const data = await response.json();
@@ -49,10 +59,12 @@ export async function createImovel(imovelData) {
 }
 
 export async function updateImovel(id, imovelData) {
+  const isFormData = imovelData instanceof FormData;
+
   const response = await fetch(`${API_URL}${id}/`, {
-    method: "PATCH", // Usando PATCH para atualizações parciais
-    headers: getHeaders(),
-    body: JSON.stringify(imovelData),
+    method: "PATCH",
+    headers: getHeaders(isFormData),
+    body: isFormData ? imovelData : JSON.stringify(imovelData),
   });
 
   const data = await response.json();
