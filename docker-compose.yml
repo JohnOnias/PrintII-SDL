@@ -1,0 +1,26 @@
+services:
+  backend:
+    build:
+      context: ./back
+      dockerfile: Dockerfile
+    volumes:
+      - ./back:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=1
+      - PYTHONUNBUFFERED=1
+
+  frontend:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    volumes:
+      - ./front:/app
+      - /app/node_modules # Evita sobrescrever node_modules do container com o do host
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    environment:
+      - VITE_API_URL=http://localhost:8000
