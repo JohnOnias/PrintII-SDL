@@ -1,5 +1,5 @@
-# Usar uma imagem Node leve
-FROM node:20-slim
+# Usar uma imagem Node Alpine
+FROM node:20-alpine
 
 # Definir o diretório de trabalho
 WORKDIR /app
@@ -17,5 +17,4 @@ COPY . .
 EXPOSE 5173
 
 # Comando para rodar o servidor de desenvolvimento
-# O parâmetro --host é necessário para o Docker
 CMD ["npm", "run", "dev", "--", "--host"]

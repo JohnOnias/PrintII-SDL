@@ -1,16 +1,23 @@
-# Usar uma imagem Python leve
-FROM python:3.11-slim
+# Usar Ubuntu 24.04 como base
+FROM ubuntu:24.04
+
+# Evitar prompts interativos
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Definir o diretório de trabalho
 WORKDIR /app
 
-# Instalar dependências do sistema para pacotes como opencv
+# Instalar Python, pip e venv
 RUN apt-get update && apt-get install -y \
-    libgl1-mesa-glx \
-    libglib2.0-0 \
+    python3-pip \
+    python3-venv \
     && rm -rf /var/lib/apt/lists/*
 
-# Copiar os arquivos de requisitos (usando o nome com erro de digitação conforme o projeto)
+# Criar um ambiente virtual
+RUN python3 -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Copiar os arquivos de requisitos
 COPY requeriments_updated.txt .
 
 # Instalar as dependências do Python
@@ -23,5 +30,4 @@ COPY . .
 EXPOSE 8000
 
 # Comando para rodar as migrações e iniciar o servidor
-# Usamos 0.0.0.0 para que o servidor seja acessível fora do container
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
