@@ -1,4 +1,17 @@
 services:
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_DATABASE: db_printii
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: user_printii
+      MYSQL_PASSWORD: password_printii
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
   backend:
     build:
       context: ./back
@@ -11,6 +24,13 @@ services:
     environment:
       - DEBUG=1
       - PYTHONUNBUFFERED=1
+      - DB_NAME=db_printii
+      - DB_USER=user_printii
+      - DB_PASSWORD=password_printii
+      - DB_HOST=db
+      - DB_PORT=3306
+    depends_on:
+      - db
     dns:
       - 8.8.8.8
       - 1.1.1.1
@@ -32,3 +52,6 @@ services:
     dns:
       - 8.8.8.8
       - 1.1.1.1
+
+volumes:
+  mysql_data:
