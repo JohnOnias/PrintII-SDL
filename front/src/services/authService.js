@@ -1,5 +1,10 @@
+const API_URL = "http://localhost:8000";
+
+/* =========================
+   LOGIN
+========================= */
 export async function loginAuth(email, password) {
-  const response = await fetch("http://localhost:8000/usuarios/login", {
+  const response = await fetch(`${API_URL}/usuarios/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -10,48 +15,67 @@ export async function loginAuth(email, password) {
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.message || "Erro no login");
+if (!response.ok) {
+  console.log("🔥 ERRO BACKEND COMPLETO:", data);
+
+  throw new Error(
+    data.detail ||
+    JSON.stringify(data) ||
+    "Erro no cadastro"
+  );
+}  }
+
+  // 🔥 salva token
+  localStorage.setItem("access", data.access);
+  localStorage.setItem("refresh", data.refresh);
+
+  // 🔥 salva usuário (IMPORTANTE)
+  if (data.user) {
+    localStorage.setItem("user", JSON.stringify(data.user));
+  } else {
+    // fallback caso backend não envie user
+    const fakeUser = {
+      email,
+      username: email.split("@")[0],
+    };
+
+    localStorage.setItem("user", JSON.stringify(fakeUser));
   }
 
   return data;
 }
 
+/* =========================
+   CADASTRO
+========================= */
 export async function cadastroAuth(formData) {
-  // Mapear campos do formulário para os campos esperados pela API
-  const dataToSend = {
-    username: formData.username,
-    email: formData.email,
-    password: formData.password,
-    cpf: formData.cpf,
-    sexo: formData.sexo,
-    profissao: formData.profissao,
-    // Campos com valores padrão no backend
-    idade: "25", // valor padrão
-    rua: "Não informado", // valor padrão
-    bairro: "Não informado", // valor padrão
-    numero: 0, // valor padrão
-    tipo_de_usuario: "locatario", // valor padrão
-  };
-
   const response = await fetch("http://localhost:8000/usuarios/register", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(dataToSend),
+    body: JSON.stringify(formData),
   });
 
   const data = await response.json();
 
+  // 🔥 MOSTRA EXATAMENTE O QUE O BACKEND ESTÁ DIZENDO
   if (!response.ok) {
-    throw new Error(data.message || "Erro no cadastro");
+    console.log("🔥 ERRO COMPLETO DO DJANGO:", data);
+
+    throw new Error(
+      JSON.stringify(data, null, 2)
+    );
   }
 
   return data;
 }
 
+/* =========================
+   REFRESH TOKEN
+========================= */
 export async function refreshTokenAuth(refreshToken) {
-  const response = await fetch("http://localhost:8000/usuarios/token/refresh", {
+  const response = await fetch(`${API_URL}/usuarios/token/refresh`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
