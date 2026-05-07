@@ -36,7 +36,7 @@ createRoot(document.getElementById('root')).render(
         {/* Cadastro de imóvel */}
         <Route path="/cadastro-imovel" element={<CadastroImovel />} />
 
-<Route path="/escolha" element={<EscolhaTipo />} />
+      <Route path="/escolha" element={<EscolhaTipo />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>

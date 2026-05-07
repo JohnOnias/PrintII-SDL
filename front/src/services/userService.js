@@ -1,20 +1,27 @@
 // ===============================
-// 📦 USER LOCAL (FRONT ONLY)
+// 📦 USER LOCAL STORAGE
 // ===============================
 
 export function getUser() {
   const user = localStorage.getItem("user");
-  return user ? JSON.parse(user) : null;
+
+  if (!user) return null;
+
+  return JSON.parse(user);
 }
 
 export function updateUser(data) {
-  localStorage.setItem("user", JSON.stringify(data));
+  localStorage.setItem(
+    "user",
+    JSON.stringify(data)
+  );
+
   return data;
 }
 
 export function logout() {
-  localStorage.removeItem("user");
   localStorage.removeItem("access_token");
   localStorage.removeItem("refresh_token");
+
   window.location.href = "/login";
 }

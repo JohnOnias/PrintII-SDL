@@ -21,75 +21,158 @@ export default function Perfil() {
   }, []);
 
   if (!user) {
-    return <div className="p-10">Carregando...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        Carregando...
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 font-[Poppins]">
-      <div className="flex">
-        <Sidebar />
+    <div className="flex min-h-screen w-full bg-gray-100 font-[Poppins] overflow-hidden">
+      
+      {/* SIDEBAR */}
+      <Sidebar />
 
-        <main className="flex-1">
+      {/* CONTEÚDO */}
+      <main className="flex flex-1 flex-col min-h-screen overflow-y-auto">
 
-          {/* HEADER (igual seu design) */}
-          <header className="bg-white px-8 py-6 shadow-sm">
-            <h1 className="text-xl font-semibold text-gray-800">
-              Olá, {user.username}!
-            </h1>
-          </header>
+        {/* HEADER */}
+        <header className="bg-white px-4 sm:px-6 md:px-8 py-5 shadow-sm">
+          <h1 className="text-lg sm:text-xl font-semibold text-gray-800">
+            Olá, {user.username}!
+          </h1>
+        </header>
 
-          {/* CONTEÚDO */}
-          <div className="flex items-center justify-center min-h-[calc(100vh-80px)] px-6 py-8">
+        {/* ÁREA CENTRAL */}
+        <div className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-10">
 
-            <div className="w-full rounded-2xl border-2 border-cyan-500 bg-white p-8 shadow-lg sm:p-12">
+          {/* CARD */}
+          <div className="w-full max-w-4xl rounded-2xl border-2 border-cyan-500 bg-white shadow-lg">
 
-              {/* FOTO */}
-              <div className="flex flex-col items-center gap-4">
-                <img
-                  src={user.avatar || "https://via.placeholder.com/120"}
-                  className="h-28 w-28 rounded-full border-4 border-cyan-500 object-cover shadow-md"
-                />
+            {/* TOPO */}
+            <div className="flex flex-col items-center px-6 py-8">
 
-                <h2 className="text-2xl font-semibold text-gray-800">
-                  {user.tipo_de_usuario || "Perfil"}
-                </h2>
+              <img
+                src={user.avatar || "https://via.placeholder.com/120"}
+                alt="avatar"
+                className="h-28 w-28 rounded-full border-4 border-cyan-500 object-cover shadow-md"
+              />
+
+              <h2 className="mt-4 text-2xl font-semibold text-gray-800 capitalize">
+                {user.tipo_de_usuario || "Perfil"}
+              </h2>
+            </div>
+
+            {/* DADOS */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-6 md:px-10 pb-8">
+
+              <div className="space-y-4">
+                <div>
+                  <p className="text-sm font-bold text-gray-900">Nome</p>
+                  <p className="text-gray-700 break-words">
+                    {user.username || "Não informado"}
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-sm font-bold text-gray-900">Email</p>
+                  <p className="text-gray-700 break-words">
+                    {user.email || "Não informado"}
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-sm font-bold text-gray-900">CPF</p>
+                  <p className="text-gray-700">
+                    {user.cpf || "Não informado"}
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-sm font-bold text-gray-900">
+                    Profissão
+                  </p>
+                  <p className="text-gray-700">
+                    {user.profissao || "Não informado"}
+                  </p>
+                </div>
               </div>
 
-              {/* DADOS */}
-              <div className="mt-8 space-y-4">
+              <div className="space-y-4">
+
                 <div>
-                  <p className="text-sm font-bold">Nome</p>
-                  <p>{user.username}</p>
+                  <p className="text-sm font-bold text-gray-900">
+                    Sexo
+                  </p>
+
+                  <p className="text-gray-700">
+                    {user.sexo || "Não informado"}
+                  </p>
                 </div>
 
                 <div>
-                  <p className="text-sm font-bold">Email</p>
-                  <p>{user.email}</p>
+                  <p className="text-sm font-bold text-gray-900">
+                    Idade
+                  </p>
+
+                  <p className="text-gray-700">
+                    {user.idade || "Não informado"}
+                  </p>
                 </div>
 
                 <div>
-                  <p className="text-sm font-bold">CPF</p>
-                  <p>{user.cpf}</p>
+                  <p className="text-sm font-bold text-gray-900">
+                    Cidade
+                  </p>
+
+                  <p className="text-gray-700">
+                    {user.cidade || "Não informado"}
+                  </p>
                 </div>
 
                 <div>
-                  <p className="text-sm font-bold">Profissão</p>
-                  <p>{user.profissao}</p>
+                  <p className="text-sm font-bold text-gray-900">
+                    Estado
+                  </p>
+
+                  <p className="text-gray-700">
+                    {user.estado || "Não informado"}
+                  </p>
                 </div>
+
+              </div>
+            </div>
+
+            {/* DESCRIÇÃO */}
+            <div className="px-6 md:px-10 pb-8">
+
+              <div className="rounded-xl border bg-gray-50 p-5">
+
+                <h3 className="font-bold text-gray-900 mb-3">
+                  Descrição de locação
+                </h3>
+
+                <p className="text-sm leading-relaxed text-gray-600">
+                  {user.locacao ||
+                    "Nenhuma descrição cadastrada."}
+                </p>
+
               </div>
 
-              {/* BOTÃO (SEM MEXER NO DESIGN) */}
+              {/* BOTÃO */}
               <button
                 onClick={() => navigate("/editarPerfil")}
-                className="mt-8 flex w-full items-center justify-center gap-2 rounded-lg bg-cyan-500 px-4 py-2 font-semibold text-white transition hover:bg-cyan-600"
+                className="mt-6 w-full rounded-lg bg-cyan-500 px-4 py-3 font-semibold text-white transition hover:bg-cyan-600"
               >
                 Editar Perfil
               </button>
 
             </div>
+
           </div>
-        </main>
-      </div>
+        </div>
+      </main>
     </div>
   );
 }

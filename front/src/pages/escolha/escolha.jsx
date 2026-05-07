@@ -6,54 +6,67 @@ export default function EscolhaTipo() {
   const navigate = useNavigate();
 
   function handleSelect(tipo) {
-    // salva escolha
     localStorage.setItem("tipo_usuario", tipo);
 
-    // redireciona
-    navigate("/login"); // ou "/cadastro" se quiser
+    navigate("/login");
   }
 
   return (
     <div
-      className="h-screen w-full flex items-center justify-center"
+      className="h-screen w-full overflow-hidden"
       style={{
         backgroundImage: `url(${bgImg})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
-      <div className="bg-white/90  p-8 rounded-2xl shadow-xl text-center">
+      {/* POSICIONAMENTO RESPONSIVO */}
+      <div className="relative mx-auto flex min-h-screen w-full max-w-[1440px] items-center justify-center lg:justify-start px-4 md:px-8 lg:px-16">
 
-        <h1 className="text-4xl font-bold mb-6">LOGO</h1>
+        {/* CARD */}
+        <div className="w-full max-w-[520px] rounded-[32px] bg-white/95 p-8 md:p-10 lg:p-14 shadow-[0_40px_120px_rgba(0,0,0,0.18)]">
 
-        <h2 className="text-lg font-semibold mb-6">
-          Quem é você?
-        </h2>
+          {/* LOGO */}
+          <h1 className="text-center text-4xl md:text-5xl font-bold mb-10">
+            LOGO
+          </h1>
 
-        <div className="flex justify-center gap-6">
+          {/* TEXTO */}
+          <h2 className="text-center text-xl md:text-2xl font-semibold mb-10">
+            Quem é você?
+          </h2>
 
-          {/* LOCADOR */}
-          <button
-            onClick={() => handleSelect("locador")}
-            className="flex flex-col items-center bg-cyan-500 text-white p-6 rounded-xl hover:bg-cyan-600 transition"
-          >
-            <span className="text-4xl mb-2">🏠</span>
-            <span className="font-semibold">Locador</span>
-          </button>
+          {/* BOTÕES */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
 
-          {/* LOCATÁRIO */}
-          <button
-            onClick={() => handleSelect("locatario")}
-            className="flex flex-col items-center bg-cyan-500 text-white p-6 rounded-xl hover:bg-cyan-600 transition"
-          >
-            <span className="text-4xl mb-2">🔑</span>
-            <span className="font-semibold">Locatário</span>
-          </button>
+            {/* LOCADOR */}
+            <button
+              onClick={() => handleSelect("locador")}
+              className="w-full sm:w-[180px] h-[180px] flex flex-col items-center justify-center rounded-2xl bg-cyan-500 text-white transition hover:bg-cyan-600 shadow-lg"
+            >
+              <span className="text-6xl mb-4">🏠</span>
+
+              <span className="text-lg font-semibold">
+                Locador
+              </span>
+            </button>
+
+            {/* LOCATÁRIO */}
+            <button
+              onClick={() => handleSelect("locatario")}
+              className="w-full sm:w-[180px] h-[180px] flex flex-col items-center justify-center rounded-2xl bg-cyan-500 text-white transition hover:bg-cyan-600 shadow-lg"
+            >
+              <span className="text-6xl mb-4">🔑</span>
+
+              <span className="text-lg font-semibold">
+                Locatário
+              </span>
+            </button>
+
+          </div>
 
         </div>
-
       </div>
     </div>
   );
 }
-
