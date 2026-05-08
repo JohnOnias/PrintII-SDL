@@ -5,8 +5,6 @@ services:
     environment:
       MYSQL_DATABASE: db_printii
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_USER: user_printii
-      MYSQL_PASSWORD: password_printii
     ports:
       - "3306:3306"
     volumes:
@@ -25,8 +23,8 @@ services:
       - DEBUG=1
       - PYTHONUNBUFFERED=1
       - DB_NAME=db_printii
-      - DB_USER=user_printii
-      - DB_PASSWORD=password_printii
+      - DB_USER=root
+      - DB_PASSWORD=root
       - DB_HOST=db
       - DB_PORT=3306
     depends_on:
