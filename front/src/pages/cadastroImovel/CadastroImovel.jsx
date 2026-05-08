@@ -10,6 +10,7 @@ const initialForm = {
   estado: "",
   cidade: "",
   descricao: "",
+  valor: "",
 };
 
 export default function CadastroImovel({ isOpen, onClose }) {
