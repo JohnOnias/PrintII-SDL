@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import { getProfile } from "../../services/userService";
+import UserPerfil from "../../assets/imgs/UserPerfil.png";
 
 export default function Perfil() {
   const navigate = useNavigate();

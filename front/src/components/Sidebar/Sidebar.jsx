@@ -9,6 +9,8 @@ import IconImoveis from "../../assets/imgs/imoveis.png";
 import IconPerfil from "../../assets/imgs/perfil.png";
 import IconLogout from "../../assets/imgs/logout.png";
 import UserPerfil from "../../assets/imgs/UserPerfil.png";
+import IconLocador from "../../assets/imgs/locador.png";
+import IconLocatario from "../../assets/imgs/locatario.png";
 
 export default function Sidebar() {
   const location = useLocation();

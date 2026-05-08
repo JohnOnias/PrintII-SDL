@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getUser, updateUser } from "../../services/userService";
+import UserPerfil from "../../assets/imgs/UserPerfil.png";
 
 export default function EditarPerfil() {
   const [form, setForm] = useState({
