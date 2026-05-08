@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getImoveis, deleteImovel } from "../../services/imovelService";
+import { getImoveis, deleteImovel, updateImovel } from "../../services/imovelService";
 import { getProfile } from "../../services/userService";
 import CadastroImovel from "../cadastroImovel/CadastroImovel";
 import cat404 from "../../assets/imgs/404_CAT.png";
@@ -9,6 +9,7 @@ export default function Inicio({ isHome = true }) {
   const [imoveis, setImoveis] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [activeStatusMenu, setActiveStatusMenu] = useState(null);
 
   const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
@@ -57,6 +58,22 @@ export default function Inicio({ isHome = true }) {
       } catch (err) {
         alert("Erro ao excluir imóvel: " + err.message);
       }
+    }
+  };
+
+  const handleStatusChange = async (imovel, newStatus) => {
+    setActiveStatusMenu(null);
+    if (imovel.status === newStatus) {
+      alert("Este já é o status atual do imóvel. Nenhuma alteração foi realizada.");
+      return;
+    }
+
+    try {
+      await updateImovel(imovel.id, { status: newStatus });
+      setImoveis(imoveis.map(i => i.id === imovel.id ? { ...i, status: newStatus } : i));
+      alert("Status atualizado com sucesso!");
+    } catch (err) {
+      alert("Erro ao atualizar status: " + err.message);
     }
   };
 
