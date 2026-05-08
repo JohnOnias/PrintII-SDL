@@ -155,7 +155,10 @@ export default function Inicio({ isHome = true }) {
                         <div className="flex justify-between items-start mb-4 relative">
                           <div className="relative">
                             <button 
-                              onClick={() => setActiveStatusMenu(activeStatusMenu === imovel.id ? null : imovel.id)}
+                              onClick={() => {
+                                setActiveActionMenu(null);
+                                setActiveStatusMenu(activeStatusMenu === imovel.id ? null : imovel.id);
+                              }}
                               className={`flex items-center gap-1 border rounded px-2 py-0.5 text-[10px] font-bold uppercase transition ${
                                 imovel.status === 'disponivel' ? 'border-emerald-500 text-emerald-600 bg-emerald-50' : 
                                 imovel.status === 'indisponivel' ? 'border-amber-500 text-amber-600 bg-amber-50' :
@@ -190,7 +193,42 @@ export default function Inicio({ isHome = true }) {
                               </div>
                             )}
                           </div>
-                          <button className="text-black font-bold text-xl">⋮</button>
+                          
+                          <div className="relative">
+                            <button 
+                              onClick={() => {
+                                setActiveStatusMenu(null);
+                                setActiveActionMenu(activeActionMenu === imovel.id ? null : imovel.id);
+                              }}
+                              className="text-black font-bold text-xl px-2 hover:bg-gray-100 rounded-full transition"
+                            >
+                              ⋮
+                            </button>
+
+                            {/* DROPDOWN AÇÕES (EDITAR/EXCLUIR) */}
+                            {activeActionMenu === imovel.id && (
+                              <div className="absolute top-full right-0 mt-1 w-32 bg-white border border-gray-200 rounded-md shadow-lg z-20 py-1 animate-in fade-in slide-in-from-top-1">
+                                <button 
+                                  onClick={() => {
+                                    setActiveActionMenu(null);
+                                    alert("Função de edição em breve!");
+                                  }}
+                                  className="w-full text-left px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50 transition flex items-center gap-2"
+                                >
+                                  <span>✎</span> Editar
+                                </button>
+                                <button 
+                                  onClick={() => {
+                                    setActiveActionMenu(null);
+                                    handleDelete(imovel.id);
+                                  }}
+                                  className="w-full text-left px-4 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 transition flex items-center gap-2"
+                                >
+                                  <span>🗑</span> Excluir
+                                </button>
+                              </div>
+                            )}
+                          </div>
                         </div>
 
                         {/* CIRCULAR IMAGE AREA */}
@@ -230,13 +268,6 @@ export default function Inicio({ isHome = true }) {
                           </div>
                         </div>
 
-                        {/* DELETE BUTTON */}
-                        <button 
-                          onClick={() => handleDelete(imovel.id)}
-                          className="absolute -top-2 -right-2 bg-red-100 text-red-600 w-6 h-6 rounded-full flex items-center justify-center opacity-0 hover:opacity-100 transition shadow-sm"
-                        >
-                          ×
-                        </button>
                       </div>
                     );
                   })}
