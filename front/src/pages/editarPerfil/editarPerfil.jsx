@@ -271,11 +271,3 @@ export default function EditarPerfil() {
     </div>
   );
 }
-      </div>
-
-          </form>
-        </div>
-      </main>
-    </div>
-  );
-}

@@ -112,11 +112,3 @@ export default function Perfil() {
     </div>
   );
 }
-     </div>
-
-          </div>
-        </div>
-      </main>
-    </div>
-  );
-}
