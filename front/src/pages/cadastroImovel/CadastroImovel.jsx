@@ -1,5 +1,5 @@
-import React, { useState, useRef } from "react";
-import { createImovel } from "../../services/imovelService";
+import React, { useState, useRef, useEffect } from "react";
+import { createImovel, updateImovel as updateImovelService } from "../../services/imovelService";
 
 const initialForm = {
   categoria: "",
@@ -13,14 +13,77 @@ const initialForm = {
   valor: "",
 };
 
-export default function CadastroImovel({ isOpen, onClose }) {
+export default function CadastroImovel({ isOpen, onClose, imovelData = null }) {
   const [form, setForm] = useState(initialForm);
   const [errors, setErrors] = useState({});
   const [files, setFiles] = useState([]);
+  const [removedMediaIds, setRemovedMediaIds] = useState([]);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
   const [serverError, setServerError] = useState("");
   const fileInputRef = useRef(null);
+  
+  const isEditing = !!imovelData;
+  const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+
+  useEffect(() => {
+    if (imovelData && isOpen) {
+      console.log("📝 Preenchendo formulário com:", imovelData);
+      
+      // Tentativa de Parsing do Endereço
+      // O backend concatena assim: `${form.endereco}, ${form.cidade} - ${form.estado}, CEP: ${form.cep} (${form.referencia})`
+      
+      // Regex aprimorada para capturar os grupos corretamente, lidando com vírgulas no endereço
+      // O padrão busca: [Rua/Número], [Cidade] - [Estado], CEP: [CEP] ([Referência])
+      const regex = /^(.*),\s*(.*?)\s*-\s*(.*?),\s*CEP:\s*(.*?)\s*\((.*?)\)$/;
+      const match = imovelData.endereco ? imovelData.endereco.match(regex) : null;
+
+      if (match) {
+        console.log("✅ Endereço parseado com sucesso");
+        setForm({
+          categoria: imovelData.categoria || "",
+          tipo: imovelData.tipo || "",
+          endereco: (match[1] || "").trim(),
+          cidade: (match[2] || "").trim(),
+          estado: (match[3] || "").trim(),
+          cep: (match[4] || "").trim(),
+          referencia: (match[5] || "").trim(),
+          descricao: imovelData.descricao || "",
+          valor: imovelData.valor || "",
+        });
+      } else {
+        console.warn("⚠️ Regex falhou, tentando split manual para endereço");
+        // Fallback manual se o regex falhar (formato não padrão)
+        const parts = imovelData.endereco ? imovelData.endereco.split(',') : [];
+        const lastPart = parts.length > 1 ? parts.pop() : ""; // Tenta pegar a parte final com CEP/Ref
+        const cityStatePart = parts.length > 1 ? parts.pop() : ""; // Tenta pegar Cidade - Estado
+        
+        setForm({
+          categoria: imovelData.categoria || "",
+          tipo: imovelData.tipo || "",
+          endereco: parts.join(',').trim() || imovelData.endereco || "",
+          referencia: lastPart.match(/\((.*?)\)/)?.[1] || "",
+          cep: lastPart.match(/CEP:\s*(.*?)\s/)?.[1] || "",
+          estado: cityStatePart.split('-')[1]?.trim() || "",
+          cidade: cityStatePart.split('-')[0]?.trim() || "",
+          descricao: imovelData.descricao || "",
+          valor: imovelData.valor || "",
+        });
+      }
+      setFiles([]); 
+      setRemovedMediaIds([]);
+    } else if (!isEditing && isOpen) {
+      setForm(initialForm);
+      setFiles([]);
+      setRemovedMediaIds([]);
+    }
+    
+    if (isOpen) {
+      setErrors({});
+      setServerError("");
+      setSuccess("");
+    }
+  }, [imovelData, isOpen]);
 
   if (!isOpen) return null;
 
@@ -49,10 +112,18 @@ export default function CadastroImovel({ isOpen, onClose }) {
     setFiles(prev => prev.filter((_, i) => i !== index));
   };
 
+  const markMediaForRemoval = (id) => {
+    setRemovedMediaIds(prev => [...prev, id]);
+  };
+
+  const unmarkMediaForRemoval = (id) => {
+    setRemovedMediaIds(prev => prev.filter(midiaId => midiaId !== id));
+  };
+
   const validateForm = () => {
     const newErrors = {};
     Object.entries(form).forEach(([key, value]) => {
-      if (!value.trim()) {
+      if (value === undefined || value === null || (typeof value === 'string' && !value.trim())) {
         newErrors[key] = "Campo obrigatório";
       }
     });
@@ -63,46 +134,55 @@ export default function CadastroImovel({ isOpen, onClose }) {
   const clearForm = () => {
     setForm(initialForm);
     setFiles([]);
+    setRemovedMediaIds([]);
     setErrors({});
-    setServerError("");
   };
 
   const handleSubmit = async (event) => {
     if (event) event.preventDefault();
     setServerError("");
     setSuccess("");
-    console.log("🚀 handleSubmit chamado - validando formulário...");
+    
     if (!validateForm()) {
-      console.log("❌ Validação falhou");
       return;
     }
 
     setLoading(true);
     try {
-      console.log("📦 Preparando FormData...");
       const formData = new FormData();
-      Object.entries(form).forEach(([key, value]) => {
-        console.log(`  ${key}: ${value}`);
-        formData.append(key, value);
-      });
+      
+      formData.append("categoria", form.categoria);
+      formData.append("tipo", form.tipo);
+      formData.append("descricao", form.descricao);
+      formData.append("valor", form.valor);
+      
+      const fullEndereco = `${form.endereco}, ${form.cidade} - ${form.estado}, CEP: ${form.cep} (${form.referencia})`;
+      formData.append("endereco", fullEndereco);
+
       files.forEach((file) => {
-        console.log(`  arquivo: ${file.name}`);
         formData.append("midias_upload", file);
       });
 
-      console.log("📤 Chamando createImovel...");
-      await createImovel(formData);
+      if (isEditing) {
+        removedMediaIds.forEach(id => {
+          formData.append("midias_remover", id);
+        });
 
-      setSuccess("Imóvel cadastrado com sucesso!");
+        await updateImovelService(imovelData.id, formData);
+        setSuccess("Imóvel atualizado com sucesso!");
+      } else {
+        await createImovel(formData);
+        setSuccess("Imóvel cadastrado com sucesso!");
+      }
+
       setTimeout(() => {
         clearForm();
-        onClose();
-        // Recarrega a página para puxar os novos imóveis
+        if (onClose) onClose();
         window.location.reload();
       }, 1500);
     } catch (error) {
-      setServerError(error.message || "Erro ao enviar cadastro");
-      console.error("Erro no cadastro de imóvel", error);
+      setServerError(error.message || "Erro ao processar solicitação");
+      console.error("Erro no processamento de imóvel", error);
     } finally {
       setLoading(false);
     }
@@ -125,7 +205,9 @@ export default function CadastroImovel({ isOpen, onClose }) {
         
         {/* HEADER */}
         <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4 bg-slate-50/50">
-          <h2 className="text-xl font-bold text-slate-900">Cadastro de Imóvel</h2>
+          <h2 className="text-xl font-bold text-slate-900">
+            {isEditing ? "Editar Imóvel" : "Cadastro de Imóvel"}
+          </h2>
           <button
             onClick={onClose}
             className="rounded-full p-1.5 text-gray-400 transition hover:bg-gray-100 hover:text-gray-600"
@@ -139,7 +221,7 @@ export default function CadastroImovel({ isOpen, onClose }) {
         {/* CORPO (COM SCROLL) */}
         <div className="max-h-[70vh] overflow-y-auto p-6">
           {success && (
-            <div className="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-800">
+            <div data-testid="success-message" className="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-800">
               {success}
             </div>
           )}
@@ -185,6 +267,7 @@ export default function CadastroImovel({ isOpen, onClose }) {
                     <option value="">Selecione</option>
                     <option value="apartamento">Apartamento</option>
                     <option value="casa">Casa</option>
+                    <option value="quarto">Quarto</option>
                     <option value="terreno">Terreno</option>
                   </select>
                   {errors.tipo && <p className="mt-0.5 text-[10px] text-red-500">{errors.tipo}</p>}
@@ -196,7 +279,7 @@ export default function CadastroImovel({ isOpen, onClose }) {
                 </div>
                 <div>
                   <label htmlFor="estado" className="mb-0.5 block text-xs font-semibold text-slate-700">Estado</label>
-                  <input id="estado" type="text" value={form.estado} onChange={(e) => handleChange("estado", e.target.value)} placeholder="CE" maxLength={2} className={inputClass("estado")} />
+                  <input id="estado" type="text" value={form.estado} onChange={(e) => handleChange("estado", e.target.value)} placeholder="CE" maxLength={20} className={inputClass("estado")} />
                   {errors.estado && <p className="mt-0.5 text-[10px] text-red-500">{errors.estado}</p>}
                 </div>
                 <div>
@@ -212,15 +295,45 @@ export default function CadastroImovel({ isOpen, onClose }) {
               </div>
             </div>
 
+            {/* SEÇÃO DE MÍDIAS EXISTENTES */}
+            {isEditing && imovelData.midias && imovelData.midias.length > 0 && (
+              <div className="rounded-xl border border-gray-100 bg-slate-50 p-4">
+                <p className="text-sm font-bold text-slate-900 uppercase mb-3">Mídias Atuais</p>
+                <div className="grid grid-cols-4 gap-2">
+                  {imovelData.midias.map((midia) => {
+                    const isRemoved = removedMediaIds.includes(midia.id);
+                    const url = midia.arquivo.startsWith('http') ? midia.arquivo : `${API_BASE_URL}${midia.arquivo}`;
+                    return (
+                      <div key={midia.id} className={`relative aspect-square rounded-lg overflow-hidden border border-gray-200 bg-white transition-opacity ${isRemoved ? 'opacity-30 grayscale' : ''}`}>
+                        <img src={url} alt="Mídia" className="h-full w-full object-cover" />
+                        <button 
+                          type="button"
+                          onClick={() => isRemoved ? unmarkMediaForRemoval(midia.id) : markMediaForRemoval(midia.id)}
+                          className={`absolute top-1 right-1 h-5 w-5 rounded-full flex items-center justify-center text-[10px] font-bold shadow-sm transition ${isRemoved ? 'bg-emerald-500 text-white hover:bg-emerald-600' : 'bg-red-500 text-white hover:bg-red-600'}`}
+                        >
+                          {isRemoved ? "↺" : "✕"}
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* SEÇÃO DE NOVAS MÍDIAS */}
             <div className="rounded-xl border border-gray-100 bg-slate-50 p-4">
               <div className="flex items-center justify-between mb-3">
-                <p className="text-sm font-bold text-slate-900 uppercase">Mídias</p>
+                <p className="text-sm font-bold text-slate-900 uppercase">
+                  {isEditing ? "Adicionar Novas Mídias" : "Mídias"}
+                </p>
                 <button type="button" onClick={() => fileInputRef.current?.click()} className="rounded-full bg-[#219EBC] px-4 py-1.5 text-xs font-bold text-white transition hover:bg-[#1a86a1]">+ Adicionar</button>
                 <input ref={fileInputRef} type="file" multiple accept="image/*,video/*" onChange={handleFileSelect} className="hidden" />
               </div>
               <div className="space-y-2">
                 {files.length === 0 ? (
-                  <div className="rounded-lg border border-dashed border-gray-300 bg-white p-4 text-center text-xs text-gray-400">Arraste ou selecione fotos e vídeos</div>
+                  <div className="rounded-lg border border-dashed border-gray-300 bg-white p-4 text-center text-xs text-gray-400">
+                    {isEditing ? "Selecione novas fotos/vídeos se desejar" : "Arraste ou selecione fotos e vídeos"}
+                  </div>
                 ) : (
                   <div className="grid grid-cols-1 gap-2">
                     {files.map((file, index) => (
@@ -236,24 +349,13 @@ export default function CadastroImovel({ isOpen, onClose }) {
           </form>
         </div>
 
-        {/* ACTIONS (RODAPÉ) */}
+        {/* ACTIONS */}
         <div className="border-t border-gray-100 bg-gray-50 px-6 py-4 flex justify-end gap-3">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-6 py-2 text-sm font-medium text-gray-600 hover:text-gray-800"
-          >
-            Cancelar
-          </button>
-          <button
-            onClick={handleSubmit}
-            disabled={loading}
-            className="rounded-lg bg-emerald-600 px-8 py-2 text-sm font-bold text-white transition hover:bg-emerald-700 disabled:opacity-50"
-          >
-            {loading ? "Salvando..." : "Cadastrar Imóvel"}
+          <button type="button" onClick={onClose} className="px-6 py-2 text-sm font-medium text-gray-600 hover:text-gray-800">Cancelar</button>
+          <button onClick={handleSubmit} disabled={loading} className="rounded-lg bg-emerald-600 px-8 py-2 text-sm font-bold text-white transition hover:bg-emerald-700 disabled:opacity-50">
+            {loading ? "Salvando..." : isEditing ? "Salvar Alterações" : "Cadastrar Imóvel"}
           </button>
         </div>
-
       </div>
     </div>
   );

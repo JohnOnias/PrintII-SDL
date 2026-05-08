@@ -8,11 +8,28 @@ export default function Inicio({ isHome = true }) {
   const [user, setUser] = useState(null);
   const [imoveis, setImoveis] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [imovelParaEditar, setImovelParaEditar] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeStatusMenu, setActiveStatusMenu] = useState(null);
   const [activeActionMenu, setActiveActionMenu] = useState(null);
 
   const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+
+  const openEditModal = (imovel) => {
+    setImovelParaEditar(imovel);
+    setIsModalOpen(true);
+    setActiveActionMenu(null);
+  };
+
+  const openCreateModal = () => {
+    setImovelParaEditar(null);
+    setIsModalOpen(true);
+  };
+
+  const closeAndClearModal = () => {
+    setIsModalOpen(false);
+    setImovelParaEditar(null);
+  };
 
   async function loadData() {
     let userData = null;
@@ -127,7 +144,7 @@ export default function Inicio({ isHome = true }) {
             
             {/* BOTÃO CADASTRAR - CENTRALIZADO E TEAL */}
             <button 
-              onClick={() => setIsModalOpen(true)}
+              onClick={openCreateModal}
               className="w-full max-w-[500px] bg-[#219EBC] py-3 rounded-2xl text-2xl font-bold text-white shadow-md transition hover:bg-[#1a86a1] mb-12"
             >
               Cadastrar Novo Imóvel
@@ -148,6 +165,14 @@ export default function Inicio({ isHome = true }) {
                       const arquivo = imovel.midias[0].arquivo;
                       imageUrl = arquivo.startsWith('http') ? arquivo : `${API_BASE_URL}${arquivo}`;
                     }
+
+                    // Tenta extrair os dados do endereço concatenado
+                    const regex = /^(.*),\s*(.*?)\s*-\s*(.*?),\s*CEP:\s*(.*?)\s*\((.*?)\)$/;
+                    const match = imovel.endereco ? imovel.endereco.match(regex) : null;
+                    const rua = match ? match[1].trim() : imovel.endereco;
+                    const cidade = match ? match[2].trim() : "-";
+                    const estado = match ? match[3].trim() : "";
+                    const cidadeEstado = cidade !== "-" && estado ? `${cidade} - ${estado}` : cidade;
 
                     return (
                       <div key={imovel.id} className="relative bg-white rounded-xl border border-gray-100 shadow-sm p-6 flex flex-col min-h-[420px]">
@@ -210,10 +235,7 @@ export default function Inicio({ isHome = true }) {
                             {activeActionMenu === imovel.id && (
                               <div className="absolute top-full right-0 mt-1 w-32 bg-white border border-gray-200 rounded-md shadow-lg z-20 py-1 animate-in fade-in slide-in-from-top-1">
                                 <button 
-                                  onClick={() => {
-                                    setActiveActionMenu(null);
-                                    alert("Função de edição em breve!");
-                                  }}
+                                  onClick={() => openEditModal(imovel)}
                                   className="w-full text-left px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50 transition flex items-center gap-2"
                                 >
                                   <span>✎</span> Editar
@@ -245,18 +267,21 @@ export default function Inicio({ isHome = true }) {
                                 )}
                               </div>
                               {/* EDIT ICON OVERLAY */}
-                              <div className="absolute bottom-1 right-1 bg-[#219EBC] w-8 h-8 rounded-full border-2 border-white flex items-center justify-center shadow-md">
+                              <button 
+                                onClick={() => openEditModal(imovel)}
+                                className="absolute bottom-1 right-1 bg-[#219EBC] w-8 h-8 rounded-full border-2 border-white flex items-center justify-center shadow-md hover:bg-[#1a86a1] transition"
+                              >
                                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                  </svg>
-                              </div>
+                              </button>
                            </div>
                         </div>
 
                         {/* INFO SECTION */}
                         <div className="space-y-2 text-sm text-gray-700 flex-1">
-                          <p><span className="font-bold text-black">Endereço:</span> {imovel.endereco}</p>
-                          <p><span className="font-bold text-black">Cidade:</span> {imovel.cidade} - {imovel.estado}</p>
+                          <p className="line-clamp-2"><span className="font-bold text-black">Endereço:</span> {rua}</p>
+                          <p><span className="font-bold text-black">Cidade:</span> {cidadeEstado}</p>
                           <p className="line-clamp-3"><span className="font-bold text-black">Descrição:</span> {imovel.descricao}</p>
                         </div>
 
@@ -279,10 +304,11 @@ export default function Inicio({ isHome = true }) {
           </div>
 
         </div>
-        {/* MODAL DE CADASTRO */}
+        {/* MODAL DE CADASTRO / EDIÇÃO */}
         <CadastroImovel 
           isOpen={isModalOpen} 
-          onClose={() => setIsModalOpen(false)}
+          onClose={closeAndClearModal}
+          imovelData={imovelParaEditar}
         />
       </main>
     </div>
