@@ -83,30 +83,20 @@ export default function Cadastro() {
 
       const result = await cadastroAuth(dataToSend);
 
-      // 🔥 salva usuário local
-const userData = {
-  ...dataToSend,
-};
+      // 🔥 salva tokens e usuário local
+      localStorage.setItem("access", result.access);
+      localStorage.setItem("refresh", result.refresh);
+      
+      const updatedUser = {
+        ...dataToSend,
+        id: result.id || result.user?.id
+      };
 
-const oldUser =
-  JSON.parse(localStorage.getItem("user")) || {};
-
-const updatedUser = {
-  ...oldUser,
-  ...dataToSend,
-};
-
-localStorage.setItem(
-  "user",
-  JSON.stringify(updatedUser)
-);
+      localStorage.setItem("user", JSON.stringify(updatedUser));
 
       console.log("Cadastro realizado com sucesso", result);
 
       alert("Cadastro realizado com sucesso!");
-
-      localStorage.setItem("access_token", result.access);
-      localStorage.setItem("refresh_token", result.refresh);
 
       navigate("/dashboard");
 

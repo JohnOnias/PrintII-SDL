@@ -29,7 +29,9 @@ export async function loginAuth(email, password) {
   localStorage.setItem("refresh", data.refresh);
 
   // 🔥 salva usuário (IMPORTANTE)
-  if (data.user) {
+  if (data.usuario) {
+    localStorage.setItem("user", JSON.stringify(data.usuario));
+  } else if (data.user) {
     localStorage.setItem("user", JSON.stringify(data.user));
   } else {
     // fallback caso backend não envie user

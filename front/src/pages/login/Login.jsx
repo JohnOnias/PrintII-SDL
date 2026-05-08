@@ -17,25 +17,10 @@ export default function Login() {
     setShowErro(false);
 
     try {
+      // O service já salva 'access', 'refresh' e 'user' no localStorage
       const data = await loginAuth(email, senha);
 
-      // 🔥 salva token
-      localStorage.setItem("token", data.token);
-
-      // 🔥 pega usuário já salvo
-      const oldUser = JSON.parse(localStorage.getItem("user")) || {};
-
-      // 🔥 mantém dados antigos
-      const updatedUser = {
-        ...oldUser,
-        email,
-        password: senha,
-      };
-
-      // 🔥 salva novamente
-      localStorage.setItem("user", JSON.stringify(updatedUser));
-
-      console.log("USER SALVO:", updatedUser);
+      console.log("LOGIN SUCESSO:", data);
 
       navigate("/dashboard");
     } catch (error) {

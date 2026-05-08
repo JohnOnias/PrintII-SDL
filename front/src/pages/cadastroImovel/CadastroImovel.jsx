@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import { createImovel } from "../../services/imovelService";
 
 const initialForm = {
   categoria: "",
@@ -79,23 +80,10 @@ export default function CadastroImovel() {
         formData.append(key, value);
       });
       files.forEach((file) => {
-        formData.append("files", file);
+        formData.append("midias_upload", file);
       });
 
-      const response = await fetch("http://localhost:8000/imoveis/register", {
-        method: "POST",
-        body: formData,
-      });
-
-      let data = {};
-      const contentType = response.headers.get("content-type") || "";
-      if (contentType.includes("application/json")) {
-        data = await response.json();
-      }
-
-      if (!response.ok) {
-        throw new Error(data.detail || data.message || response.statusText || "Erro ao cadastrar imóvel");
-      }
+      await createImovel(formData);
 
       setSuccess("Imóvel cadastrado com sucesso!");
       clearForm();
