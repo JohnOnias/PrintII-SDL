@@ -9,12 +9,16 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   backend:
     build:
       context: ./back
       dockerfile: Dockerfile
-      network: host
     volumes:
       - ./back:/app
     ports:
@@ -28,16 +32,13 @@ services:
       - DB_HOST=db
       - DB_PORT=3306
     depends_on:
-      - db
-    dns:
-      - 8.8.8.8
-      - 1.1.1.1
+      db:
+        condition: service_healthy
 
   frontend:
     build:
       context: ./front
       dockerfile: Dockerfile
-      network: host
     volumes:
       - ./front:/app
       - /app/node_modules
@@ -47,9 +48,6 @@ services:
       - backend
     environment:
       - VITE_API_URL=http://localhost:8000
-    dns:
-      - 8.8.8.8
-      - 1.1.1.1
 
 volumes:
   mysql_data:
