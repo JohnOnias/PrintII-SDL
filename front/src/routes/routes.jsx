@@ -14,7 +14,7 @@ import CadastroImovel from "../pages/cadastroImovel/CadastroImovel";
 const router = createBrowserRouter([
     { 
         path: "/",
-        element: <Navigate to="/login" replace />
+        element: <EscolhaTipo />
     },
     { 
         path: "/login",
