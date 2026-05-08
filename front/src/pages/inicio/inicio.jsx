@@ -135,10 +135,44 @@ export default function Inicio({ isHome = true }) {
                       <div key={imovel.id} className="relative bg-white rounded-xl border border-gray-100 shadow-sm p-6 flex flex-col min-h-[420px]">
                         
                         {/* TOP ACTIONS */}
-                        <div className="flex justify-between items-start mb-4">
-                          <button className="flex items-center gap-1 border border-gray-300 rounded px-2 py-0.5 text-[10px] font-bold text-gray-700 uppercase">
-                            Status <span className="text-[8px]">▼</span>
-                          </button>
+                        <div className="flex justify-between items-start mb-4 relative">
+                          <div className="relative">
+                            <button 
+                              onClick={() => setActiveStatusMenu(activeStatusMenu === imovel.id ? null : imovel.id)}
+                              className={`flex items-center gap-1 border rounded px-2 py-0.5 text-[10px] font-bold uppercase transition ${
+                                imovel.status === 'disponivel' ? 'border-emerald-500 text-emerald-600 bg-emerald-50' : 
+                                imovel.status === 'indisponivel' ? 'border-amber-500 text-amber-600 bg-amber-50' :
+                                'border-gray-400 text-gray-500 bg-gray-50'
+                              }`}
+                            >
+                              {imovel.status || 'Status'} <span className="text-[8px]">▼</span>
+                            </button>
+                            
+                            {/* DROPDOWN STATUS */}
+                            {activeStatusMenu === imovel.id && (
+                              <div className="absolute top-full left-0 mt-1 w-32 bg-white border border-gray-200 rounded-md shadow-lg z-20 py-1 animate-in fade-in slide-in-from-top-1">
+                                <p className="px-3 py-1 text-[8px] font-bold text-gray-400 uppercase border-b border-gray-50">Alterar para:</p>
+                                <button 
+                                  onClick={() => handleStatusChange(imovel, 'disponivel')}
+                                  className="w-full text-left px-3 py-1.5 text-[10px] font-semibold text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 transition"
+                                >
+                                  Disponível
+                                </button>
+                                <button 
+                                  onClick={() => handleStatusChange(imovel, 'indisponivel')}
+                                  className="w-full text-left px-3 py-1.5 text-[10px] font-semibold text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition"
+                                >
+                                  Indisponível
+                                </button>
+                                <button 
+                                  onClick={() => handleStatusChange(imovel, 'oculto')}
+                                  className="w-full text-left px-3 py-1.5 text-[10px] font-semibold text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition"
+                                >
+                                  Oculto
+                                </button>
+                              </div>
+                            )}
+                          </div>
                           <button className="text-black font-bold text-xl">⋮</button>
                         </div>
 
