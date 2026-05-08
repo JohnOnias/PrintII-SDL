@@ -26,7 +26,7 @@ class UserSerializer(serializers.ModelSerializer):
             'id', 'username', 'cpf', 'idade',
             'sexo', 'profissao', 'rua', 'bairro',   
             'cidade', 'estado', 'numero', 
-            'email', 'password', 'tipo_de_usuario'
+            'email', 'password', 'tipo_de_usuario', 'locacao'
         ]
         
         extra_kwargs = {
@@ -56,6 +56,7 @@ class PublicUserSerializer(serializers.ModelSerializer):
             'estado',
             'numero',
             'tipo_de_usuario',
+            'locacao',
             'created_at',
             'updated_at'
         ]
@@ -75,7 +76,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             'username', 'idade', 'sexo', 'profissao', 
-            'rua', 'bairro', 'cidade', 'estado', 'numero', 'email'
+            'rua', 'bairro', 'cidade', 'estado', 'numero', 'email', 'locacao'
         ]
         extra_kwargs = {
             'email': {'required': False},
@@ -88,6 +89,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
             'cidade': {'required': False},
             'estado': {'required': False},
             'numero': {'required': False},
+            'locacao': {'required': False},
         }
 
 
