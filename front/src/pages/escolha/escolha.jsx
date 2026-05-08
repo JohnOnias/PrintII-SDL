@@ -41,7 +41,7 @@ export default function EscolhaTipo() {
             >
               <div className="w-[150px] h-[130px] rounded-xl border border-gray-200 bg-white p-2 shadow-sm transition group-hover:shadow-md">
                 <div className="flex h-full w-full items-center justify-center rounded-lg bg-cyan-500 text-white shadow-inner">
-                  <span className="text-6xl">🏠</span>
+                  <span className="text-6xl"></span>
                 </div>
               </div>
               <span className="text-lg font-bold text-gray-700">
@@ -56,7 +56,7 @@ export default function EscolhaTipo() {
             >
               <div className="w-[150px] h-[130px] rounded-xl border border-gray-200 bg-white p-2 shadow-sm transition group-hover:shadow-md">
                 <div className="flex h-full w-full items-center justify-center rounded-lg bg-cyan-500 text-white shadow-inner">
-                  <span className="text-6xl">🔑</span>
+                  <span className="text-6xl"></span>
                 </div>
               </div>
               <span className="text-lg font-bold text-gray-700">

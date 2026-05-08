@@ -2,6 +2,7 @@ const API_URL = `${import.meta.env.VITE_API_URL || "http://localhost:8000"}/imov
 
 const getHeaders = (isFormData = false) => {
   const token = localStorage.getItem("access") || localStorage.getItem("access_token") || localStorage.getItem("token");
+  console.log("🔑 Token capturado:", token ? `Bearer ${token.substring(0, 20)}...` : "NENHUM TOKEN");
   const headers = {};
   
   if (token) {
@@ -44,14 +45,19 @@ export async function getImovel(id) {
 
 export async function createImovel(imovelData) {
   const isFormData = imovelData instanceof FormData;
+  const headers = getHeaders(isFormData);
+  
+  console.log("📤 Enviando POST /imoveis/ com headers:", headers);
+  console.log("📤 Token completo:", headers.Authorization);
   
   const response = await fetch(API_URL, {
     method: "POST",
-    headers: getHeaders(isFormData),
+    headers: headers,
     body: isFormData ? imovelData : JSON.stringify(imovelData),
   });
 
   const data = await response.json();
+  console.log("📥 Resposta:", response.status, data);
   if (!response.ok) {
     throw new Error(data.detail || "Erro ao criar imóvel");
   }

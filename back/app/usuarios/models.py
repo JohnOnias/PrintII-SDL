@@ -33,6 +33,9 @@ class User(AbstractBaseUser):
     numero = models.IntegerField(null=False)
     email = models.EmailField(unique=True, null=False)
     locacao = models.TextField(null=True, blank=True)
+    rede_social_1 = models.URLField(max_length=255, null=True, blank=True)
+    rede_social_2 = models.URLField(max_length=255, null=True, blank=True)
+    rede_social_3 = models.URLField(max_length=255, null=True, blank=True)
 
     class UserType(models.TextChoices):
         LOCADOR = 'locador', 'Locador'

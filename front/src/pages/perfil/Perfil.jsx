@@ -36,142 +36,74 @@ export default function Perfil() {
   }
 
   return (
-    <div className="flex flex-col h-full w-full font-[Poppins]">
+    <div className="flex flex-col h-full w-full font-[Poppins] bg-white">
       
       {/* CONTEÚDO */}
-      <main className="flex-1 flex flex-col overflow-y-auto">
+      <main className="flex-1 flex flex-col overflow-y-auto relative">
 
         {/* HEADER */}
-        <header className="bg-white px-4 sm:px-6 md:px-8 py-5 shadow-sm">
-          <h1 className="text-lg sm:text-xl font-semibold text-gray-800">
+        <header className="bg-white px-8 py-6 flex items-center gap-4">
+          <h1 className="text-2xl font-light text-slate-800">
             Olá, {user.username}!
           </h1>
         </header>
 
         {/* ÁREA CENTRAL */}
-        <div className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-10 bg-gray-100">
+        <div className="flex-1 flex flex-col items-center justify-start pt-24 pb-16 px-4">
 
-          {/* CARD */}
-          <div className="w-full max-w-4xl rounded-2xl border-2 border-cyan-500 bg-white shadow-lg">
-
-            {/* TOPO */}
-            <div className="flex flex-col items-center px-6 py-8">
-
+          {/* CARD PRINCIPAL */}
+          <div className="relative w-full max-w-[520px] rounded-xl border border-gray-200 bg-white px-6 md:px-8 pb-8 pt-20 shadow-sm">
+            
+             {/* AVATAR OVERLAPPING */}
+             <div className="absolute -top-[60px] left-1/2 -translate-x-1/2 flex h-[120px] w-[120px] items-center justify-center rounded-full border-[6px] border-[#176999] bg-white">
               <img
-                src={user.avatar || "https://via.placeholder.com/120"}
+                src={user.avatar || "https://placehold.co/90x90"}
                 alt="avatar"
-                className="h-28 w-28 rounded-full border-4 border-cyan-500 object-cover shadow-md"
+                className="h-[90px] w-[90px] rounded-full object-cover"
               />
-
-              <h2 className="mt-4 text-2xl font-semibold text-gray-800 capitalize">
-                {user.tipo_de_usuario || "Perfil"}
-              </h2>
             </div>
 
-            {/* DADOS */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-6 md:px-10 pb-8">
-
-              <div className="space-y-4">
-                <div>
-                  <p className="text-sm font-bold text-gray-900">Nome</p>
-                  <p className="text-gray-700 break-words">
-                    {user.username || "Não informado"}
-                  </p>
-                </div>
-
-                <div>
-                  <p className="text-sm font-bold text-gray-900">Email</p>
-                  <p className="text-gray-700 break-words">
-                    {user.email || "Não informado"}
-                  </p>
-                </div>
-
-                <div>
-                  <p className="text-sm font-bold text-gray-900">CPF</p>
-                  <p className="text-gray-700">
-                    {user.cpf || "Não informado"}
-                  </p>
-                </div>
-
-                <div>
-                  <p className="text-sm font-bold text-gray-900">
-                    Profissão
-                  </p>
-                  <p className="text-gray-700">
-                    {user.profissao || "Não informado"}
-                  </p>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-
-                <div>
-                  <p className="text-sm font-bold text-gray-900">
-                    Sexo
-                  </p>
-
-                  <p className="text-gray-700">
-                    {user.sexo || "Não informado"}
-                  </p>
-                </div>
-
-                <div>
-                  <p className="text-sm font-bold text-gray-900">
-                    Idade
-                  </p>
-
-                  <p className="text-gray-700">
-                    {user.idade || "Não informado"}
-                  </p>
-                </div>
-
-                <div>
-                  <p className="text-sm font-bold text-gray-900">
-                    Cidade
-                  </p>
-
-                  <p className="text-gray-700">
-                    {user.cidade || "Não informado"}
-                  </p>
-                </div>
-
-                <div>
-                  <p className="text-sm font-bold text-gray-900">
-                    Estado
-                  </p>
-
-                  <p className="text-gray-700">
-                    {user.estado || "Não informado"}
-                  </p>
-                </div>
-
-              </div>
+            {/* ROLE / TIPO DE USUÁRIO */}
+            <div className="text-center mb-8">
+               <h2 className="text-2xl font-semibold text-[#404040]/60 capitalize tracking-tight">
+                 {user.tipo_de_usuario || "Locatário"}
+               </h2>
             </div>
 
-            {/* DESCRIÇÃO */}
-            <div className="px-6 md:px-10 pb-8">
+            {/* INFO BOX */}
+            <div className="w-full bg-white border border-gray-100 shadow-[0px_1.5px_1.5px_rgba(0,0,0,0.10)] rounded-md p-5 space-y-3 mb-8">
+                <div>
+                  <h3 className="text-sm font-bold text-black uppercase tracking-wider">Nome</h3>
+                  <p className="text-sm font-normal text-black mt-0.5">{user.username}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-black uppercase tracking-wider">Email</h3>
+                  <p className="text-sm font-normal text-black mt-0.5">{user.email}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-black uppercase tracking-wider">Telefone</h3>
+                  <p className="text-xs font-normal text-[#222222]/90 mt-0.5">{user.telefone || "(88) 922667-2846"}</p>
+                </div>
+            </div>
 
-              <div className="rounded-xl border bg-gray-50 p-5">
-
-                <h3 className="font-bold text-gray-900 mb-3">
-                  Descrição de locação
+            {/* DESCRIPTION BOX */}
+            <div className="w-full bg-white border border-gray-100 shadow-[0px_1.5px_1.5px_rgba(0,0,0,0.10)] rounded-md p-5 mb-8">
+                <h3 className="text-sm font-bold text-black mb-2">
+                  Qual tipo de locação procuro?
                 </h3>
-
-                <p className="text-sm leading-relaxed text-gray-600">
-                  {user.locacao ||
-                    "Nenhuma descrição cadastrada."}
+                <p className="text-xs font-normal text-[#49454f]/80 leading-relaxed">
+                  {user.locacao || "O que eu busco em um locatário é, acima de tudo, tranquilidade mútua. Espero alguém que trate o imóvel não apenas como um endereço temporário, mas como um lar, zelando pela conservação como se fosse seu."}
                 </p>
+            </div>
 
-              </div>
-
-              {/* BOTÃO */}
+            {/* EDIT BUTTON */}
+            <div className="flex justify-center">
               <button
                 onClick={() => navigate("/editarPerfil")}
-                className="mt-6 w-full rounded-lg bg-cyan-500 px-4 py-3 font-semibold text-white transition hover:bg-cyan-600"
+                className="flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50/50 px-5 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-100"
               >
-                Editar Perfil
+                Editor Perfil
               </button>
-
             </div>
 
           </div>

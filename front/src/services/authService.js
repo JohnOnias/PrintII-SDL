@@ -7,7 +7,7 @@ export async function loginAuth(email, password) {
   const response = await fetch(`${API_URL}/usuarios/login`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
+      "Content-Type": "application/json; charset=utf-8",
     },
     body: JSON.stringify({ email, password }),
   });
@@ -27,6 +27,11 @@ export async function loginAuth(email, password) {
   // 🔥 salva token
   localStorage.setItem("access", data.access);
   localStorage.setItem("refresh", data.refresh);
+  
+  console.log("✅ Token salvo no localStorage:", {
+    access: data.access ? data.access.substring(0, 20) + "..." : null,
+    refresh: data.refresh ? data.refresh.substring(0, 20) + "..." : null
+  });
 
   // 🔥 salva usuário (IMPORTANTE)
   if (data.usuario) {
@@ -53,7 +58,7 @@ export async function cadastroAuth(formData) {
   const response = await fetch("http://localhost:8000/usuarios/register", {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
+      "Content-Type": "application/json; charset=utf-8",
     },
     body: JSON.stringify(formData),
   });
@@ -79,7 +84,7 @@ export async function refreshTokenAuth(refreshToken) {
   const response = await fetch(`${API_URL}/usuarios/token/refresh`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
+      "Content-Type": "application/json; charset=utf-8",
     },
     body: JSON.stringify({ refresh: refreshToken }),
   });

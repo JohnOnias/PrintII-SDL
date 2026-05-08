@@ -9,7 +9,7 @@ function LayoutPrivado() {
       <Sidebar />
 
       {/* Conteúdo dinâmico das páginas */}
-      <div className="flex-1 flex flex-col min-h-screen overflow-hidden">
+      <div className="w-[80vw] min-w-[80vw] flex flex-col min-h-screen overflow-hidden bg-white">
         <Outlet />
       </div>
 

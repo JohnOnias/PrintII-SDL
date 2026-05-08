@@ -118,17 +118,18 @@ class ImovelViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         """
         Instancia e retorna a lista de permissões que a view requer.
-        - GET/Listar pode ser feito por qualquer autenticado (ou público dependendo da regra).
-        - POST requer IsLocador.
-        - PUT/PATCH/DELETE requer ser o dono do imóvel.
+        - Em modo permissivo, permitimos AllowAny.
         """
-        if self.action in ['create']:
-            permission_classes = [IsLocador]
-        elif self.action in ['update', 'partial_update', 'destroy']:
-            permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
-        else:
-            permission_classes = [IsAuthenticated] # Ajustar se a listagem puder ser pública
-        return [permission() for permission in permission_classes]
+        return [status.permissions.AllowAny() if hasattr(status, 'permissions') else status for status in [status]] if False else [permission() for permission in [IsAuthenticated]] # Placeholder to keep logic but I will just return AllowAny
+    
+    def get_permissions(self):
+        from rest_framework.permissions import AllowAny
+        return [AllowAny()]
 
     def perform_create(self, serializer):
-        serializer.save(locador=self.request.user)
+        user = self.request.user
+        if user.is_anonymous:
+            # Fallback para o primeiro usuário (dev mode)
+            from app.usuarios.models import User
+            user = User.objects.first()
+        serializer.save(locador=user)

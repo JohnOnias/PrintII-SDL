@@ -10,6 +10,7 @@ class Imovel(models.Model):
         CASA = 'casa', 'Casa'
         APARTAMENTO = 'apartamento', 'Apartamento'
         QUARTO = 'quarto', 'Quarto'
+        TERRENO = 'terreno', 'Terreno'
         
     class StatusChoices(models.TextChoices):
         DISPONIVEL = 'disponivel', 'Disponível'
