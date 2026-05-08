@@ -34,11 +34,15 @@ const router = createBrowserRouter([
         children: [
             {
                 path: "dashboard",
-                element: <Inicio />
+                element: <Inicio isHome={true} />
             },
             {
                 path: "inicio",
-                element: <Inicio />
+                element: <Inicio isHome={true} />
+            },
+            {
+                path: "meus-imoveis",
+                element: <Inicio isHome={false} />
             },
             {
                 path: "perfil",

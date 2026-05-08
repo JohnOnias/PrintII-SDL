@@ -4,7 +4,7 @@ import { getProfile } from "../../services/userService";
 import CadastroImovel from "../cadastroImovel/CadastroImovel";
 import cat404 from "../../assets/imgs/404_CAT.png";
 
-export default function Inicio() {
+export default function Inicio({ isHome = true }) {
   const [user, setUser] = useState(null);
   const [imoveis, setImoveis] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -71,10 +71,8 @@ export default function Inicio() {
     return <div className="p-10 flex items-center justify-center h-full text-lg">Carregando...</div>;
   }
 
-  const isLocador = user?.tipo_de_usuario === 'locador';
-
-  if (!isLocador) {
-    // LAYOUT LOCATÁRIO (Retornando apenas imagem 404 e mensagem)
+  // SE FOR TELA DE INÍCIO OU LOCATÁRIO, MOSTRA 404
+  if (isHome || user.tipo_de_usuario !== 'locador') {
     return (
       <div className="flex flex-col items-center justify-center h-full w-full bg-white font-[Poppins] p-4">
         <img src={cat404} alt="Não foi possível carregar" className="max-w-full max-h-[400px] mb-4" />
@@ -83,7 +81,7 @@ export default function Inicio() {
     );
   }
 
-  // LAYOUT LOCADOR (Conforme protótipo tela_imóveis_locador.png)
+  // LAYOUT MEUS IMÓVEIS (LOCADOR)
   return (
     <div className="flex flex-col h-full w-full bg-white font-[Poppins]">
       <main className="flex-1 flex flex-col overflow-y-auto relative">
@@ -181,10 +179,10 @@ export default function Inicio() {
                           </div>
                         </div>
 
-                        {/* DELETE BUTTON (Floating or hidden for pure prototype look, but kept for functionality) */}
+                        {/* DELETE BUTTON */}
                         <button 
                           onClick={() => handleDelete(imovel.id)}
-                          className="absolute -top-2 -right-2 bg-red-100 text-red-600 w-6 h-6 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition shadow-sm"
+                          className="absolute -top-2 -right-2 bg-red-100 text-red-600 w-6 h-6 rounded-full flex items-center justify-center opacity-0 hover:opacity-100 transition shadow-sm"
                         >
                           ×
                         </button>
@@ -198,11 +196,13 @@ export default function Inicio() {
           </div>
 
         </div>
-{/* MODAL DE CADASTRO (O componente já é o modal) */}
-<CadastroImovel 
-  isOpen={isModalOpen} 
-  onClose={() => setIsModalOpen(false)}
-/>      </main>
+        {/* MODAL DE CADASTRO */}
+        <CadastroImovel 
+          isOpen={isModalOpen} 
+          onClose={() => setIsModalOpen(false)}
+        />
+      </main>
     </div>
   );
 }
+

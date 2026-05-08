@@ -25,7 +25,7 @@ export default function Sidebar() {
   ];
 
   if (isLocador) {
-    navItems.push({ label: "Meus Imóveis", path: "/dashboard", icon: IconImoveis });
+    navItems.push({ label: "Meus Imóveis", path: "/meus-imoveis", icon: IconImoveis });
   } else {
     // Para Locatário, adicionamos Favoritos (usando ícone de imóveis como fallback se não houver um específico)
     navItems.push({ label: "Favoritos", path: "/favoritos", icon: IconImoveis });
