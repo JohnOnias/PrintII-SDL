@@ -10,6 +10,7 @@ export default function Inicio({ isHome = true }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [activeStatusMenu, setActiveStatusMenu] = useState(null);
+  const [activeActionMenu, setActiveActionMenu] = useState(null);
 
   const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
