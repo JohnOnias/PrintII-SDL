@@ -193,6 +193,46 @@ Authorization: Bearer <access_token>
 
 ---
 
+### 6. Filtrar Imóveis
+```http
+GET /imoveis/filter/?endereco=rua&categoria=residencial&tipo=casa&valor=1200.00
+Authorization: Bearer <access_token>
+```
+**Parâmetros de Query (opcionais):**
+- `endereco` (string) - Filtra por endereço (case-insensitive)
+- `categoria` (string) - Filtra por categoria: `residencial` ou `comercial`
+- `tipo` (string) - Filtra por tipo: `casa`, `apartamento`, `quarto`
+- `valor` (decimal) - Filtra por valor exato
+
+**Observações:**
+- Requer perfil de usuário `locatario`.
+- Pode combinar múltiplos parâmetros.
+- `endereco` não aceita números (apenas texto).
+- `valor` deve ser um número decimal válido.
+
+---
+
+### 7. Pesquisar Imóveis
+```http
+GET /imoveis/search/?numero=123&rua=Flores&bairro=Centro&endereco=Rua+das+Flores
+Authorization: Bearer <access_token>
+```
+**Parâmetros de Query (opcionais):**
+- `numero` (string numérica) - Pesquisa por número do endereço
+- `rua` (string) - Pesquisa por nome da rua
+- `bairro` (string) - Pesquisa por bairro
+- `endereco` (string) - Pesquisa geral por endereço
+
+**Observações:**
+- Disponível para qualquer usuário autenticado.
+- Retorna apenas imóveis com status `disponivel`.
+- Pesquisa case-insensitive.
+- `numero` aceita apenas dígitos.
+- `rua`, `bairro` e `endereco` não aceitam números.
+- Pode combinar múltiplos parâmetros.
+
+---
+
 ## Códigos de Status HTTP
 
 | Código | Significado |
