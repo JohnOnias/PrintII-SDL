@@ -1,6 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import bgImg from "../../assets/imgs/bg.png";
+import locadorImg from "../../assets/imgs/locador.png";
+import locatarioImg from "../../assets/imgs/locatario.png";
 
 export default function EscolhaTipo() {
   const navigate = useNavigate();
@@ -40,8 +42,8 @@ export default function EscolhaTipo() {
               className="group flex flex-col items-center gap-4 transition-transform hover:scale-105"
             >
               <div className="w-[150px] h-[130px] rounded-xl border border-gray-200 bg-white p-2 shadow-sm transition group-hover:shadow-md">
-                <div className="flex h-full w-full items-center justify-center rounded-lg bg-cyan-500 text-white shadow-inner">
-                  <span className="text-6xl"></span>
+                <div className="flex h-full w-full items-center justify-center rounded-lg bg-cyan-500 overflow-hidden shadow-inner">
+                  <img src={locadorImg} alt="Locador" className="w-full h-full object-cover" />
                 </div>
               </div>
               <span className="text-lg font-bold text-gray-700">
@@ -55,8 +57,8 @@ export default function EscolhaTipo() {
               className="group flex flex-col items-center gap-4 transition-transform hover:scale-105"
             >
               <div className="w-[150px] h-[130px] rounded-xl border border-gray-200 bg-white p-2 shadow-sm transition group-hover:shadow-md">
-                <div className="flex h-full w-full items-center justify-center rounded-lg bg-cyan-500 text-white shadow-inner">
-                  <span className="text-6xl"></span>
+                <div className="flex h-full w-full items-center justify-center rounded-lg bg-cyan-500 overflow-hidden shadow-inner">
+                  <img src={locatarioImg} alt="Locatário" className="w-full h-full object-cover" />
                 </div>
               </div>
               <span className="text-lg font-bold text-gray-700">

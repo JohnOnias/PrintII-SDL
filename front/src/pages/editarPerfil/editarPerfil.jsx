@@ -81,7 +81,7 @@ export default function EditarPerfil() {
           <div className="flex items-center gap-6 mb-12">
             <div className="h-28 w-28 rounded-full border-[6px] border-[#176999] overflow-hidden shadow-sm bg-white">
               <img
-                src={user.avatar || "https://placehold.co/113x113"}
+                src={user.avatar || UserPerfil}
                 alt="avatar"
                 className="h-full w-full object-cover"
               />
@@ -198,7 +198,7 @@ export default function EditarPerfil() {
             {/* OUTROS DADOS */}
             <section className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm">
               <h2 className="text-xl font-bold text-gray-800 mb-6">Outros Dados</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+              <div className="flex flex-col gap-y-6">
                 <div>
                   <label className="text-[10px] font-bold text-black uppercase tracking-wider">CPF</label>
                   <input
@@ -211,13 +211,16 @@ export default function EditarPerfil() {
                 </div>
                 <div>
                   <label className="text-[10px] font-bold text-black uppercase tracking-wider">Sexo</label>
-                  <input
+                  <select
                     name="sexo"
                     value={form.sexo}
                     onChange={handleChange}
-                    placeholder="Masculino"
-                    className="w-full mt-1 border border-gray-200 rounded-md p-2 text-sm text-gray-600 outline-none focus:border-[#176999]"
-                  />
+                    className="w-full mt-1 border border-gray-200 rounded-md p-2 text-sm text-gray-600 outline-none focus:border-[#176999] bg-white"
+                  >
+                    <option value="">Selecione</option>
+                    <option value="M">Masculino</option>
+                    <option value="F">Feminino</option>
+                  </select>
                 </div>
                 <div>
                   <label className="text-[10px] font-bold text-black uppercase tracking-wider">Profissão</label>
@@ -239,7 +242,7 @@ export default function EditarPerfil() {
                     className="w-full mt-1 border border-gray-200 rounded-md p-2 text-sm text-gray-600 outline-none focus:border-[#176999]"
                   />
                 </div>
-                <div className="md:col-span-2">
+                <div>
                   <label className="text-[10px] font-bold text-black uppercase tracking-wider">Endereço</label>
                   <input
                     name="endereco"
@@ -261,6 +264,14 @@ export default function EditarPerfil() {
                 Salvar Alterações
               </button>
             </div>
+
+          </form>
+        </div>
+      </main>
+    </div>
+  );
+}
+      </div>
 
           </form>
         </div>

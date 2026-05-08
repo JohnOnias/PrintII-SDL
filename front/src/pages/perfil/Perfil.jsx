@@ -57,7 +57,7 @@ export default function Perfil() {
              {/* AVATAR OVERLAPPING */}
              <div className="absolute -top-[60px] left-1/2 -translate-x-1/2 flex h-[120px] w-[120px] items-center justify-center rounded-full border-[6px] border-[#176999] bg-white">
               <img
-                src={user.avatar || "https://placehold.co/90x90"}
+                src={user.avatar || UserPerfil}
                 alt="avatar"
                 className="h-[90px] w-[90px] rounded-full object-cover"
               />
@@ -105,6 +105,14 @@ export default function Perfil() {
                 Editor Perfil
               </button>
             </div>
+
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
+     </div>
 
           </div>
         </div>

@@ -3,6 +3,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { getUser, logout } from "../../services/userService";
 import CadastroImovel from "../../pages/cadastroImovel/CadastroImovel";
 
+// Icons
+import IconInicio from "../../assets/imgs/inicio.png";
+import IconImoveis from "../../assets/imgs/imoveis.png";
+import IconPerfil from "../../assets/imgs/perfil.png";
+import IconLogout from "../../assets/imgs/logout.png";
+import UserPerfil from "../../assets/imgs/UserPerfil.png";
+
 export default function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -12,20 +19,19 @@ export default function Sidebar() {
   const isLocador = user?.tipo_de_usuario === "locador";
 
   const navItems = [
-    { label: "Inicio", path: "/dashboard" },
+    { label: "Inicio", path: "/dashboard", icon: IconInicio },
   ];
 
   if (isLocador) {
-    // Para Locador, o botão Inicio vira Meus Imóveis ou adicionamos logo abaixo conforme protótipo
-    navItems.push({ label: "Meus Imóveis", path: "/dashboard" });
+    navItems.push({ label: "Meus Imóveis", path: "/dashboard", icon: IconImoveis });
   } else {
-    // Para Locatário, adicionamos Favoritos
-    navItems.push({ label: "Favoritos", path: "/favoritos" });
+    // Para Locatário, adicionamos Favoritos (usando ícone de imóveis como fallback se não houver um específico)
+    navItems.push({ label: "Favoritos", path: "/favoritos", icon: IconImoveis });
   }
 
   navItems.push(
-    { label: "Perfil", path: "/perfil" },
-    { label: "Sair", path: "logout" }
+    { label: "Perfil", path: "/perfil", icon: IconPerfil },
+    { label: "Sair", path: "logout", icon: IconLogout }
   );
 
   const handleNav = (path) => {
@@ -46,14 +52,21 @@ export default function Sidebar() {
         <div className="px-5 py-8 flex items-center gap-3">
           <div className="relative flex h-[70px] w-[70px] items-center justify-center rounded-full border-[3px] border-[#091A64] bg-white overflow-hidden shadow-sm">
             <img
-              src={user?.avatar || "https://placehold.co/60x60"}
+              src={user?.avatar || UserPerfil}
               alt="avatar"
               className="h-full w-full object-cover"
             />
           </div>
           <div>
             <h2 className="text-xl font-semibold leading-tight">{user?.username || "Lucas"}</h2>
-            <p className="text-base font-semibold opacity-60 capitalize">{user?.tipo_de_usuario || "Locatário"}</p>
+            <div className="flex items-center gap-1.5 opacity-70">
+              <img 
+                src={isLocador ? IconLocador : IconLocatario} 
+                alt="role icon" 
+                className="h-4 w-4 rounded-full object-cover" 
+              />
+              <p className="text-sm font-semibold capitalize">{user?.tipo_de_usuario || "Locatário"}</p>
+            </div>
           </div>
         </div>
 
@@ -81,6 +94,9 @@ export default function Sidebar() {
                         : "text-white hover:bg-white/10"
                     }`}
                   >
+                    {item.icon && (
+                      <img src={item.icon} alt={item.label} className="h-6 w-6 object-contain" />
+                    )}
                     <span className="text-lg font-medium tracking-tight">
                       {item.label}
                     </span>
