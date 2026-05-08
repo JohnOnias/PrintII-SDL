@@ -4,15 +4,22 @@ export default function Input({
   tipo = "text",
   value,
   onChange,
-  disabled = false
+  disabled = false,
+  id
 }) {
+  const inputId = id || `input-${nome.toLowerCase().replace(/\s+/g, '-')}`;
+
   return (
     <div>
-      <label className="block text-xs font-semibold text-gray-700 mb-1">
+      <label 
+        htmlFor={inputId}
+        className="block text-xs font-semibold text-gray-700 mb-1"
+      >
         {nome}
       </label>
 
       <input
+        id={inputId}
         type={tipo}
         placeholder={placeholder}
         value={value}

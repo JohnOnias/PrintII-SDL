@@ -61,7 +61,6 @@ export default function CadastroImovel() {
     setFiles([]);
     setErrors({});
     setServerError("");
-    setSuccess("");
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -123,12 +122,12 @@ export default function CadastroImovel() {
           </div>
 
           {success && (
-            <div className="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-800">
+            <div data-testid="success-message" className="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-800">
               {success}
             </div>
           )}
           {serverError && (
-            <div className="mb-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+            <div data-testid="error-message" className="mb-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
               {serverError}
             </div>
           )}
@@ -137,8 +136,9 @@ export default function CadastroImovel() {
             <div className="grid gap-2 sm:gap-3 sm:grid-cols-2">
               <div className="space-y-1.5 sm:space-y-2">
                 <div>
-                  <label className="mb-0.5 block text-xs font-semibold text-slate-700 sm:text-sm">Categoria</label>
+                  <label htmlFor="categoria" className="mb-0.5 block text-xs font-semibold text-slate-700 sm:text-sm">Categoria</label>
                   <select
+                    id="categoria"
                     value={form.categoria}
                     onChange={(e) => handleChange("categoria", e.target.value)}
                     className={inputClass("categoria")}
@@ -151,8 +151,9 @@ export default function CadastroImovel() {
                 </div>
 
                 <div>
-                  <label className="mb-0.5 block text-xs font-semibold text-slate-700 sm:text-sm">Endereço</label>
+                  <label htmlFor="endereco" className="mb-0.5 block text-xs font-semibold text-slate-700 sm:text-sm">Endereço</label>
                   <input
+                    id="endereco"
                     type="text"
                     value={form.endereco}
                     onChange={(e) => handleChange("endereco", e.target.value)}
@@ -163,8 +164,9 @@ export default function CadastroImovel() {
                 </div>
 
                 <div>
-                  <label className="mb-0.5 block text-xs font-semibold text-slate-700 sm:text-sm">CEP</label>
+                  <label htmlFor="cep" className="mb-0.5 block text-xs font-semibold text-slate-700 sm:text-sm">CEP</label>
                   <input
+                    id="cep"
                     type="text"
                     value={form.cep}
                     onChange={(e) => handleChange("cep", e.target.value)}
@@ -175,8 +177,9 @@ export default function CadastroImovel() {
                 </div>
 
                 <div>
-                  <label className="mb-0.5 block text-xs font-semibold text-slate-700 sm:text-sm">Cidade</label>
+                  <label htmlFor="cidade" className="mb-0.5 block text-xs font-semibold text-slate-700 sm:text-sm">Cidade</label>
                   <input
+                    id="cidade"
                     type="text"
                     value={form.cidade}
                     onChange={(e) => handleChange("cidade", e.target.value)}
@@ -189,8 +192,9 @@ export default function CadastroImovel() {
 
               <div className="space-y-1.5 sm:space-y-2">
                 <div>
-                  <label className="mb-0.5 block text-xs font-semibold text-slate-700 sm:text-sm">Tipo de Imóvel</label>
+                  <label htmlFor="tipo" className="mb-0.5 block text-xs font-semibold text-slate-700 sm:text-sm">Tipo de Imóvel</label>
                   <select
+                    id="tipo"
                     value={form.tipo}
                     onChange={(e) => handleChange("tipo", e.target.value)}
                     className={inputClass("tipo")}
@@ -204,8 +208,9 @@ export default function CadastroImovel() {
                 </div>
 
                 <div>
-                  <label className="mb-0.5 block text-xs font-semibold text-slate-700 sm:text-sm">Referência</label>
+                  <label htmlFor="referencia" className="mb-0.5 block text-xs font-semibold text-slate-700 sm:text-sm">Referência</label>
                   <input
+                    id="referencia"
                     type="text"
                     value={form.referencia}
                     onChange={(e) => handleChange("referencia", e.target.value)}
@@ -216,8 +221,9 @@ export default function CadastroImovel() {
                 </div>
 
                 <div>
-                  <label className="mb-0.5 block text-xs font-semibold text-slate-700 sm:text-sm">Estado</label>
+                  <label htmlFor="estado" className="mb-0.5 block text-xs font-semibold text-slate-700 sm:text-sm">Estado</label>
                   <input
+                    id="estado"
                     type="text"
                     value={form.estado}
                     onChange={(e) => handleChange("estado", e.target.value)}
@@ -228,8 +234,9 @@ export default function CadastroImovel() {
                 </div>
 
                 <div>
-                  <label className="mb-0.5 block text-xs font-semibold text-slate-700 sm:text-sm">Descrição</label>
+                  <label htmlFor="descricao" className="mb-0.5 block text-xs font-semibold text-slate-700 sm:text-sm">Descrição</label>
                   <textarea
+                    id="descricao"
                     value={form.descricao}
                     onChange={(e) => handleChange("descricao", e.target.value)}
                     rows={2}

@@ -15,15 +15,14 @@ export async function loginAuth(email, password) {
   const data = await response.json();
 
   if (!response.ok) {
-if (!response.ok) {
-  console.log("🔥 ERRO BACKEND COMPLETO:", data);
+    console.log("🔥 ERRO BACKEND COMPLETO:", data);
 
-  throw new Error(
-    data.detail ||
-    JSON.stringify(data) ||
-    "Erro no cadastro"
-  );
-}  }
+    throw new Error(
+      data.detail ||
+      JSON.stringify(data) ||
+      "Erro no login"
+    );
+  }
 
   // 🔥 salva token
   localStorage.setItem("access", data.access);

@@ -190,11 +190,12 @@ localStorage.setItem(
                 <div className="space-y-4">
 
                   <div>
-                    <label className="block text-xs font-semibold text-gray-700 mb-1">
+                    <label htmlFor="username" className="block text-xs font-semibold text-gray-700 mb-1">
                       Nome de Usuário
                     </label>
 
                     <input
+                      id="username"
                       type="text"
                       value={form.username}
                       onChange={(e) =>
@@ -212,11 +213,12 @@ localStorage.setItem(
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-gray-700 mb-1">
+                    <label htmlFor="email" className="block text-xs font-semibold text-gray-700 mb-1">
                       Email
                     </label>
 
                     <input
+                      id="email"
                       type="email"
                       value={form.email}
                       onChange={(e) =>
@@ -234,11 +236,12 @@ localStorage.setItem(
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-gray-700 mb-1">
+                    <label htmlFor="cpf" className="block text-xs font-semibold text-gray-700 mb-1">
                       CPF
                     </label>
 
                     <input
+                      id="cpf"
                       type="text"
                       value={form.cpf}
                       onChange={(e) =>
@@ -266,11 +269,12 @@ localStorage.setItem(
                 <div className="space-y-4">
 
                   <div>
-                    <label className="block text-xs font-semibold text-gray-700 mb-1">
+                    <label htmlFor="sexo" className="block text-xs font-semibold text-gray-700 mb-1">
                       Sexo
                     </label>
 
                     <select
+                      id="sexo"
                       value={form.sexo}
                       onChange={(e) =>
                         handleChange("sexo", e.target.value)
@@ -284,11 +288,12 @@ localStorage.setItem(
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-gray-700 mb-1">
+                    <label htmlFor="profissao" className="block text-xs font-semibold text-gray-700 mb-1">
                       Profissão
                     </label>
 
                     <input
+                      id="profissao"
                       type="text"
                       value={form.profissao}
                       onChange={(e) =>
@@ -300,11 +305,12 @@ localStorage.setItem(
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-gray-700 mb-1">
+                    <label htmlFor="password" className="block text-xs font-semibold text-gray-700 mb-1">
                       Senha
                     </label>
 
                     <input
+                      id="password"
                       type="password"
                       value={form.password}
                       onChange={(e) =>
@@ -316,11 +322,12 @@ localStorage.setItem(
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-gray-700 mb-1">
+                    <label htmlFor="confirmPassword" className="block text-xs font-semibold text-gray-700 mb-1">
                       Confirme a senha
                     </label>
 
                     <input
+                      id="confirmPassword"
                       type="password"
                       value={form.confirmPassword}
                       onChange={(e) =>
@@ -332,6 +339,11 @@ localStorage.setItem(
                       placeholder="Confirme sua senha"
                       className={inputClass("confirmPassword")}
                     />
+                    {errors.confirmPassword && (
+                      <p className="mt-1 text-xs text-red-500">
+                        {errors.confirmPassword}
+                      </p>
+                    )}
                   </div>
 
                 </div>
