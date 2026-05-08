@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/Sidebar/Sidebar";
-import { getUser } from "../../services/userService";
+import { getUser, updateUser } from "../../services/userService";
 
 export default function EditarPerfil() {
 
@@ -41,47 +41,26 @@ export default function EditarPerfil() {
     e.preventDefault();
 
     try {
-
-      // 🔥 PEGA USER ATUAL
-      const currentUser =
-        JSON.parse(localStorage.getItem("user")) || {};
-
-      // 🔥 JUNTA DADOS
-      const updatedUser = {
-        ...currentUser,
-        ...form,
-      };
-
-      // 🔥 SALVA
-      localStorage.setItem(
-        "user",
-        JSON.stringify(updatedUser)
-      );
+      // 🔥 Chama o serviço que agora integra com o backend
+      const updatedUser = await updateUser(form);
 
       // 🔥 ATUALIZA STATE
       setForm(updatedUser);
 
-      console.log(
-        "USER SALVO:",
-        JSON.parse(localStorage.getItem("user"))
-      );
+      console.log("USER SALVO NO BACKEND:", updatedUser);
 
       alert("Perfil atualizado com sucesso!");
 
     } catch (err) {
-
       console.error("Erro ao atualizar:", err);
-
-      alert("Erro ao atualizar perfil");
+      alert("Erro ao atualizar perfil: " + err.message);
     }
   }
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-gray-100">
+    <div className="flex flex-col h-full w-full">
 
-      <Sidebar />
-
-      <main className="flex-1 flex flex-col">
+      <main className="flex-1 flex flex-col overflow-y-auto">
 
         {/* HEADER */}
         <header className="bg-white px-8 py-6 shadow-sm">
@@ -91,11 +70,11 @@ export default function EditarPerfil() {
         </header>
 
         {/* FORM */}
-        <div className="flex-1 overflow-y-auto p-8">
+        <div className="p-8">
 
           <form
             onSubmit={handleSubmit}
-            className="bg-white p-8 rounded-xl shadow-md space-y-6"
+            className="bg-white p-8 rounded-xl shadow-md space-y-6 max-w-5xl mx-auto"
           >
 
             {/* DADOS PERFIL */}

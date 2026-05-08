@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Sidebar from "../../components/Sidebar/Sidebar";
-import { getUser } from "../../services/userService";
+import { getProfile } from "../../services/userService";
 
 export default function Inicio() {
   const [user, setUser] = useState(null);
@@ -8,7 +7,7 @@ export default function Inicio() {
   useEffect(() => {
     async function loadUser() {
       try {
-        const data = await getUser();
+        const data = await getProfile();
         setUser(data);
       } catch (err) {
         console.error("ERRO AO BUSCAR USER:", err);
@@ -23,12 +22,11 @@ export default function Inicio() {
   }
 
   return (
-    <div className="flex h-screen w-full overflow-hidden">
-      <Sidebar />
+    <div className="flex flex-col h-full w-full bg-gray-100">
 
-      <main className="flex-1 flex flex-col overflow-hidden">
+      <main className="flex-1 flex flex-col overflow-y-auto">
 
-        {/* HEADER (igual ao seu design) */}
+        {/* HEADER */}
         <header className="bg-white px-8 py-6 shadow-sm">
           <div className="flex items-center gap-4">
             <h1 className="text-xl font-semibold text-gray-800">
@@ -38,7 +36,7 @@ export default function Inicio() {
         </header>
 
         {/* CONTEÚDO */}
-        <div className="flex-1 overflow-y-auto px-8 py-6 bg-gray-100">
+        <div className="flex-1 px-8 py-6">
 
           <div className="w-full max-w-5xl mx-auto rounded-2xl border-2 border-cyan-500 bg-white p-8 shadow-lg">
 

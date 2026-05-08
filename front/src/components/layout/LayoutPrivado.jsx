@@ -1,17 +1,15 @@
-import { Outlet } from "react-router";
-import Navbar from "../Navbar/Navbar";
+import { Outlet } from "react-router-dom";
+import Sidebar from "../Sidebar/Sidebar";
 
 function LayoutPrivado() {
   return (
-    <div className="h-screen w-screen flex">
+    <div className="flex h-screen w-screen bg-gray-100 overflow-hidden">
       
-      {/* Sidebar */}
-      <div className="bg-amber-300 w-1/5 min-w-[200px]">
-        <Navbar />
-      </div>
+      {/* Sidebar moderna */}
+      <Sidebar />
 
-      {/* Conteúdo */}
-      <div className="bg-red-200 flex-1 overflow-auto">
+      {/* Conteúdo dinâmico das páginas */}
+      <div className="flex-1 flex flex-col min-h-screen overflow-hidden">
         <Outlet />
       </div>
 

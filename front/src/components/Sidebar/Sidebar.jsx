@@ -1,26 +1,36 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { getUser, logout } from "../../services/userService";
 
 const navItems = [
   { label: "Início", path: "/dashboard" },
   { label: "Perfil", path: "/perfil" },
-  { label: "Sair", path: "/login" },
+  { label: "Sair", path: "logout" },
 ];
 
 export default function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
+  const user = getUser();
+
+  const handleNav = (path) => {
+    if (path === "logout") {
+      logout();
+    } else {
+      navigate(path);
+    }
+  };
 
   return (
     <aside className="min-h-screen w-full max-w-[280px] bg-gradient-to-b from-cyan-600 via-sky-600 to-blue-700 text-white shadow-lg md:sticky md:top-0 md:self-start">
       <div className="hidden md:flex h-full flex-col px-6 py-8">
         <div className="mb-10 flex items-center gap-3">
           <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15 text-2xl font-bold text-white shadow-sm">
-            L
+            {user?.username?.charAt(0).toUpperCase() || "U"}
           </div>
           <div>
             <p className="text-sm uppercase tracking-[0.22em] text-cyan-100/90">Olá,</p>
-            <h2 className="text-xl font-semibold">Lucas</h2>
+            <h2 className="text-xl font-semibold">{user?.username || "Usuário"}</h2>
           </div>
         </div>
 
@@ -31,7 +41,7 @@ export default function Sidebar() {
               <button
                 key={item.path}
                 type="button"
-                onClick={() => navigate(item.path)}
+                onClick={() => handleNav(item.path)}
                 className={`w-full rounded-2xl px-4 py-3 text-left text-sm font-medium transition hover:bg-white/10 ${
                   isActive ? "bg-white/15 text-white shadow-inner" : "text-cyan-100"
                 }`}
@@ -62,7 +72,7 @@ export default function Sidebar() {
             <button
               key={item.path}
               type="button"
-              onClick={() => navigate(item.path)}
+              onClick={() => handleNav(item.path)}
               className="whitespace-nowrap rounded-full bg-white/10 px-4 py-2 text-xs font-semibold text-cyan-100 transition hover:bg-white/20"
             >
               {item.label}

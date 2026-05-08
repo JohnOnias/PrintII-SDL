@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../../components/Sidebar/Sidebar";
-import { getUser } from "../../services/userService";
+import { getProfile } from "../../services/userService";
 
 export default function Perfil() {
   const navigate = useNavigate();
@@ -10,15 +10,22 @@ export default function Perfil() {
   useEffect(() => {
     async function loadUser() {
       try {
-        const data = await getUser();
+        const data = await getProfile();
         setUser(data);
       } catch (err) {
         console.error("ERRO AO BUSCAR USER:", err);
+        // Se falhar a busca online, tenta pegar do local
+        const localUser = JSON.parse(localStorage.getItem("user"));
+        if (localUser) {
+          setUser(localUser);
+        } else {
+          navigate("/login");
+        }
       }
     }
 
     loadUser();
-  }, []);
+  }, [navigate]);
 
   if (!user) {
     return (
@@ -29,13 +36,10 @@ export default function Perfil() {
   }
 
   return (
-    <div className="flex min-h-screen w-full bg-gray-100 font-[Poppins] overflow-hidden">
+    <div className="flex flex-col h-full w-full font-[Poppins]">
       
-      {/* SIDEBAR */}
-      <Sidebar />
-
       {/* CONTEÚDO */}
-      <main className="flex flex-1 flex-col min-h-screen overflow-y-auto">
+      <main className="flex-1 flex flex-col overflow-y-auto">
 
         {/* HEADER */}
         <header className="bg-white px-4 sm:px-6 md:px-8 py-5 shadow-sm">
@@ -45,7 +49,7 @@ export default function Perfil() {
         </header>
 
         {/* ÁREA CENTRAL */}
-        <div className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-10">
+        <div className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-10 bg-gray-100">
 
           {/* CARD */}
           <div className="w-full max-w-4xl rounded-2xl border-2 border-cyan-500 bg-white shadow-lg">
