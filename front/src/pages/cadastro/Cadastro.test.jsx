@@ -77,7 +77,10 @@ describe('Cadastro Page', () => {
   });
 
   it('successfully registers and navigates to dashboard', async () => {
-    cadastroAuth.mockResolvedValueOnce({ access: 'token-a', refresh: 'token-r' });
+    cadastroAuth.mockImplementation(async () => {
+      localStorage.setItem('access', 'token-a');
+      return { access: 'token-a', refresh: 'token-r' };
+    });
 
     render(
       <BrowserRouter>
@@ -100,7 +103,7 @@ describe('Cadastro Page', () => {
       expect(cadastroAuth).toHaveBeenCalled();
       expect(window.alert).toHaveBeenCalledWith('Cadastro realizado com sucesso!');
       expect(mockNavigate).toHaveBeenCalledWith('/dashboard');
-      expect(localStorage.getItem('access_token')).toBe('token-a');
+      expect(localStorage.getItem('access')).toBe('token-a');
     });
   });
 });

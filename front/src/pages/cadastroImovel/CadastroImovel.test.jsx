@@ -54,7 +54,7 @@ describe('CadastroImovel Page', () => {
 
     await waitFor(() => {
       expect(fetch).toHaveBeenCalledWith(
-        'http://localhost:8000/imoveis/register',
+        'http://localhost:8000/imoveis/',
         expect.objectContaining({
           method: 'POST',
           body: expect.any(FormData),

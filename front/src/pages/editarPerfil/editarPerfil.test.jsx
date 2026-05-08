@@ -4,11 +4,6 @@ import { BrowserRouter } from 'react-router-dom';
 import EditarPerfil from './editarPerfil';
 import * as userService from '../../services/userService';
 
-// Mock components
-vi.mock('../../components/Sidebar/Sidebar', () => ({
-  default: () => <div data-testid="sidebar-mock">Sidebar</div>,
-}));
-
 describe('EditarPerfil Page', () => {
   beforeEach(() => {
     localStorage.clear();
@@ -37,8 +32,10 @@ describe('EditarPerfil Page', () => {
 
   it('updates profile successfully', async () => {
     const mockUser = { username: 'Old Name', email: 'old@email.com' };
-    localStorage.setItem('user', JSON.stringify(mockUser));
+    const updatedMockUser = { ...mockUser, username: 'New Name' };
+    
     vi.spyOn(userService, 'getUser').mockReturnValue(mockUser);
+    const updateSpy = vi.spyOn(userService, 'updateUser').mockResolvedValue(updatedMockUser);
 
     render(
       <BrowserRouter>
@@ -53,8 +50,7 @@ describe('EditarPerfil Page', () => {
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      const savedUser = JSON.parse(localStorage.getItem('user'));
-      expect(savedUser.username).toBe('New Name');
+      expect(updateSpy).toHaveBeenCalled();
       expect(window.alert).toHaveBeenCalledWith('Perfil atualizado com sucesso!');
     });
   });

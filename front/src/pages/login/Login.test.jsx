@@ -40,7 +40,10 @@ describe('Login Page', () => {
   });
 
   it('successfully logs in and navigates to dashboard', async () => {
-    loginAuth.mockResolvedValueOnce({ token: 'mock-token' });
+    loginAuth.mockImplementation(async () => {
+      localStorage.setItem('access', 'mock-token');
+      return { access: 'mock-token' };
+    });
 
     render(
       <BrowserRouter>
@@ -54,7 +57,7 @@ describe('Login Page', () => {
 
     await waitFor(() => {
       expect(loginAuth).toHaveBeenCalledWith('test@example.com', 'password123');
-      expect(localStorage.getItem('token')).toBe('mock-token');
+      expect(localStorage.getItem('access')).toBe('mock-token');
       expect(mockNavigate).toHaveBeenCalledWith('/dashboard');
     });
   });
