@@ -32,6 +32,7 @@ class User(AbstractBaseUser):
     estado = models.CharField(max_length=2, default="CE")
     numero = models.IntegerField(null=False)
     email = models.EmailField(unique=True, null=False)
+    locacao = models.TextField(null=True, blank=True)
 
     class UserType(models.TextChoices):
         LOCADOR = 'locador', 'Locador'
