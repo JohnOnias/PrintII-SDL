@@ -25,7 +25,7 @@ describe('Sidebar Component', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getAllByText('Início')[0]).toBeInTheDocument();
+    expect(screen.getAllByText('Inicio')[0]).toBeInTheDocument();
     expect(screen.getAllByText('Perfil')[0]).toBeInTheDocument();
     expect(screen.getAllByText('Sair')[0]).toBeInTheDocument();
   });
@@ -51,8 +51,8 @@ describe('Sidebar Component', () => {
       </MemoryRouter>
     );
 
-    // Get the desktop button (index 0 based on current implementation)
-    const perfilButton = screen.getAllByRole('button', { name: 'Perfil' })[0];
-    expect(perfilButton).toHaveClass('bg-white/15');
+    // Get the button that contains the text 'Perfil'
+    const perfilButton = screen.getByText('Perfil').closest('button');
+    expect(perfilButton).toHaveClass('bg-[#091A64]/40');
   });
 });

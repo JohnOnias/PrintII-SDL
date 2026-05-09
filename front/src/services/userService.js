@@ -7,15 +7,22 @@ const API_URL = "http://localhost:8000";
 export function getUser() {
   const user = localStorage.getItem("user");
 
-  if (!user) return null;
+  if (!user || user === "undefined" || user === "null") return null;
 
-  return JSON.parse(user);
+  try {
+    return JSON.parse(user);
+  } catch (e) {
+    return null;
+  }
 }
 
 export async function getProfile() {
   const token = localStorage.getItem("access") || localStorage.getItem("access_token");
 
-  if (!token) throw new Error("Não autenticado");
+  if (!token || token === "undefined" || token === "null") {
+      console.warn("⚠️ Tentativa de buscar perfil sem token");
+      throw new Error("Não autenticado");
+  }
 
   const response = await fetch(`${API_URL}/usuarios/perfil`, {
     method: "GET",
@@ -26,6 +33,10 @@ export async function getProfile() {
   });
 
   if (!response.ok) {
+    if (response.status === 401) {
+        console.error("🚫 Token inválido ou expirado");
+        // Opcional: logout() ou redirecionar
+    }
     throw new Error("Erro ao buscar perfil");
   }
 
@@ -40,7 +51,7 @@ export async function getProfile() {
 export async function updateUser(userData) {
   const token = localStorage.getItem("access") || localStorage.getItem("access_token");
 
-  if (!token) throw new Error("Não autenticado");
+  if (!token || token === "undefined" || token === "null") throw new Error("Não autenticado");
 
   const response = await fetch(`${API_URL}/usuarios/update`, {
     method: "PUT",
@@ -68,6 +79,7 @@ export function logout() {
   localStorage.removeItem("access");
   localStorage.removeItem("refresh");
   localStorage.removeItem("user");
+  localStorage.removeItem("access_token"); // redundância
 
   window.location.href = "/login";
 }

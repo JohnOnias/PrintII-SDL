@@ -75,15 +75,19 @@ export default function Perfil() {
             <div className="w-full bg-white border border-gray-100 shadow-[0px_1.5px_1.5px_rgba(0,0,0,0.10)] rounded-md p-5 space-y-3 mb-8">
                 <div>
                   <h3 className="text-sm font-bold text-black uppercase tracking-wider">Nome</h3>
-                  <p className="text-sm font-normal text-black mt-0.5">{user.username}</p>
+                  <p className="text-sm font-normal text-black mt-0.5">{user.username || "Não informado"}</p>
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-black uppercase tracking-wider">Email</h3>
-                  <p className="text-sm font-normal text-black mt-0.5">{user.email}</p>
+                  <p className="text-sm font-normal text-black mt-0.5">{user.email || "Não informado"}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-black uppercase tracking-wider">CPF</h3>
+                  <p className="text-sm font-normal text-black mt-0.5">{user.cpf || "Não informado"}</p>
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-black uppercase tracking-wider">Telefone</h3>
-                  <p className="text-xs font-normal text-[#222222]/90 mt-0.5">{user.telefone || "(88) 922667-2846"}</p>
+                  <p className="text-xs font-normal text-[#222222]/90 mt-0.5">{user.telefone || "Não informado"}</p>
                 </div>
             </div>
 
@@ -93,7 +97,7 @@ export default function Perfil() {
                   Qual tipo de locação procuro?
                 </h3>
                 <p className="text-xs font-normal text-[#49454f]/80 leading-relaxed">
-                  {user.locacao || "O que eu busco em um locatário é, acima de tudo, tranquilidade mútua. Espero alguém que trate o imóvel não apenas como um endereço temporário, mas como um lar, zelando pela conservação como se fosse seu."}
+                  {user.locacao || "Não informado"}
                 </p>
             </div>
 
