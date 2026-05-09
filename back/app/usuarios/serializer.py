@@ -1,7 +1,28 @@
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
 from .models import User
+import re
 
+def validate_cpf_helper(value):
+    # Remove caracteres não numéricos
+    cpf = re.sub(r'[^0-9]', '', value)
+
+    if len(cpf) != 11:
+        raise serializers.ValidationError("CPF deve ter 11 dígitos.")
+
+    if cpf == cpf[0] * 11:
+        raise serializers.ValidationError("CPF inválido.")
+
+    # Validação dos dígitos verificadores
+    for i in range(9, 11):
+        value_sum = sum(int(cpf[num]) * ((i + 1) - num) for num in range(i))
+        check_digit = (value_sum * 10) % 11
+        if check_digit == 10:
+            check_digit = 0
+        if check_digit != int(cpf[i]):
+            raise serializers.ValidationError("CPF inválido.")
+
+    return cpf
 
 class UserSerializer(serializers.ModelSerializer):
     username = serializers.CharField(
@@ -33,6 +54,9 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'password': {'write_only': True}  # Senha não aparece na resposta por padrão
         }
+
+    def validate_cpf(self, value):
+        return validate_cpf_helper(value)
 
     def create(self, validated_data):
         password = validated_data.pop('password')
