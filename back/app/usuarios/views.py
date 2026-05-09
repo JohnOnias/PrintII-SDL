@@ -104,8 +104,16 @@ def create(request):
             )
 
         # Se passou todas as validações, salvar
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        user = serializer.save()
+        
+        # Gerar tokens para auto-login
+        refresh = RefreshToken.for_user(user)
+        
+        return Response({
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+            'usuario': serializer.data
+        }, status=status.HTTP_201_CREATED)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

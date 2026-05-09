@@ -55,3 +55,32 @@ class CPFValidationTest(TestCase):
         self.assertTrue(serializer.is_valid(), serializer.errors)
         # Check if it was cleaned
         self.assertEqual(serializer.validated_data['cpf'], '52998224725')
+
+class UserRegistrationViewTest(TestCase):
+    def setUp(self):
+        self.registration_data = {
+            'username': 'viewuser',
+            'cpf': '52998224725',
+            'idade': '25',
+            'sexo': 'M',
+            'profissao': 'Tester',
+            'rua': 'View St',
+            'bairro': 'View Bairro',
+            'numero': 456,
+            'email': 'view@example.com',
+            'password': 'password123',
+            'tipo_de_usuario': 'locatario'
+        }
+
+    def test_registration_returns_tokens(self):
+        from django.urls import reverse
+        from rest_framework.test import APIClient
+        client = APIClient()
+        url = reverse('register')
+        response = client.post(url, self.registration_data, format='json')
+        
+        self.assertEqual(response.status_code, 201)
+        self.assertIn('access', response.data)
+        self.assertIn('refresh', response.data)
+        self.assertIn('usuario', response.data)
+        self.assertEqual(response.data['usuario']['username'], 'viewuser')
