@@ -53,18 +53,25 @@ export async function updateUser(userData) {
 
   if (!token || token === "undefined" || token === "null") throw new Error("Não autenticado");
 
+  const isFormData = userData instanceof FormData;
+  
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+
+  if (!isFormData) {
+    headers["Content-Type"] = "application/json; charset=utf-8";
+  }
+
   const response = await fetch(`${API_URL}/usuarios/update`, {
     method: "PUT",
-    headers: {
-      "Content-Type": "application/json; charset=utf-8",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(userData),
+    headers: headers,
+    body: isFormData ? userData : JSON.stringify(userData),
   });
 
   if (!response.ok) {
     const errorData = await response.json();
-    throw new Error(errorData.error || "Erro ao atualizar perfil");
+    throw new Error(errorData.error || errorData.detail || "Erro ao atualizar perfil");
   }
 
   const data = await response.json();

@@ -7,6 +7,7 @@ import UserPerfil from "../../assets/imgs/UserPerfil.png";
 export default function Perfil() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
+  const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
   useEffect(() => {
     async function loadUser() {
@@ -36,6 +37,10 @@ export default function Perfil() {
     );
   }
 
+  const avatarUrl = user.foto_perfil 
+    ? (user.foto_perfil.startsWith('http') ? user.foto_perfil : `${API_BASE_URL}${user.foto_perfil}`)
+    : UserPerfil;
+
   return (
     <div className="flex flex-col h-full w-full font-[Poppins] bg-white">
       
@@ -58,7 +63,7 @@ export default function Perfil() {
              {/* AVATAR OVERLAPPING */}
              <div className="absolute -top-[60px] left-1/2 -translate-x-1/2 flex h-[120px] w-[120px] items-center justify-center rounded-full border-[6px] border-[#176999] bg-white">
               <img
-                src={user.avatar || UserPerfil}
+                src={avatarUrl}
                 alt="avatar"
                 className="h-[90px] w-[90px] rounded-full object-cover"
               />

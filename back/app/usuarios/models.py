@@ -42,6 +42,7 @@ class User(AbstractBaseUser):
         LOCATARIO = 'locatario', 'Locatário'
 
     tipo_de_usuario = models.CharField(max_length=10, choices=UserType.choices, null=False)
+    foto_perfil = models.ImageField(upload_to='perfil/', null=True, blank=True)
 
     # Campos obrigatórios para AbstractBaseUser
     is_active = models.BooleanField(default=True)

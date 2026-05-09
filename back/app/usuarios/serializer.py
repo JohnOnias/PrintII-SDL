@@ -48,7 +48,7 @@ class UserSerializer(serializers.ModelSerializer):
             'sexo', 'profissao', 'rua', 'bairro',   
             'cidade', 'estado', 'numero', 
             'email', 'password', 'tipo_de_usuario', 'locacao',
-            'rede_social_1', 'rede_social_2', 'rede_social_3'
+            'rede_social_1', 'rede_social_2', 'rede_social_3', 'foto_perfil'
         ]
         
         extra_kwargs = {
@@ -85,6 +85,7 @@ class PublicUserSerializer(serializers.ModelSerializer):
             'rede_social_1',
             'rede_social_2',
             'rede_social_3',
+            'foto_perfil',
             'created_at',
             'updated_at'
         ]
@@ -105,7 +106,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
         fields = [
             'username', 'idade', 'sexo', 'profissao', 
             'rua', 'bairro', 'cidade', 'estado', 'numero', 'email', 'locacao', 'tipo_de_usuario',
-            'rede_social_1', 'rede_social_2', 'rede_social_3'
+            'rede_social_1', 'rede_social_2', 'rede_social_3', 'foto_perfil'
         ]
         extra_kwargs = {
             'email': {'required': False},
@@ -123,6 +124,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
             'rede_social_1': {'required': False},
             'rede_social_2': {'required': False},
             'rede_social_3': {'required': False},
+            'foto_perfil': {'required': False},
         }
 
 
