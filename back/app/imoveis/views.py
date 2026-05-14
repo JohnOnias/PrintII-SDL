@@ -3,7 +3,7 @@ from decimal import Decimal, InvalidOperation
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from .models import Imovel
+from .models import Imovel, Favorito
 from .serializers import ImovelSerializer
 from .permissions import IsLocador, IsOwnerOrReadOnly, IsLocatario
 from rest_framework.decorators import api_view, permission_classes
@@ -101,6 +101,48 @@ def searchImovel(request):
 
     serializer = ImovelSerializer(queryset, many=True)
     return Response(serializer.data)
+
+# FAVORITAR / DESFAVORITAR IMÓVEL - Locatário autenticado favorita ou desfavorita um imóvel
+@api_view(['POST'])
+@permission_classes([IsAuthenticated, IsLocatario])
+def favoritar_imovel(request):
+    imovel_id = request.data.get('imovel_id')
+
+    if not imovel_id:
+        return Response(
+            {'error': 'O campo imovel_id é obrigatório'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    try:
+        imovel = Imovel.objects.get(id=imovel_id)
+    except Imovel.DoesNotExist:
+        return Response(
+            {'error': 'Imóvel não encontrado'},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    locatario = request.user
+
+    if Favorito.objects.filter(locatario=locatario, imovel=imovel).exists():
+        return Response({'Message': True}, status=status.HTTP_200_OK)
+
+    Favorito.objects.create(
+        imovel=imovel,
+        locatario=locatario
+    )
+
+    return Response({'favoritado': True}, status=status.HTTP_201_CREATED)
+
+
+# LISTAR IMÓVEIS FAVORITADOS - Locatário autenticado lista seus favoritos
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, IsLocatario])
+def listar_favoritos(request):
+    imoveis = Imovel.objects.filter(favoritos__locatario=request.user)
+    serializer = ImovelSerializer(imoveis, many=True)
+    return Response(serializer.data)
+
 
 class ImovelViewSet(viewsets.ModelViewSet):
     serializer_class = ImovelSerializer

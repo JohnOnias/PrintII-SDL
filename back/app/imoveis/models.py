@@ -1,6 +1,17 @@
 from django.db import models
 from django.conf import settings
 
+class Favorito(models.Model):
+    imovel = models.ForeignKey('Imovel', on_delete=models.CASCADE, related_name='favoritos')
+    locatario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='favoritos_como_locatario')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ['locatario', 'imovel']
+
+    def __str__(self):
+        return f"Favorito {self.id} - {self.locatario.username} -> {self.imovel.id}"
+
 class Imovel(models.Model):
     class CategoriaChoices(models.TextChoices):
         RESIDENCIAL = 'residencial', 'Residencial'

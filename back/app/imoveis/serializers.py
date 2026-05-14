@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Imovel, ImovelMidia
+from .models import Imovel, ImovelMidia, Favorito
+from app.usuarios.serializer import PublicUserSerializer
 
 class ImovelMidiaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -7,6 +8,7 @@ class ImovelMidiaSerializer(serializers.ModelSerializer):
         fields = ['id', 'arquivo', 'created_at']
 
 class ImovelSerializer(serializers.ModelSerializer):
+    locador = PublicUserSerializer(read_only=True)
     midias = ImovelMidiaSerializer(many=True, read_only=True)
     midias_upload = serializers.ListField(
         child=serializers.FileField(max_length=10000000, allow_empty_file=False, use_url=False), # Ex: max 10MB
@@ -52,3 +54,10 @@ class ImovelSerializer(serializers.ModelSerializer):
             ImovelMidia.objects.create(imovel=instance, arquivo=midia)
             
         return instance
+
+
+class FavoritoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Favorito
+        fields = ['id', 'imovel', 'locatario', 'created_at']
+        read_only_fields = ['locatario']
