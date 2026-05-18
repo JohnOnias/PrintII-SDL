@@ -146,7 +146,7 @@ DATABASES = {
 }
 
 # Use SQLite for testing or if environment variables are not enough (optional)
-if os.environ.get('USE_SQLITE') == '1':
+if os.environ.get('USE_SQLITE') == '1' or os.environ.get('GITHUB_ACTIONS') == 'true':
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
