@@ -3,10 +3,10 @@ from decimal import Decimal, InvalidOperation
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import Imovel
+from .models import Imovel, ImovelFavorito
 from .serializers import ImovelSerializer
 from .permissions import IsLocador, IsOwnerOrReadOnly, IsLocatario
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, action
 
 # Validar tipo de dados de entrada
 def _validate_text_field(value, field_name):
@@ -126,8 +126,70 @@ class ImovelViewSet(viewsets.ModelViewSet):
             return [IsLocador()]
         if self.action in ['update', 'partial_update', 'destroy']:
             return [IsAuthenticated()]
+        if self.action in ['favoritar', 'desfavoritar', 'favoritos']:
+            return [IsAuthenticated(), IsLocatario()]
         # Mudado de AllowAny para IsAuthenticated para satisfazer os requisitos de segurança
         return [IsAuthenticated()]
 
     def perform_create(self, serializer):
         serializer.save(locador=self.request.user)
+
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated, IsLocatario])
+    def favoritar(self, request, pk=None):
+        imovel = self.get_object()
+        
+        # A2: Imóvel indisponível
+        if imovel.status != Imovel.StatusChoices.DISPONIVEL:
+            return Response(
+                {'detail': 'Este imóvel não está disponível para ser favoritado.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+            
+        try:
+            favorite, created = ImovelFavorito.objects.get_or_create(
+                usuario=request.user,
+                imovel=imovel
+            )
+            
+            if not created:
+                # A3: Imóvel já favoritado
+                return Response(
+                    {'detail': 'Este imóvel já está na sua lista de favoritos.'},
+                    status=status.HTTP_200_OK
+                )
+            
+            return Response(
+                {'detail': 'Imóvel adicionado aos favoritos com sucesso.'},
+                status=status.HTTP_201_CREATED
+            )
+        except Exception:
+            # A4: Falha ao salvar favorito
+            return Response(
+                {'detail': 'Ocorreu um erro ao tentar favoritar o imóvel. Por favor, tente novamente.'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+    @action(detail=True, methods=['delete'], url_path='favoritar', permission_classes=[IsAuthenticated, IsLocatario])
+    def desfavoritar(self, request, pk=None):
+        imovel = self.get_object()
+        deleted_count, _ = ImovelFavorito.objects.filter(
+            usuario=request.user,
+            imovel=imovel
+        ).delete()
+        
+        if deleted_count == 0:
+            return Response(
+                {'detail': 'Este imóvel não estava na sua lista de favoritos.'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+            
+        return Response(
+            {'detail': 'Imóvel removido dos favoritos com sucesso.'},
+            status=status.HTTP_204_NO_CONTENT
+        )
+
+    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated, IsLocatario])
+    def favoritos(self, request):
+        favoritos = Imovel.objects.filter(favoritado_por__usuario=request.user)
+        serializer = self.get_serializer(favoritos, many=True)
+        return Response(serializer.data)

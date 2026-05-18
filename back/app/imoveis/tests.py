@@ -206,3 +206,99 @@ class ImovelTests(APITestCase):
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(imovel.midias.count(), 1)
+
+    def test_favoritar_imovel_success(self):
+        """Fluxo Principal: Locatário favorita um imóvel disponível."""
+        imovel = Imovel.objects.create(
+            locador=self.locador,
+            tipo="casa",
+            categoria="residencial",
+            endereco="Rua Disponivel",
+            descricao="Desc",
+            valor="1000.00",
+            status="disponivel"
+        )
+        url = reverse('imovel-favoritar', kwargs={'pk': imovel.pk})
+        self.client.force_authenticate(user=self.locatario)
+        
+        response = self.client.post(url)
+        
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(self.locatario.imoveis_favoritos.filter(imovel=imovel).exists())
+
+    def test_favoritar_imovel_unauthenticated(self):
+        """Fluxo A1: Falha ao favoritar sem estar autenticado."""
+        imovel = Imovel.objects.create(locador=self.locador, tipo="casa", categoria="residencial", endereco="Rua X", descricao="D", valor="1.00")
+        url = reverse('imovel-favoritar', kwargs={'pk': imovel.pk})
+        
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_favoritar_imovel_indisponivel(self):
+        """Fluxo A2: Falha ao tentar favoritar imóvel indisponível."""
+        imovel = Imovel.objects.create(
+            locador=self.locador,
+            tipo="casa",
+            categoria="residencial",
+            endereco="Rua Indisponivel",
+            descricao="Desc",
+            valor="1000.00",
+            status="indisponivel"
+        )
+        url = reverse('imovel-favoritar', kwargs={'pk': imovel.pk})
+        self.client.force_authenticate(user=self.locatario)
+        
+        response = self.client.post(url)
+        
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('não está disponível', response.data['detail'])
+
+    def test_favoritar_imovel_already_favorited(self):
+        """Fluxo A3: Informa se o imóvel já está nos favoritos."""
+        imovel = Imovel.objects.create(locador=self.locador, tipo="casa", categoria="residencial", endereco="Rua Y", descricao="D", valor="1.00")
+        from .models import ImovelFavorito
+        ImovelFavorito.objects.create(usuario=self.locatario, imovel=imovel)
+        
+        url = reverse('imovel-favoritar', kwargs={'pk': imovel.pk})
+        self.client.force_authenticate(user=self.locatario)
+        
+        response = self.client.post(url)
+        
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('já está na sua lista', response.data['detail'])
+
+    def test_desfavoritar_imovel_success(self):
+        """Teste de Desfavoritar: Remove o imóvel dos favoritos."""
+        imovel = Imovel.objects.create(locador=self.locador, tipo="casa", categoria="residencial", endereco="Rua Z", descricao="D", valor="1.00")
+        from .models import ImovelFavorito
+        ImovelFavorito.objects.create(usuario=self.locatario, imovel=imovel)
+        
+        url = reverse('imovel-desfavoritar', kwargs={'pk': imovel.pk})
+        self.client.force_authenticate(user=self.locatario)
+        
+        response = self.client.delete(url)
+        
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(self.locatario.imoveis_favoritos.filter(imovel=imovel).exists())
+
+    def test_listar_favoritos(self):
+        """Teste de Listagem: Retorna apenas os imóveis favoritados pelo usuário."""
+        imovel1 = Imovel.objects.create(locador=self.locador, tipo="casa", categoria="residencial", endereco="Fav 1", descricao="D", valor="1.00")
+        imovel2 = Imovel.objects.create(locador=self.locador, tipo="casa", categoria="residencial", endereco="Fav 2", descricao="D", valor="1.00")
+        imovel3 = Imovel.objects.create(locador=self.locador, tipo="casa", categoria="residencial", endereco="Not Fav", descricao="D", valor="1.00")
+        
+        from .models import ImovelFavorito
+        ImovelFavorito.objects.create(usuario=self.locatario, imovel=imovel1)
+        ImovelFavorito.objects.create(usuario=self.locatario, imovel=imovel2)
+        
+        url = reverse('imovel-favoritos')
+        self.client.force_authenticate(user=self.locatario)
+        
+        response = self.client.get(url)
+        
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2)
+        addresses = [item['endereco'] for item in response.data]
+        self.assertIn("Fav 1", addresses)
+        self.assertIn("Fav 2", addresses)
+        self.assertNotIn("Not Fav", addresses)

@@ -233,6 +233,38 @@ Authorization: Bearer <access_token>
 
 ---
 
+### 8. Favoritar Imóvel
+```http
+POST /imoveis/<id>/favoritar/
+Authorization: Bearer <access_token>
+```
+**Observações:**
+- Requer perfil de usuário `locatario`.
+- O imóvel deve estar com status `disponivel`.
+
+---
+
+### 9. Desfavoritar Imóvel
+```http
+DELETE /imoveis/<id>/favoritar/
+Authorization: Bearer <access_token>
+```
+**Observações:**
+- Requer perfil de usuário `locatario`.
+
+---
+
+### 10. Listar Favoritos
+```http
+GET /imoveis/favoritos/
+Authorization: Bearer <access_token>
+```
+**Observações:**
+- Requer perfil de usuário `locatario`.
+- Retorna a lista completa de imóveis favoritados pelo usuário.
+
+---
+
 ## Códigos de Status HTTP
 
 | Código | Significado |

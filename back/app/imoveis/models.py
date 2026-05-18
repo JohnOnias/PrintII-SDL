@@ -38,5 +38,18 @@ class ImovelMidia(models.Model):
 
     def __str__(self):
         return f"Mídia {self.id} - Imóvel {self.imovel.id}"
+
+class ImovelFavorito(models.Model):
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='imoveis_favoritos')
+    imovel = models.ForeignKey(Imovel, on_delete=models.CASCADE, related_name='favoritado_por')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('usuario', 'imovel')
+        verbose_name = 'Imóvel Favorito'
+        verbose_name_plural = 'Imóveis Favoritos'
+
+    def __str__(self):
+        return f"{self.usuario.email} favoritou {self.imovel.id}"
     
 
