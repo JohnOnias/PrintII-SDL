@@ -85,3 +85,4 @@ class UserRegistrationViewTest(TestCase):
         self.assertIn('usuario', response.data)
         self.assertEqual(response.data['usuario']['username'], 'viewuser')
 
+
