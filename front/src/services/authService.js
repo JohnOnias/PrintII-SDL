@@ -74,6 +74,19 @@ export async function cadastroAuth(formData) {
     );
   }
 
+  // 🔥 salva token para auto-login
+  if (data.access && data.refresh) {
+    localStorage.setItem("access", data.access);
+    localStorage.setItem("refresh", data.refresh);
+    
+    console.log("✅ Auto-login: Token salvo no localStorage");
+  }
+
+  // 🔥 salva usuário
+  if (data.usuario) {
+    localStorage.setItem("user", JSON.stringify(data.usuario));
+  }
+
   return data;
 }
 

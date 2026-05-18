@@ -1,6 +1,12 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import CadastroImovel from './CadastroImovel';
+import * as imovelService from '../../services/imovelService';
+
+vi.mock('../../services/imovelService', () => ({
+  createImovel: vi.fn(),
+  updateImovel: vi.fn(),
+}));
 
 describe('CadastroImovel Page', () => {
   beforeEach(() => {
@@ -32,11 +38,7 @@ describe('CadastroImovel Page', () => {
   });
 
   it('successfully registers a property', async () => {
-    fetch.mockResolvedValueOnce({
-      ok: true,
-      headers: new Map([['content-type', 'application/json']]),
-      json: async () => ({ id: 1, message: 'Sucesso' }),
-    });
+    imovelService.createImovel.mockResolvedValueOnce({ id: 1, message: 'Sucesso' });
 
     render(<CadastroImovel isOpen={true} />);
 
@@ -54,13 +56,7 @@ describe('CadastroImovel Page', () => {
     fireEvent.click(screen.getByRole('button', { name: /Cadastrar Imóvel/ }));
 
     await waitFor(() => {
-      expect(fetch).toHaveBeenCalledWith(
-        'http://localhost:8000/imoveis/',
-        expect.objectContaining({
-          method: 'POST',
-          body: expect.any(FormData),
-        })
-      );
+      expect(imovelService.createImovel).toHaveBeenCalled();
     });
 
     await waitFor(() => {
@@ -95,11 +91,7 @@ describe('CadastroImovel Page', () => {
   });
 
   it('handles server errors gracefully', async () => {
-    fetch.mockResolvedValueOnce({
-      ok: false,
-      headers: { get: () => 'application/json' },
-      json: async () => ({ detail: 'Erro interno no servidor' }),
-    });
+    imovelService.createImovel.mockRejectedValueOnce(new Error('Erro interno no servidor'));
 
     render(<CadastroImovel isOpen={true} />);
 
@@ -118,6 +110,32 @@ describe('CadastroImovel Page', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Erro interno no servidor')).toBeInTheDocument();
+    });
+  });
+
+  it('automatically fills address fields when a valid CEP is entered', async () => {
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        logradouro: 'Praça da Sé',
+        bairro: 'Sé',
+        localidade: 'São Paulo',
+        uf: 'SP',
+        cep: '01001-000',
+      }),
+    });
+
+    render(<CadastroImovel isOpen={true} />);
+
+    const cepInput = screen.getByLabelText('CEP');
+    fireEvent.change(cepInput, { target: { value: '01001000' } });
+
+    await waitFor(() => {
+      expect(fetch).toHaveBeenCalledWith('https://viacep.com.br/ws/01001000/json/');
+      expect(screen.getByLabelText('Endereço')).toHaveValue('Praça da Sé');
+      expect(screen.getByLabelText('Cidade')).toHaveValue('São Paulo');
+      expect(screen.getByLabelText('Estado')).toHaveValue('SP');
+      expect(screen.getByLabelText('Referência')).toHaveValue('Sé');
     });
   });
 });

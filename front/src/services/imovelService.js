@@ -1,15 +1,14 @@
 const API_URL = `${import.meta.env.VITE_API_URL || "http://localhost:8000"}/imoveis/`;
 
 const getHeaders = (isFormData = false) => {
-  const token = localStorage.getItem("access") || localStorage.getItem("access_token") || localStorage.getItem("token");
-  console.log("🔑 Token capturado:", token ? `Bearer ${token.substring(0, 20)}...` : "NENHUM TOKEN");
+  const token = localStorage.getItem("access") || localStorage.getItem("access_token");
+  
   const headers = {};
   
-  if (token) {
+  if (token && token !== "undefined" && token !== "null") {
     headers["Authorization"] = `Bearer ${token}`;
   }
-  
-  // Se for FormData, o navegador define o Content-Type automaticamente com o boundary correto
+
   if (!isFormData) {
     headers["Content-Type"] = "application/json";
   }
@@ -19,65 +18,56 @@ const getHeaders = (isFormData = false) => {
 
 export async function getImoveis() {
   const response = await fetch(API_URL, {
-    method: "GET",
     headers: getHeaders(),
   });
-
-  const data = await response.json();
+  
   if (!response.ok) {
+    const data = await response.json();
     throw new Error(data.detail || "Erro ao buscar imóveis");
   }
-  return data;
+  return response.json();
 }
 
-export async function getImovel(id) {
+export async function getImovelById(id) {
   const response = await fetch(`${API_URL}${id}/`, {
-    method: "GET",
     headers: getHeaders(),
   });
 
-  const data = await response.json();
   if (!response.ok) {
+    const data = await response.json();
     throw new Error(data.detail || "Erro ao buscar detalhes do imóvel");
   }
-  return data;
+  return response.json();
 }
 
-export async function createImovel(imovelData) {
-  const isFormData = imovelData instanceof FormData;
-  const headers = getHeaders(isFormData);
-  
-  console.log("📤 Enviando POST /imoveis/ com headers:", headers);
-  console.log("📤 Token completo:", headers.Authorization);
-  
+export async function createImovel(data) {
+  const isFormData = data instanceof FormData;
   const response = await fetch(API_URL, {
     method: "POST",
-    headers: headers,
-    body: isFormData ? imovelData : JSON.stringify(imovelData),
+    headers: getHeaders(isFormData),
+    body: isFormData ? data : JSON.stringify(data),
   });
 
-  const data = await response.json();
-  console.log("📥 Resposta:", response.status, data);
   if (!response.ok) {
-    throw new Error(data.detail || "Erro ao criar imóvel");
+    const data = await response.json();
+    throw new Error(data.detail || JSON.stringify(data) || "Erro ao cadastrar imóvel");
   }
-  return data;
+  return response.json();
 }
 
-export async function updateImovel(id, imovelData) {
-  const isFormData = imovelData instanceof FormData;
-
+export async function updateImovel(id, data) {
+  const isFormData = data instanceof FormData;
   const response = await fetch(`${API_URL}${id}/`, {
     method: "PATCH",
     headers: getHeaders(isFormData),
-    body: isFormData ? imovelData : JSON.stringify(imovelData),
+    body: isFormData ? data : JSON.stringify(data),
   });
 
-  const data = await response.json();
   if (!response.ok) {
-    throw new Error(data.detail || "Erro ao atualizar imóvel");
+    const data = await response.json();
+    throw new Error(data.detail || JSON.stringify(data) || "Erro ao atualizar imóvel");
   }
-  return data;
+  return response.json();
 }
 
 export async function deleteImovel(id) {

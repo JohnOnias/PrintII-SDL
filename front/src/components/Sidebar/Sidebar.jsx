@@ -17,8 +17,13 @@ export default function Sidebar() {
   const navigate = useNavigate();
   const user = getUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
   const isLocador = user?.tipo_de_usuario === "locador";
+
+  const avatarUrl = user?.foto_perfil 
+    ? (user.foto_perfil.startsWith('http') ? user.foto_perfil : `${API_BASE_URL}${user.foto_perfil}`)
+    : UserPerfil;
 
   const navItems = [
     { label: "Inicio", path: "/dashboard", icon: IconInicio },
@@ -54,7 +59,7 @@ export default function Sidebar() {
         <div className="px-5 py-8 flex items-center gap-3">
           <div className="relative flex h-[70px] w-[70px] items-center justify-center rounded-full border-[3px] border-[#091A64] bg-white overflow-hidden shadow-sm">
             <img
-              src={user?.avatar || UserPerfil}
+              src={avatarUrl}
               alt="avatar"
               className="h-full w-full object-cover"
             />

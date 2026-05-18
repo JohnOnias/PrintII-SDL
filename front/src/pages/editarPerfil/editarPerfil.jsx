@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { getUser, updateUser } from "../../services/userService";
 import UserPerfil from "../../assets/imgs/UserPerfil.png";
 
@@ -19,6 +19,10 @@ export default function EditarPerfil() {
   });
 
   const [user, setUser] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const fileInputRef = useRef(null);
+  const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
   useEffect(() => {
     const userData = getUser();
@@ -48,11 +52,31 @@ export default function EditarPerfil() {
     });
   }
 
+  function handleFileChange(e) {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      setPreviewUrl(URL.createObjectURL(file));
+    }
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     try {
-      const updatedUser = await updateUser(form);
-      setForm(updatedUser);
+      let dataToSubmit;
+      
+      if (selectedFile) {
+        dataToSubmit = new FormData();
+        Object.keys(form).forEach(key => {
+          dataToSubmit.append(key, form[key]);
+        });
+        dataToSubmit.append('foto_perfil', selectedFile);
+      } else {
+        dataToSubmit = form;
+      }
+
+      const updatedUser = await updateUser(dataToSubmit);
+      setUser(updatedUser);
       alert("Perfil atualizado com sucesso!");
     } catch (err) {
       console.error("Erro ao atualizar:", err);
@@ -63,6 +87,15 @@ export default function EditarPerfil() {
   if (!user) return <div className="p-10 text-center">Carregando...</div>;
 
   const isLocador = user?.tipo_de_usuario === 'locador';
+  
+  // Resolve avatar URL
+  const getAvatarUrl = () => {
+    if (previewUrl) return previewUrl;
+    if (user.foto_perfil) {
+      return user.foto_perfil.startsWith('http') ? user.foto_perfil : `${API_BASE_URL}${user.foto_perfil}`;
+    }
+    return UserPerfil;
+  };
 
   return (
     <div className="flex flex-col h-full w-full bg-white font-[Poppins]">
@@ -82,12 +115,23 @@ export default function EditarPerfil() {
           <div className="flex items-center gap-6 mb-12">
             <div className="h-28 w-28 rounded-full border-[6px] border-[#176999] overflow-hidden shadow-sm bg-white">
               <img
-                src={user.avatar || UserPerfil}
+                src={getAvatarUrl()}
                 alt="avatar"
                 className="h-full w-full object-cover"
               />
             </div>
-            <button className="bg-[#176999] text-white px-6 py-2 rounded-full text-xs font-bold shadow-sm transition hover:bg-[#12557a]">
+            <input 
+              type="file" 
+              ref={fileInputRef} 
+              onChange={handleFileChange} 
+              accept="image/*" 
+              className="hidden" 
+            />
+            <button 
+              type="button"
+              onClick={() => fileInputRef.current.click()}
+              className="bg-[#176999] text-white px-6 py-2 rounded-full text-xs font-bold shadow-sm transition hover:bg-[#12557a]"
+            >
               Mudar Foto
             </button>
           </div>
