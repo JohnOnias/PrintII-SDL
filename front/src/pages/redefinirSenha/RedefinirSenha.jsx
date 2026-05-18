@@ -3,11 +3,11 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { confirmPasswordReset } from '../../services/authService';
 
 function RedefinirSenha() {
-  console.log("DEBUG: Renderizando RedefinirSenha");
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const [uid, setUid] = useState('');
   const [token, setToken] = useState('');
 
@@ -16,8 +16,8 @@ function RedefinirSenha() {
 
   useEffect(() => {
     const query = new URLSearchParams(location.search);
-    setUid(query.get('uid'));
-    setToken(query.get('token'));
+    setUid(query.get('uid') || '');
+    setToken(query.get('token') || '');
   }, [location]);
 
   const handleSubmit = async (e) => {
@@ -25,22 +25,31 @@ function RedefinirSenha() {
     setMessage('');
     setError('');
 
+    if (!uid || !token) {
+      setError('Link de redefinição inválido ou incompleto.');
+      return;
+    }
+
     if (newPassword !== confirmPassword) {
       setError('As senhas não coincidem');
       return;
     }
 
+    setLoading(true);
     try {
       const data = await confirmPasswordReset(uid, token, newPassword);
-      setMessage(data.message);
+      setMessage(data.message || 'Senha alterada com sucesso!');
       setTimeout(() => navigate('/login'), 3000);
     } catch (err) {
-      setError(err.message);
+      console.error("Erro ao redefinir senha:", err);
+      setError(err.message || 'Erro ao conectar com o servidor.');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div>
+    <div style={{ padding: '20px' }}>
       <h1>Criar nova senha</h1>
       <form onSubmit={handleSubmit}>
         <div>
@@ -50,18 +59,24 @@ function RedefinirSenha() {
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
             required
+            disabled={loading}
           />
         </div>
-        <div>
+        <div style={{ marginTop: '10px' }}>
           <input
             type="password"
             placeholder="Confirme a nova senha"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
+            disabled={loading}
           />
         </div>
-        <button type="submit">Salvar nova senha</button>
+        <div style={{ marginTop: '20px' }}>
+          <button type="submit" disabled={loading}>
+            {loading ? 'Salvando...' : 'Salvar nova senha'}
+          </button>
+        </div>
       </form>
       {message && <p style={{ color: 'green' }}>{message}. Redirecionando para o login...</p>}
       {error && <p style={{ color: 'red' }}>{error}</p>}

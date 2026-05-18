@@ -67,6 +67,13 @@ def get_user_by_id(request, user_id):
     
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
+def all(request):
+    usuarios = User.objects.all()
+    serializer = PublicUserSerializer(usuarios, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def list_all_users(request):
     usuarios = User.objects.all()
     serializer = PublicUserSerializer(usuarios, many=True)
@@ -204,13 +211,20 @@ def request_password_reset(request):
         reset_link = f"http://localhost:5173/redefinir-senha?uid={uid}&token={token}"
         
         subject = "Redefinição de Senha - PrintII"
-        message = f"Olá {user.username},\n\nVocê solicitou a redefinção de sua senha. Clique no link abaixo para cadastrar uma nova senha:\n\n{reset_link}\n\nSe você não solicitou isso, ignore este e-mail."
-        
-        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL or 'noreply@printii.com', [email])
-        
-        return Response({'message': 'E-mail de redefinição enviado com sucesso'}, status=status.HTTP_200_OK)
+        message = f"Olá {user.username},\n\nVocê solicitou a redefinição de sua senha. Clique no link abaixo para cadastrar uma nova senha:\n\n{reset_link}\n\nSe você não solicitou isso, ignore este e-mail."
+
+        try:
+            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL or 'noreply@printii.com', [email])
+            return Response({'message': 'E-mail de redefinição enviado com sucesso'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(f"ERRO AO ENVIAR E-MAIL: {str(e)}")
+            print(f"LINK DE RECUPERAÇÃO (FALLBACK): {reset_link}")
+            return Response({
+                'error': 'O servidor de e-mail falhou, mas o link foi gerado no console do backend.',
+                'link_debug': reset_link if settings.DEBUG else None
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     except User.DoesNotExist:
-        # Por segurança, não confirmamos que o e-mail não existe
         return Response({'message': 'Se o e-mail existir, um link de redefinição será enviado.'}, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
