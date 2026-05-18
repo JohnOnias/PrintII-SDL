@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { confirmPasswordReset } from '../../services/authService';
 
 function RedefinirSenha() {
+  console.log("DEBUG: Renderizando RedefinirSenha");
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [message, setMessage] = useState('');

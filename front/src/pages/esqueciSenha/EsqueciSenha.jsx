@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { requestPasswordReset } from '../../services/authService';
 
 function EsqueciSenha() {
+  console.log("DEBUG: Renderizando EsqueciSenha");
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');

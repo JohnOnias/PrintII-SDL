@@ -15,10 +15,6 @@ import RedefinirSenha from "../pages/redefinirSenha/RedefinirSenha";
 
 const router = createBrowserRouter([
     { 
-        path: "/",
-        element: <EscolhaTipo />
-    },
-    { 
         path: "/login",
         element: <Login /> 
     },
@@ -42,6 +38,10 @@ const router = createBrowserRouter([
         path: "/",
         element: <LayoutPrivado />,
         children: [
+            {
+                index: true,
+                element: <EscolhaTipo />
+            },
             {
                 path: "dashboard",
                 element: <Inicio isHome={true} />
@@ -67,6 +67,10 @@ const router = createBrowserRouter([
                 element: <CadastroImovel />
             }
         ]
+    },
+    {
+        path: "*",
+        element: <Navigate to="/login" replace />
     }
 ]);
 
