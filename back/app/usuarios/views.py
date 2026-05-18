@@ -4,6 +4,11 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.core.mail import send_mail
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.conf import settings
 from .serializer import TypeUserSerializer, UserSerializer, LoginSerializer, PublicUserSerializer, UpdateUserSerializer
 from .models import User
 
@@ -62,7 +67,7 @@ def get_user_by_id(request, user_id):
     
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def all(request):
+def list_all_users(request):
     usuarios = User.objects.all()
     serializer = PublicUserSerializer(usuarios, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
@@ -182,3 +187,51 @@ def update(request):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def request_password_reset(request):
+    email = request.data.get('email')
+    if not email:
+        return Response({'error': 'Email é obrigatório'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        user = User.objects.get(email=email)
+        token = default_token_generator.make_token(user)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        
+        # Link para o frontend
+        reset_link = f"http://localhost:5173/redefinir-senha?uid={uid}&token={token}"
+        
+        subject = "Redefinição de Senha - PrintII"
+        message = f"Olá {user.username},\n\nVocê solicitou a redefinção de sua senha. Clique no link abaixo para cadastrar uma nova senha:\n\n{reset_link}\n\nSe você não solicitou isso, ignore este e-mail."
+        
+        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL or 'noreply@printii.com', [email])
+        
+        return Response({'message': 'E-mail de redefinição enviado com sucesso'}, status=status.HTTP_200_OK)
+    except User.DoesNotExist:
+        # Por segurança, não confirmamos que o e-mail não existe
+        return Response({'message': 'Se o e-mail existir, um link de redefinição será enviado.'}, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def confirm_password_reset(request):
+    uidb64 = request.data.get('uid')
+    token = request.data.get('token')
+    new_password = request.data.get('new_password')
+    
+    if not all([uidb64, token, new_password]):
+        return Response({'error': 'Parâmetros insuficientes'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+        
+    if user is not None and default_token_generator.check_token(user, token):
+        user.set_password(new_password)
+        user.save()
+        return Response({'message': 'Senha alterada com sucesso'}, status=status.HTTP_200_OK)
+    else:
+        return Response({'error': 'Token inválido ou expirado'}, status=status.HTTP_400_BAD_REQUEST)

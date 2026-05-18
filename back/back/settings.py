@@ -180,3 +180,6 @@ STATIC_URL = 'static/'
 
 MEDIA_URL = '/midias/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'imoveis', 'midias')
+
+# Email configuration (Development)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

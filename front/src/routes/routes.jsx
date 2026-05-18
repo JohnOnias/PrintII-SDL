@@ -10,6 +10,8 @@ import EditarPerfil from "../pages/editarPerfil/editarPerfil";
 import Inicio from "../pages/inicio/inicio";
 import EscolhaTipo from "../pages/escolha/escolha";
 import CadastroImovel from "../pages/cadastroImovel/CadastroImovel";
+import EsqueciSenha from "../pages/esqueciSenha/EsqueciSenha";
+import RedefinirSenha from "../pages/redefinirSenha/RedefinirSenha";
 
 const router = createBrowserRouter([
     { 
@@ -27,6 +29,14 @@ const router = createBrowserRouter([
     { 
         path: "/escolha",
         element: <EscolhaTipo /> 
+    },
+    { 
+        path: "/esqueci-senha",
+        element: <EsqueciSenha /> 
+    },
+    { 
+        path: "/redefinir-senha",
+        element: <RedefinirSenha /> 
     },
     {
         path: "/",
