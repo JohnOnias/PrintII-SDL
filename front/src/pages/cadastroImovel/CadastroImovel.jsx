@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { createImovel, updateImovel as updateImovelService } from "../../services/imovelService";
+import { fetchAddressByCEP } from "../../services/cepService";
 
 const initialForm = {
   categoria: "",
@@ -90,6 +91,26 @@ export default function CadastroImovel({ isOpen, onClose, imovelData = null }) {
   const handleChange = (field, value) => {
     setForm((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => ({ ...prev, [field]: "" }));
+  };
+
+  const handleCEPChange = async (value) => {
+    handleChange("cep", value);
+    
+    const cleanedCEP = value.replace(/\D/g, "");
+    if (cleanedCEP.length === 8) {
+      try {
+        const addressData = await fetchAddressByCEP(cleanedCEP);
+        setForm((prev) => ({
+          ...prev,
+          endereco: addressData.logradouro,
+          cidade: addressData.cidade,
+          estado: addressData.estado,
+          referencia: prev.referencia || addressData.bairro,
+        }));
+      } catch (error) {
+        console.error("Erro ao buscar CEP:", error);
+      }
+    }
   };
 
   const handleFileSelect = (event) => {
@@ -250,7 +271,7 @@ export default function CadastroImovel({ isOpen, onClose, imovelData = null }) {
                 </div>
                 <div>
                   <label htmlFor="cep" className="mb-0.5 block text-xs font-semibold text-slate-700">CEP</label>
-                  <input id="cep" type="text" value={form.cep} onChange={(e) => handleChange("cep", e.target.value)} placeholder="63-400-000" className={inputClass("cep")} />
+                  <input id="cep" type="text" value={form.cep} onChange={(e) => handleCEPChange(e.target.value)} placeholder="63-400-000" className={inputClass("cep")} />
                   {errors.cep && <p className="mt-0.5 text-[10px] text-red-500">{errors.cep}</p>}
                 </div>
                 <div>

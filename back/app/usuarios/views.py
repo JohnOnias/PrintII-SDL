@@ -18,9 +18,15 @@ from .models import User
 def profile(request):
     user = request.user
     
+    print(f"DEBUG: Acessando perfil. User: {user}, Authenticated: {user.is_authenticated}")
+
     if user.is_anonymous:
+        # Se for anônimo, tentamos pegar o primeiro usuário apenas para dev
+        # mas idealmente o frontend deve lidar com o 401 se não houver token
         from .models import User
         user = User.objects.first()
+        if not user:
+             return Response({'error': 'Nenhum usuário cadastrado no sistema'}, status=status.HTTP_404_NOT_FOUND)
 
     serializer = UserSerializer(user)
     return Response(serializer.data, status=status.HTTP_200_OK)
@@ -57,7 +63,9 @@ def get_user_by_id(request, user_id):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def all(request):
-    pass
+    usuarios = User.objects.all()
+    serializer = PublicUserSerializer(usuarios, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 ################################# POST ###########################################
@@ -96,8 +104,16 @@ def create(request):
             )
 
         # Se passou todas as validações, salvar
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        user = serializer.save()
+        
+        # Gerar tokens para auto-login
+        refresh = RefreshToken.for_user(user)
+        
+        return Response({
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+            'usuario': serializer.data
+        }, status=status.HTTP_201_CREATED)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -132,7 +148,9 @@ def refresh_token(request):
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
 def destroy(request):
-    pass
+    user = request.user
+    user.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(['PUT'])

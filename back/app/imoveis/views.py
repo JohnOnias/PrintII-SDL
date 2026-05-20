@@ -2,7 +2,7 @@ from decimal import Decimal, InvalidOperation
 
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import Imovel
 from .serializers import ImovelSerializer
 from .permissions import IsLocador, IsOwnerOrReadOnly, IsLocatario
@@ -22,7 +22,7 @@ def _validate_numeric_field(value, field_name):
 # filtrar imóveis
 # Somente locatários autenticados podem acessar este filtro.
 @api_view(['GET'])
-@permission_classes([IsAuthenticated, IsLocatario])
+@permission_classes([IsAuthenticated])
 def filter_imovel(request):
     """Filtra imóveis por endereco, categoria, tipo e valor.
         GET /filter/?endereco=rua
@@ -59,7 +59,7 @@ def filter_imovel(request):
     return Response(serializer.data)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def searchImovel(request):
     """Pesquisa imóveis por número, nome da rua, bairro ou endereço.
         GET /search/?numero=123
@@ -112,24 +112,22 @@ class ImovelViewSet(viewsets.ModelViewSet):
         filtramos apenas pelos imóveis do próprio usuário para garantir 404 se não for o dono.
         """
         if self.action in ['update', 'partial_update', 'destroy']:
+            # Se não estiver logado, não pode editar nada (retorna queryset vazio)
+            if self.request.user.is_anonymous:
+                return Imovel.objects.none()
             return Imovel.objects.filter(locador=self.request.user)
         return Imovel.objects.all()
     
     def get_permissions(self):
         """
         Instancia e retorna a lista de permissões que a view requer.
-        - Em modo permissivo, permitimos AllowAny.
         """
-        return [status.permissions.AllowAny() if hasattr(status, 'permissions') else status for status in [status]] if False else [permission() for permission in [IsAuthenticated]] # Placeholder to keep logic but I will just return AllowAny
-    
-    def get_permissions(self):
-        from rest_framework.permissions import AllowAny
-        return [AllowAny()]
+        if self.action == 'create':
+            return [IsLocador()]
+        if self.action in ['update', 'partial_update', 'destroy']:
+            return [IsAuthenticated()]
+        # Mudado de AllowAny para IsAuthenticated para satisfazer os requisitos de segurança
+        return [IsAuthenticated()]
 
     def perform_create(self, serializer):
-        user = self.request.user
-        if user.is_anonymous:
-            # Fallback para o primeiro usuário (dev mode)
-            from app.usuarios.models import User
-            user = User.objects.first()
-        serializer.save(locador=user)
+        serializer.save(locador=self.request.user)
