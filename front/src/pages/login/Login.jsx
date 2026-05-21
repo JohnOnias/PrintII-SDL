@@ -9,12 +9,19 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [showErro, setShowErro] = useState(false);
+  const [camposVazios, setCamposVazios] = useState(false);
 
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setShowErro(false);
+    setCamposVazios(false);
+
+    if (!email.trim() || !senha.trim()) {
+      setCamposVazios(true);
+      return;
+    }
 
     try {
       // O service já salva 'access', 'refresh' e 'user' no localStorage
@@ -26,7 +33,6 @@ export default function Login() {
     } catch (error) {
       console.error("Erro no login:", error);
       setShowErro(true);
-      alert("Erro ao fazer login. Verifique suas credenciais.");
     }
   };
 
@@ -57,7 +63,8 @@ export default function Login() {
             tipo={"email"}
             nome={"E-mail"}
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => { setEmail(e.target.value); setCamposVazios(false); setShowErro(false); }}
+            erro={camposVazios || showErro}
           />
 
           <div className="mt-4">
@@ -66,19 +73,26 @@ export default function Login() {
               tipo={"password"}
               nome={"Senha"}
               value={senha}
-              onChange={(e) => setSenha(e.target.value)}
+              onChange={(e) => { setSenha(e.target.value); setCamposVazios(false); setShowErro(false); }}
+              erro={camposVazios || showErro}
             />
           </div>
 
-          {showErro && (
+          {camposVazios && (
             <span className="flex justify-center font-[Poppins] text-red-600 text-center text-sm mt-2">
-              Email ou Senha Inválidos!
+              Dados não preenchidos!
             </span>
           )}
 
           <div className="mt-6">
             <Entrar type="submit" />
           </div>
+
+          {showErro && (
+            <span className="flex justify-center font-[Poppins] text-red-600 text-center text-sm mt-2">
+              Dados inválidos ou não cadastrados!
+            </span>
+          )}
         </form>
 
         <p

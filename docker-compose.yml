@@ -1,19 +1,19 @@
 services:
-  db:
-    image: mysql:8.0
-    restart: always
-    network_mode: host  # Usa a rede do host
-    environment:
-      MYSQL_DATABASE: db_printii
-      MYSQL_ROOT_PASSWORD: root
-    # 'ports' são ignorados em network_mode: host, pois já mapeia para as portas nativas
-    volumes:
-      - mysql_data:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
+  # db:
+  #   image: mysql:8.0
+  #   restart: always
+  #   network_mode: host  # Usa a rede do host
+  #   environment:
+  #     MYSQL_DATABASE: db_printii
+  #     MYSQL_ROOT_PASSWORD: root
+  #   # 'ports' são ignorados em network_mode: host, pois já mapeia para as portas nativas
+  #   volumes:
+  #     - mysql_data:/var/lib/mysql
+  #   healthcheck:
+  #     test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+  #     interval: 5s
+  #     timeout: 5s
+  #     retries: 10
 
   backend:
     build:
@@ -26,14 +26,15 @@ services:
     environment:
       - DEBUG=1
       - PYTHONUNBUFFERED=1
-      - DB_NAME=db_printii
-      - DB_USER=root
-      - DB_PASSWORD=root
-      - DB_HOST=127.0.0.1  # IMPORTANTE: No modo host, use localhost ou 127.0.0.1
-      - DB_PORT=3306
-    depends_on:
-      db:
-        condition: service_healthy
+      # - USE_MYSQL=1 # Descomente para usar MySQL
+      # - DB_NAME=db_printii
+      # - DB_USER=root
+      # - DB_PASSWORD=root
+      # - DB_HOST=127.0.0.1
+      # - DB_PORT=3306
+    # depends_on:
+    #   db:
+    #     condition: service_healthy
 
   frontend:
     build:
@@ -49,5 +50,5 @@ services:
     environment:
       - VITE_API_URL=http://localhost:8000
 
-volumes:
-  mysql_data:
+# volumes:
+#   mysql_data:

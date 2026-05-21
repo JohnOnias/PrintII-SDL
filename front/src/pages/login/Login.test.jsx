@@ -76,8 +76,7 @@ describe('Login Page', () => {
     fireEvent.click(screen.getByRole('button', { name: /entrar/i }));
 
     await waitFor(() => {
-      expect(screen.getByText('Email ou Senha Inválidos!')).toBeInTheDocument();
-      expect(window.alert).toHaveBeenCalledWith('Erro ao fazer login. Verifique suas credenciais.');
+      expect(screen.getByText('Dados inválidos ou não cadastrados!')).toBeInTheDocument();
     });
   });
 
