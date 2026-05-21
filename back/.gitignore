@@ -121,5 +121,14 @@ dmypy.json
 *.swo
 *~
 
+# Media and uploads
+imoveis/midias/*
+!imoveis/midias/.gitkeep
+midias_test/
+
+# Local database
+*.sqlite3
+*.sqlite3-journal
+
 __pycache__/
 *.pyc
