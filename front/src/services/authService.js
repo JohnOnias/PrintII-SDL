@@ -109,4 +109,43 @@ export async function refreshTokenAuth(refreshToken) {
   }
 
   return data;
-}
+  }
+
+  /* =========================
+   REDEFINIR SENHA
+  ========================= */
+  export async function requestPasswordReset(email) {
+  const response = await fetch(`${API_URL}/usuarios/esqueci-senha`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+    },
+    body: JSON.stringify({ email }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || "Erro ao solicitar redefinição de senha");
+  }
+
+  return data;
+  }
+
+  export async function confirmPasswordReset(uid, token, new_password) {
+  const response = await fetch(`${API_URL}/usuarios/redefinir-senha`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+    },
+    body: JSON.stringify({ uid, token, new_password }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || "Erro ao redefinir senha");
+  }
+
+  return data;
+  }

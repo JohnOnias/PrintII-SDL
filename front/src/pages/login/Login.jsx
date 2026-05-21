@@ -96,7 +96,7 @@ export default function Login() {
         </form>
 
         <p
-          onClick={() => navigate("/resetSenha")}
+          onClick={() => navigate("/esqueci-senha")}
           className="cursor-pointer text-sm text-gray-500 hover:text-black mt-4"
         >
           Esqueci minha senha!

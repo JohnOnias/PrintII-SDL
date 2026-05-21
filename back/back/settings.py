@@ -181,3 +181,18 @@ STATIC_URL = 'static/'
 
 MEDIA_URL = '/midias/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'imoveis', 'midias')
+
+# Email configuration
+# Segurança: As credenciais são lidas das variáveis de ambiente do sistema.
+# Se não estiverem configuradas, o sistema usa o console como fallback.
+EMAIL_HOST_USER = os.environ.get('EMAIL_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')
+
+if os.environ.get('GITHUB_ACTIONS') == 'true' or not (EMAIL_HOST_USER and EMAIL_HOST_PASSWORD):
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = os.environ.get('EMAIL_HOST', 'sandbox.smtp.mailtrap.io')
+    EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 2525))
+    EMAIL_USE_TLS = True
+    DEFAULT_FROM_EMAIL = 'noreply@printii.com'
