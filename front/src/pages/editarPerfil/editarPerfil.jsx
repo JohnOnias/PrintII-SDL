@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { getUser, updateUser } from "../../services/userService";
 import UserPerfil from "../../assets/imgs/UserPerfil.png";
+import ErrosModal from "../../components/Modal/errosModal";
 
 export default function EditarPerfil() {
   const [form, setForm] = useState({
@@ -17,6 +18,12 @@ export default function EditarPerfil() {
     rede_social_2: "",
     rede_social_3: "",
   });
+
+// states do modal de erros 
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+  const [tipoModal, setTipoModal] = useState(false);
+
 
   const [errors, setErrors] = useState({});
 
@@ -100,42 +107,49 @@ export default function EditarPerfil() {
       setPreviewUrl(URL.createObjectURL(file));
     }
   }
-
   async function handleSubmit(e) {
     e.preventDefault();
-
+  
     const isValid = validateForm();
-
+  
     if (!isValid) {
+      setTipoModal("error");
+      setModalMessage("Preencha todos os campos obrigatórios.");
+      setIsErrorModalOpen(true);
       return;
     }
-
+  
     try {
       let dataToSubmit;
-
+  
       if (selectedFile) {
         dataToSubmit = new FormData();
-
+  
         Object.keys(form).forEach((key) => {
           dataToSubmit.append(key, form[key]);
         });
-
+  
         dataToSubmit.append("foto_perfil", selectedFile);
       } else {
         dataToSubmit = form;
       }
-
+  
       const updatedUser = await updateUser(dataToSubmit);
-
+  
       setUser(updatedUser);
-
-      alert("Perfil atualizado com sucesso!");
+  
+      setTipoModal(true);
+      setModalMessage("Perfil atualizado com sucesso!");
+      setIsErrorModalOpen(true);
+  
     } catch (err) {
       console.error("Erro ao atualizar:", err);
-      alert("Erro ao atualizar perfil: " + err.message);
+  
+      setTipoModal(false);
+      setModalMessage(err.message || "Erro ao atualizar perfil.");
+      setIsErrorModalOpen(true);
     }
   }
-
   if (!user) return <div className="p-10 text-center">Carregando...</div>;
 
   const isLocador = user?.tipo_de_usuario === 'locador';
@@ -428,6 +442,15 @@ export default function EditarPerfil() {
           </form>
         </div>
       </main>
+      <ErrosModal
+  isOpen={isErrorModalOpen}
+  onClose={() => setIsErrorModalOpen(false)}
+  message={modalMessage}
+  tipo={tipoModal} 
+
+/>
+
+                    
     </div>
   );
 }

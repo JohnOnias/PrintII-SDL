@@ -15,6 +15,7 @@ const initialForm = {
 };
 
 export default function CadastroImovel({ isOpen, onClose, imovelData = null }) {
+  
   const [form, setForm] = useState(initialForm);
   const [errors, setErrors] = useState({});
   const [files, setFiles] = useState([]);
