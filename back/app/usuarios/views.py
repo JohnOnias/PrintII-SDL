@@ -206,6 +206,12 @@ def request_password_reset(request):
         subject = "Redefinição de Senha - PrintII"
         message = f"Olá {user.username},\n\nVocê solicitou a redefinição de sua senha. Clique no link abaixo para cadastrar uma nova senha:\n\n{reset_link}\n\nSe você não solicitou isso, ignore este e-mail."
 
+        # IMPRIMIR NO CONSOLE PARA FACILITAR TESTES
+        print("\n" + "="*50)
+        print(f"🔗 LINK DE REDEFINIÇÃO DE SENHA GERADO:")
+        print(f"{reset_link}")
+        print("="*50 + "\n")
+
         try:
             send_mail(subject, message, settings.DEFAULT_FROM_EMAIL or 'noreply@printii.com', [email])
             return Response({'message': 'E-mail de redefinição enviado com sucesso'}, status=status.HTTP_200_OK)

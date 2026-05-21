@@ -15,16 +15,20 @@ import RedefinirSenha from "../pages/redefinirSenha/RedefinirSenha";
 
 const router = createBrowserRouter([
     { 
+        path: "/",
+        element: <EscolhaTipo /> 
+    },
+    { 
+        path: "/escolha",
+        element: <EscolhaTipo /> 
+    },
+    { 
         path: "/login",
         element: <Login /> 
     },
     { 
         path: "/cadastro",
         element: <Cadastro /> 
-    },
-    { 
-        path: "/escolha",
-        element: <EscolhaTipo /> 
     },
     { 
         path: "/esqueci-senha",
@@ -35,13 +39,8 @@ const router = createBrowserRouter([
         element: <RedefinirSenha /> 
     },
     {
-        path: "/",
         element: <LayoutPrivado />,
         children: [
-            {
-                index: true,
-                element: <EscolhaTipo />
-            },
             {
                 path: "dashboard",
                 element: <Inicio isHome={true} />
