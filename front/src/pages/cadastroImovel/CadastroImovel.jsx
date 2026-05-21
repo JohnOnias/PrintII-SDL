@@ -94,18 +94,27 @@ export default function CadastroImovel({ isOpen, onClose, imovelData = null }) {
 
   const handleFileSelect = (event) => {
     const selectedFiles = Array.from(event.target.files);
-    const validFiles = selectedFiles.filter(file => {
-      const isValidType = file.type.startsWith('image/') || file.type.startsWith('video/');
-      const isValidSize = file.size <= 10 * 1024 * 1024; // 10MB max
-      return isValidType && isValidSize;
-    });
+    const allowedTypes = ['image/png', 'image/jpg', 'image/jpeg'];
+    const imageFiles = selectedFiles.filter(file => allowedTypes.includes(file.type));
 
-    if (validFiles.length !== selectedFiles.length) {
-      alert('Apenas imagens e vídeos são permitidos (máx. 10MB cada)');
+    const currentTotalSize = files.reduce((sum, f) => sum + f.size, 0);
+    let newTotalSize = currentTotalSize;
+    const validFiles = [];
+
+    for (const file of imageFiles) {
+      if (newTotalSize + file.size <= 100 * 1024 * 1024) {
+        validFiles.push(file);
+        newTotalSize += file.size;
+      }
+    }
+
+    const rejectedCount = selectedFiles.length - validFiles.length;
+    if (rejectedCount > 0) {
+      alert('Apenas imagens (PNG, JPG, JPEG) são permitidas, com no máximo 100MB no total.');
     }
 
     setFiles(prev => [...prev, ...validFiles]);
-    event.target.value = ''; 
+    event.target.value = '';
   };
 
   const removeFile = (index) => {
@@ -327,12 +336,12 @@ export default function CadastroImovel({ isOpen, onClose, imovelData = null }) {
                   {isEditing ? "Adicionar Novas Mídias" : "Mídias"}
                 </p>
                 <button type="button" onClick={() => fileInputRef.current?.click()} className="rounded-full bg-[#219EBC] px-4 py-1.5 text-xs font-bold text-white transition hover:bg-[#1a86a1]">+ Adicionar</button>
-                <input ref={fileInputRef} type="file" multiple accept="image/*,video/*" onChange={handleFileSelect} className="hidden" />
+                <input ref={fileInputRef} type="file" multiple accept="image/png,image/jpg,image/jpeg" onChange={handleFileSelect} className="hidden" />
               </div>
               <div className="space-y-2">
                 {files.length === 0 ? (
                   <div className="rounded-lg border border-dashed border-gray-300 bg-white p-4 text-center text-xs text-gray-400">
-                    {isEditing ? "Selecione novas fotos/vídeos se desejar" : "Arraste ou selecione fotos e vídeos"}
+                    {isEditing ? "Selecione novas imagens se desejar" : "Arraste ou selecione imagens (PNG, JPG, JPEG)"}
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 gap-2">

@@ -9,10 +9,27 @@ class ImovelMidiaSerializer(serializers.ModelSerializer):
 class ImovelSerializer(serializers.ModelSerializer):
     midias = ImovelMidiaSerializer(many=True, read_only=True)
     midias_upload = serializers.ListField(
-        child=serializers.FileField(max_length=10000000, allow_empty_file=False, use_url=False), # Ex: max 10MB
+        child=serializers.FileField(max_length=10000000, allow_empty_file=False, use_url=False),
         write_only=True,
         required=False
     )
+
+    def validate_midias_upload(self, value):
+        allowed_types = ['image/png', 'image/jpg', 'image/jpeg']
+        max_total_size = 100 * 1024 * 1024
+
+        total_size = 0
+        for file in value:
+            if file.content_type not in allowed_types:
+                raise serializers.ValidationError(
+                    f"Apenas imagens PNG, JPG e JPEG são permitidas. Tipo recebido: {file.content_type}"
+                )
+            total_size += file.size
+
+        if total_size > max_total_size:
+            raise serializers.ValidationError("O tamanho total das imagens não pode exceder 100MB.")
+
+        return value
     midias_remover = serializers.ListField(
         child=serializers.IntegerField(),
         write_only=True,

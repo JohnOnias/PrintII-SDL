@@ -180,3 +180,5 @@ STATIC_URL = 'static/'
 
 MEDIA_URL = '/midias/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'imoveis', 'midias')
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = 104857600  # 100MB
