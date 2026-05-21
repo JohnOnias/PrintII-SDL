@@ -1,33 +1,28 @@
-# Usar Ubuntu 24.04 como base
-FROM ubuntu:24.04
+# Usar a imagem oficial do Python 3.11 slim como base
+FROM python:3.11-slim
 
 # Evitar prompts interativos
 ENV DEBIAN_FRONTEND=noninteractive
 ENV LANG=C.UTF-8
 ENV LC_ALL=C.UTF-8
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
 # Definir o diretório de trabalho
 WORKDIR /app
 
-# Instalar Python, pip, venv e dependências para mysqlclient
+# Instalar dependências do sistema necessárias para mysqlclient e outras bibliotecas
 RUN apt-get update && apt-get install -y \
-    python3-pip \
-    python3-venv \
-    python3-dev \
     default-libmysqlclient-dev \
     pkg-config \
     gcc \
     && rm -rf /var/lib/apt/lists/*
 
-# Criar um ambiente virtual
-RUN python3 -m venv /opt/venv
-ENV PATH="/opt/venv/bin:$PATH"
-
 # Copiar os arquivos de requisitos
-COPY requeriments_updated.txt .
+COPY requirements_updated.txt .
 
 # Instalar as dependências do Python
-RUN pip install --no-cache-dir -r requeriments_updated.txt
+RUN pip install --no-cache-dir -r requirements_updated.txt
 
 # Copiar o restante do código do backend
 COPY . .
