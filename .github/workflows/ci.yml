@@ -16,11 +16,12 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-
       - name: Install Dependencies
         run: |
+          cd back
           python -m pip install --upgrade pip
-          pip install -r back/requeriments_updated.txt
+          pip install -r requirements_updated.txt
+
 
       - name: Run Backend Tests
         run: |
