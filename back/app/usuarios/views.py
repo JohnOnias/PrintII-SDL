@@ -67,13 +67,6 @@ def get_user_by_id(request, user_id):
     
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def all(request):
-    usuarios = User.objects.all()
-    serializer = PublicUserSerializer(usuarios, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
 def list_all_users(request):
     usuarios = User.objects.all()
     serializer = PublicUserSerializer(usuarios, many=True)
