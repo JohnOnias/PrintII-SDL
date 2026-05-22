@@ -16,6 +16,15 @@ RUN apt-get update && apt-get install -y \
     default-libmysqlclient-dev \
     pkg-config \
     gcc \
+    # Dependências necessárias para compilar e empacotar imagens do Pillow
+    libjpeg-dev \
+    zlib1g-dev \
+    libtiff5-dev \
+    libfreetype6-dev \
+    liblcms2-dev \
+    libwebp-dev \
+    libopenjp2-7-dev \
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
 # Copiar os arquivos de requisitos
