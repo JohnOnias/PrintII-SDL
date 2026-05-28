@@ -12,6 +12,7 @@ import EscolhaTipo from "../pages/escolha/escolha";
 import CadastroImovel from "../pages/cadastroImovel/CadastroImovel";
 import EsqueciSenha from "../pages/esqueciSenha/EsqueciSenha";
 import RedefinirSenha from "../pages/redefinirSenha/RedefinirSenha";
+import ListarImoveis from "../pages/listarImoveis/ListarImoveis";
 
 const router = createBrowserRouter([
     { 
@@ -48,6 +49,10 @@ const router = createBrowserRouter([
             {
                 path: "inicio",
                 element: <Inicio isHome={true} />
+            },
+            {
+                path: "listar-imoveis",
+                element: <ListarImoveis />
             },
             {
                 path: "meus-imoveis",

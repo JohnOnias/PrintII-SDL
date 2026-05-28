@@ -25,10 +25,15 @@ export default function Sidebar() {
     ? (user.foto_perfil.startsWith('http') ? user.foto_perfil : `${API_BASE_URL}${user.foto_perfil}`)
     : UserPerfil;
 
+    // Definindo os itens de navegação com base no tipo de usuário
   const navItems = [
-    { label: "Inicio", path: "/dashboard", icon: IconInicio },
+    {
+      label: "Inicio",
+      path: isLocador ? '/dashboard' : '/listar-imoveis',
+      icon: IconInicio
+    }
   ];
-
+  
   if (isLocador) {
     navItems.push({ label: "Meus Imóveis", path: "/meus-imoveis", icon: IconImoveis });
   } else {
