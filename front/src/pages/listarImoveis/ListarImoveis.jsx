@@ -9,7 +9,10 @@ export default function ListarImoveis() {
   const [imoveis, setImoveis] = useState([]);
   const [loading, setLoading] = useState(true);
 const [currentImages, setCurrentImages] = useState({});
+function abrirDetalhes(){
 
+
+}
 
   useEffect(() => {
     async function carregarImoveis() {
@@ -49,16 +52,14 @@ const prevImage = (imovelId, total) => {
 
 
   return (
+    <div className="flex flex-col justify-items-center">
 
-<>
  <h1 className="text-3xl font-bold p-4 border-solid border-1 rounded-xl mb-10 mt-5 ml-2 mr-2 text-center top-0 ">
         Imoveis disponiveis no momento
       </h1>
 
-
     <div className="p-5 flex h-screen flex-col justify-center">
      
-
    <div className="grid grid-cols-3 gap-4">
   {imoveis.map((imovel) => {
     const currentIndex = currentImages[imovel.id] || 0;
@@ -75,12 +76,19 @@ const prevImage = (imovelId, total) => {
       >
 
 
-  <p className="h-10 w-50 "> Favoritar <img src={IconStar} alt="" className="h-5 w-5" /></p>
+  <div className="h-10 ">
+    <div className="flex flex-row justify-center h-10 items-center  w-28 rounded-xl border-solid border-1 mb-2">
+    <p className="mr-2"> Favoritar </p>
+    <img src={IconStar} alt="" className="h-5 w-5" />
+    
+    
+    </div>
+  </div>
         <div className="relative">
           <img
             src={imagemAtual}
             alt={imovel.categoria}
-            className="w-full h-48 object-cover rounded-md mb-3"
+            className="w-full h-48 object-cover rounded-md mb-3 mt-2"
           />
 
   
@@ -136,6 +144,6 @@ const prevImage = (imovelId, total) => {
   })}
 </div>
     </div>
-  </>
+  </div>
   );
 }
