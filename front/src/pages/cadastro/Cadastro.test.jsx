@@ -101,7 +101,6 @@ describe('Cadastro Page', () => {
 
     await waitFor(() => {
       expect(cadastroAuth).toHaveBeenCalled();
-      expect(window.alert).toHaveBeenCalledWith('Cadastro realizado com sucesso!');
       expect(mockNavigate).toHaveBeenCalledWith('/dashboard');
       expect(localStorage.getItem('access')).toBe('token-a');
     });

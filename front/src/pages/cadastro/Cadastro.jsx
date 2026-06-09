@@ -85,14 +85,28 @@ export default function Cadastro() {
 
       console.log("Cadastro realizado com sucesso", result);
 
-      alert("Cadastro realizado com sucesso!");
-
       navigate("/dashboard");
 
       setForm(initialForm);
 
     } catch (error) {
       console.error("Erro no cadastro", error);
+
+      try {
+        const backendErrors = JSON.parse(error.message);
+        const fieldErrors = {};
+        for (const [field, messages] of Object.entries(backendErrors)) {
+          if (field === "cpf") {
+            fieldErrors.cpf = "cpf invalido";
+          } else {
+            fieldErrors[field] = Array.isArray(messages) ? messages[0] : messages;
+          }
+        }
+        if (Object.keys(fieldErrors).length > 0) {
+          setErrors(fieldErrors);
+          return;
+        }
+      } catch (_) {}
 
       alert("Erro no cadastro: " + error.message);
 
@@ -226,8 +240,10 @@ export default function Cadastro() {
                       onChange={(e) =>
                         handleChange("cpf", e.target.value)
                       }
-                      placeholder="11 dígitos"
-                      className={inputClass("cpf")}
+                      placeholder={errors.cpf ? "cpf invalido" : "11 dígitos"}
+                      className={`${inputClass("cpf")} ${
+                        errors.cpf ? "placeholder:text-red-500" : "placeholder:text-gray-400"
+                      }`}
                     />
 
                     {errors.cpf && (
