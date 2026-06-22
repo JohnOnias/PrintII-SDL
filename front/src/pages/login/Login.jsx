@@ -41,7 +41,8 @@ export default function Login() {
       className="flex flex-row justify-start items-center h-screen w-screen bg-cover bg-center bg-no-repeat font-[Poppins]"
       style={{ backgroundImage: `url(${bg})` }}
     >
-      <div className="bg-white flex flex-col content-center justify-center items-center h-[55vh] w-[20vw] rounded-[25px] ml-[10vw] m-auto shadow-lg">
+      <div className="bg-white h-[80vh] w-[70vw] sm:h-[450px] sm:w-[350px]    flex flex-col content-center justify-center items-center rounded-[25px] ml-[10vw] m-auto shadow-lg">
+
         <div className="bg-gray-100 flex justify-evenly items-center h-[4vh] w-[15vw] rounded-[7px] mb-[1vh]">
           <h3 className="font-bold text-black cursor-default">Login</h3>
           <h3
@@ -57,7 +58,7 @@ export default function Login() {
           <h5 className="font-regular text-gray-600">Por favor faça seu login!</h5>
         </div>
 
-        <form onSubmit={handleLogin} className="w-[15vw]">
+        <form onSubmit={handleLogin} className="w-[150px] sm:w-[150px]">
           <Input
             placeholder={"Usuario@email.com"}
             tipo={"email"}
@@ -84,7 +85,7 @@ export default function Login() {
             </span>
           )}
 
-          <div className="mt-6">
+          <div className="mt-4">
             <Entrar type="submit" />
           </div>
 
