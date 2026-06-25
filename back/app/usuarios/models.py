@@ -22,15 +22,16 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser):
     username = models.CharField(max_length=100, unique=True, null=False)
-    cpf = models.CharField(max_length=11, unique=True, null=False)
-    idade = models.CharField(max_length=3, null=False)
-    sexo = models.CharField(max_length=20, null=False)
-    profissao = models.CharField(max_length=100, null=False)
-    rua = models.CharField(max_length=150, null=False)
-    bairro = models.CharField(max_length=100, null=False)
-    cidade = models.CharField(max_length=100, default="Cedro")  # levando em conta que se trata do cedro
-    estado = models.CharField(max_length=2, default="CE")
-    numero = models.IntegerField(null=False)
+    telefone = models.CharField(max_length=20, null=True, blank=True)
+    cpf = models.CharField(max_length=11, unique=True, null=True, blank=True)
+    idade = models.CharField(max_length=3, null=True, blank=True)
+    sexo = models.CharField(max_length=20, null=True, blank=True)
+    profissao = models.CharField(max_length=100, null=True, blank=True)
+    rua = models.CharField(max_length=150, null=True, blank=True)
+    bairro = models.CharField(max_length=100, null=True, blank=True)
+    cidade = models.CharField(max_length=100, null=True, blank=True, default="Cedro")
+    estado = models.CharField(max_length=2, null=True, blank=True, default="CE")
+    numero = models.IntegerField(null=True, blank=True)
     email = models.EmailField(unique=True, null=False)
     locacao = models.TextField(null=True, blank=True)
     rede_social_1 = models.URLField(max_length=255, null=True, blank=True)
@@ -41,7 +42,7 @@ class User(AbstractBaseUser):
         LOCADOR = 'locador', 'Locador'
         LOCATARIO = 'locatario', 'Locatário'
 
-    tipo_de_usuario = models.CharField(max_length=10, choices=UserType.choices, null=False)
+    tipo_de_usuario = models.CharField(max_length=10, choices=UserType.choices, null=True, blank=True)
     foto_perfil = models.ImageField(upload_to='perfil/', null=True, blank=True)
 
     # Campos obrigatórios para AbstractBaseUser

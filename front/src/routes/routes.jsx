@@ -13,6 +13,7 @@ import CadastroImovel from "../pages/cadastroImovel/CadastroImovel";
 import EsqueciSenha from "../pages/esqueciSenha/EsqueciSenha";
 import RedefinirSenha from "../pages/redefinirSenha/RedefinirSenha";
 import ListarImoveis from "../pages/listarImoveis/ListarImoveis";
+import PublicImovel from "../pages/publicImovel/PublicImovel";
 
 const router = createBrowserRouter([
     { 
@@ -40,15 +41,19 @@ const router = createBrowserRouter([
         element: <RedefinirSenha /> 
     },
     {
+        path: "/imovel/:id",
+        element: <PublicImovel />
+    },
+    {
         element: <LayoutPrivado />,
         children: [
             {
                 path: "dashboard",
-                element: <Inicio isHome={true} />
+                element: <ListarImoveis />
             },
             {
                 path: "inicio",
-                element: <Inicio isHome={true} />
+                element: <ListarImoveis />
             },
             {
                 path: "listar-imoveis",

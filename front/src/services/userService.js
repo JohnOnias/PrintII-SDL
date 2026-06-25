@@ -44,6 +44,7 @@ export async function getProfile() {
   
   // Atualiza o localStorage com os dados frescos
   localStorage.setItem("user", JSON.stringify(data));
+  window.dispatchEvent(new CustomEvent("user-updated"));
   
   return data;
 }
@@ -78,6 +79,7 @@ export async function updateUser(userData) {
   
   // Atualiza o localStorage com os dados retornados do servidor
   localStorage.setItem("user", JSON.stringify(data));
+  window.dispatchEvent(new CustomEvent("user-updated"));
 
   return data;
 }
