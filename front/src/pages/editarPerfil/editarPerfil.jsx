@@ -21,6 +21,9 @@ export default function EditarPerfil() {
   const [user, setUser] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [showErrorPopup, setShowErrorPopup] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState({});
   const fileInputRef = useRef(null);
   const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
@@ -62,9 +65,22 @@ export default function EditarPerfil() {
 
   async function handleSubmit(e) {
     e.preventDefault();
+
+    const errors = {};
+    if (!form.username.trim()) errors.username = true;
+    if (!form.email.trim()) errors.email = true;
+    if (!form.telefone.trim()) errors.telefone = true;
+
+    setFieldErrors(errors);
+
+    if (Object.keys(errors).length > 0) {
+      setShowErrorPopup(true);
+      return;
+    }
+
     try {
       let dataToSubmit;
-      
+
       if (selectedFile) {
         dataToSubmit = new FormData();
         Object.keys(form).forEach(key => {
@@ -77,7 +93,22 @@ export default function EditarPerfil() {
 
       const updatedUser = await updateUser(dataToSubmit);
       setUser(updatedUser);
-      alert("Perfil atualizado com sucesso!");
+      setForm({
+        username: updatedUser.username || "",
+        email: updatedUser.email || "",
+        telefone: updatedUser.telefone || "",
+        locacao: updatedUser.locacao || "",
+        cpf: updatedUser.cpf || "",
+        sexo: updatedUser.sexo || "",
+        profissao: updatedUser.profissao || "",
+        nascimento: updatedUser.nascimento || "",
+        endereco: updatedUser.endereco || "",
+        rede_social_1: updatedUser.rede_social_1 || "",
+        rede_social_2: updatedUser.rede_social_2 || "",
+        rede_social_3: updatedUser.rede_social_3 || "",
+      });
+      setFieldErrors({});
+      setShowSuccessPopup(true);
     } catch (err) {
       console.error("Erro ao atualizar:", err);
       alert("Erro ao atualizar perfil: " + err.message);
@@ -148,7 +179,9 @@ export default function EditarPerfil() {
                     name="username"
                     value={form.username}
                     onChange={handleChange}
-                    className="w-full mt-1 border border-gray-200 rounded-md p-2 text-sm text-gray-600 outline-none focus:border-[#176999]"
+                    className={`w-full mt-1 border rounded-md p-2 text-sm outline-none ${
+                      fieldErrors.username ? "border-red-500 bg-red-50" : "border-gray-200 text-gray-600 focus:border-[#176999]"
+                    }`}
                   />
                 </div>
                 <div>
@@ -157,7 +190,9 @@ export default function EditarPerfil() {
                     name="email"
                     value={form.email}
                     onChange={handleChange}
-                    className="w-full mt-1 border border-gray-200 rounded-md p-2 text-sm text-gray-600 outline-none focus:border-[#176999]"
+                    className={`w-full mt-1 border rounded-md p-2 text-sm outline-none ${
+                      fieldErrors.email ? "border-red-500 bg-red-50" : "border-gray-200 text-gray-600 focus:border-[#176999]"
+                    }`}
                   />
                 </div>
                 <div>
@@ -167,7 +202,9 @@ export default function EditarPerfil() {
                     value={form.telefone}
                     onChange={handleChange}
                     placeholder="(88) 91234-5678"
-                    className="w-full mt-1 border border-gray-200 rounded-md p-2 text-sm text-gray-600 outline-none focus:border-[#176999]"
+                    className={`w-full mt-1 border rounded-md p-2 text-sm outline-none ${
+                      fieldErrors.telefone ? "border-red-500 bg-red-50" : "border-gray-200 text-gray-600 focus:border-[#176999]"
+                    }`}
                   />
                 </div>
               </div>
@@ -313,6 +350,40 @@ export default function EditarPerfil() {
           </form>
         </div>
       </main>
+
+      {showSuccessPopup && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+          onClick={() => setShowSuccessPopup(false)}
+        >
+          <div className="bg-white rounded-2xl shadow-2xl px-10 py-8 text-center max-w-sm mx-4">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-100 flex items-center justify-center">
+              <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <p className="text-lg font-bold text-gray-800">Alterações salvas!</p>
+            <p className="text-sm text-gray-500 mt-1">Seu perfil foi atualizado com sucesso.</p>
+          </div>
+        </div>
+      )}
+
+      {showErrorPopup && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+          onClick={() => setShowErrorPopup(false)}
+        >
+          <div className="bg-white rounded-2xl shadow-2xl px-10 py-8 text-center max-w-sm mx-4">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-100 flex items-center justify-center">
+              <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </div>
+            <p className="text-lg font-bold text-gray-800">Campos obrigatórios</p>
+            <p className="text-sm text-gray-500 mt-1">Preencha todos os campos destacados em vermelho.</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

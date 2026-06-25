@@ -18,11 +18,15 @@ class ImovelSerializer(serializers.ModelSerializer):
         write_only=True,
         required=False
     )
+    locador_telefone = serializers.SerializerMethodField()
 
     class Meta:
         model = Imovel
-        fields = ['id', 'locador', 'tipo', 'categoria', 'endereco', 'descricao', 'valor', 'status', 'midias', 'midias_upload', 'midias_remover', 'created_at', 'updated_at']
+        fields = ['id', 'locador', 'locador_telefone', 'tipo', 'categoria', 'endereco', 'descricao', 'valor', 'status', 'midias', 'midias_upload', 'midias_remover', 'created_at', 'updated_at']
         read_only_fields = ['locador']
+
+    def get_locador_telefone(self, obj):
+        return obj.locador.telefone if obj.locador and obj.locador.telefone else None
 
     def create(self, validated_data):
         midias_data = validated_data.pop('midias_upload', [])
