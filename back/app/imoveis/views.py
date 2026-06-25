@@ -126,8 +126,7 @@ class ImovelViewSet(viewsets.ModelViewSet):
             return [IsLocador()]
         if self.action in ['update', 'partial_update', 'destroy']:
             return [IsAuthenticated()]
-        # Mudado de AllowAny para IsAuthenticated para satisfazer os requisitos de segurança
-        return [IsAuthenticated()]
+        return [AllowAny()]
 
     def perform_create(self, serializer):
         serializer.save(locador=self.request.user)

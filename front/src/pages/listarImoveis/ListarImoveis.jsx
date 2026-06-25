@@ -31,7 +31,10 @@ export default function ListarImoveis() {
 
   useEffect(() => {
     setShowFavorites(!!location.state?.showFavorites);
-  }, [location.state?.showFavorites]);
+    if (location.state?.fromFavorites) {
+      setSelectedImovel(null);
+    }
+  }, [location.state?.showFavorites, location.state?.fromFavorites]);
 
   useEffect(() => {
     async function loadData() {

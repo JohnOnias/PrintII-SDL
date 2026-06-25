@@ -45,7 +45,8 @@ export default function DetalhesImovel({ imovel, onBack, API_BASE_URL }) {
 
   const handleShare = async () => {
     try {
-      await navigator.clipboard.writeText(window.location.href);
+      const shareUrl = `${window.location.origin}/imovel/${imovel.id}`;
+      await navigator.clipboard.writeText(shareUrl);
       setShowShareMsg(true);
       setTimeout(() => setShowShareMsg(false), 2000);
     } catch (err) {
@@ -111,13 +112,18 @@ export default function DetalhesImovel({ imovel, onBack, API_BASE_URL }) {
 
             <button
               onClick={() => {
-                const subject = encodeURIComponent("Interesse no imóvel: " + imovel.endereco);
-                const body = encodeURIComponent(
-                  "Olá, tenho interesse no imóvel localizado em " +
-                  imovel.endereco +
-                  ". Gostaria de mais informações."
-                );
-                window.location.href = "mailto:?subject=" + subject + "&body=" + body;
+                const tel = imovel.locador_telefone?.replace(/\D/g, "");
+                if (tel) {
+                  const waNumber = tel.startsWith("55") ? tel : `55${tel}`;
+                  const msg = encodeURIComponent(
+                    "Olá, tenho interesse no imóvel localizado em " +
+                    imovel.endereco +
+                    ". Gostaria de mais informações."
+                  );
+                  window.open(`https://wa.me/${waNumber}?text=${msg}`, "_blank");
+                } else {
+                  alert("Telefone do locador não disponível.");
+                }
               }}
               className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm transition w-full sm:w-auto justify-center bg-[#219EBC] text-white hover:bg-[#1a86a1]"
             >

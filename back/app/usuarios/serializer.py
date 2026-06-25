@@ -44,7 +44,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            'id', 'username', 'cpf', 'idade',
+            'id', 'username', 'telefone', 'cpf', 'idade',
             'sexo', 'profissao', 'rua', 'bairro',   
             'cidade', 'estado', 'numero', 
             'email', 'password', 'tipo_de_usuario', 'locacao',
@@ -72,6 +72,7 @@ class PublicUserSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'username',
+            'telefone',
             'idade',
             'sexo',
             'profissao',
@@ -104,13 +105,14 @@ class UpdateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            'username', 'idade', 'sexo', 'profissao', 
+            'username', 'telefone', 'idade', 'sexo', 'profissao', 
             'rua', 'bairro', 'cidade', 'estado', 'numero', 'email', 'locacao', 'tipo_de_usuario',
             'rede_social_1', 'rede_social_2', 'rede_social_3', 'foto_perfil'
         ]
         extra_kwargs = {
             'email': {'required': False},
             'username': {'required': False},
+            'telefone': {'required': False},
             'idade': {'required': False},
             'sexo': {'required': False},
             'profissao': {'required': False},
