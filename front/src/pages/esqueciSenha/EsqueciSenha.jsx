@@ -34,13 +34,13 @@ export default function EsqueciSenha() {
       className="flex flex-row justify-start items-center h-screen w-screen bg-cover bg-center bg-no-repeat font-[Poppins]"
       style={{ backgroundImage: `url(${bg})` }}
     >
-      <div className="bg-white flex flex-col content-center justify-center items-center h-[55vh] w-[20vw] rounded-[25px] ml-[10vw] m-auto shadow-lg px-8">
+      <div className="bg-white flex flex-col content-center justify-center items-center h-[400px] w-[290px] sm:h-[450px] sm:w-[320px] rounded-[20px] sm:rounded-[25px] sm:ml-[200px] m-auto shadow-lg px-8">
         <div className="text-center mb-6">
           <h1 className="font-bold text-2xl">Recuperar Senha</h1>
           <h5 className="font-regular text-gray-600">Enviaremos um link para o seu e-mail</h5>
         </div>
 
-        <form onSubmit={handleSubmit} className="w-full max-w-[15vw]">
+        <form onSubmit={handleSubmit} className="w-full max-w-[300px]">
           <Input
             placeholder={"Usuario@email.com"}
             tipo={"email"}
