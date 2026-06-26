@@ -34,15 +34,15 @@ export default function EscolhaTipo() {
             Quem é você?
           </h2>
 
-          <div className="flex flex-row items-center justify-center gap-10">
+          <div className="flex flex-col sm:flex-row  items-center justify-center gap-1 sm:gap-5 lg:gap-10">
 
             {/* BOTÃO LOCADOR */}
             <button
               onClick={() => handleSelect("locador")}
               className="group flex flex-col items-center gap-4 transition-transform hover:scale-105"
             >
-              <div className="w-[150px] h-[130px] rounded-xl border border-gray-200 bg-white p-2 shadow-sm transition group-hover:shadow-md">
-                <div className="flex h-full w-full items-center justify-center rounded-lg bg-cyan-500 overflow-hidden shadow-inner">
+              <div className=" w-[130px] h-[110px] sm:w-[150px] sm:h-[130px]  rounded-xl border border-gray-200 bg-white p-2 shadow-sm transition group-hover:shadow-md">
+                <div className="flex h-full w-full items-center justify-center rounded-lg overflow-hidden shadow-inner">
                   <img src={locadorImg} alt="Locador" className="w-full h-full object-cover" />
                 </div>
               </div>
@@ -56,8 +56,8 @@ export default function EscolhaTipo() {
               onClick={() => handleSelect("locatario")}
               className="group flex flex-col items-center gap-4 transition-transform hover:scale-105"
             >
-              <div className="w-[150px] h-[130px] rounded-xl border border-gray-200 bg-white p-2 shadow-sm transition group-hover:shadow-md">
-                <div className="flex h-full w-full items-center justify-center rounded-lg bg-cyan-500 overflow-hidden shadow-inner">
+              <div className=" w-[130px] h-[110px] sm:w-[150px] sm:h-[130px]  rounded-xl border border-gray-200 bg-white p-2 shadow-sm transition group-hover:shadow-md">
+                <div className="flex h-full w-full items-center justify-center rounded-lg  overflow-hidden shadow-inner">
                   <img src={locatarioImg} alt="Locatário" className="w-full h-full object-cover" />
                 </div>
               </div>

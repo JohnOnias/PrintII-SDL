@@ -56,13 +56,13 @@ export default function RedefinirSenha() {
       className="flex flex-row justify-start items-center h-screen w-screen bg-cover bg-center bg-no-repeat font-[Poppins]"
       style={{ backgroundImage: `url(${bg})` }}
     >
-      <div className="bg-white flex flex-col content-center justify-center items-center h-[55vh] w-[20vw] rounded-[25px] ml-[10vw] m-auto shadow-lg px-8">
+      <div className="bg-white flex flex-col content-center justify-center items-center  h-[450px] w-[300px] sm:h-[450px] sm:w-[350px]  rounded-[20px] sm:rounded-[25px] sm:ml-[200px] m-auto shadow-lg px-8">
         <div className="text-center mb-6">
           <h1 className="font-bold text-2xl">Nova Senha</h1>
           <h5 className="font-regular text-gray-600">Digite sua nova senha abaixo</h5>
         </div>
 
-        <form onSubmit={handleSubmit} className="w-full max-w-[15vw]">
+        <form onSubmit={handleSubmit} className="w-full max-w-[300px]">
           <Input
             placeholder={"Nova senha"}
             tipo={"password"}

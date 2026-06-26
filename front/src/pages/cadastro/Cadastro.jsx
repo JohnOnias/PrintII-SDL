@@ -132,11 +132,12 @@ export default function Cadastro() {
         fontFamily: "Poppins, sans-serif",
       }}
     >
+
       <div className="relative mx-auto flex min-h-screen w-full max-w-[1440px] items-start md:items-center justify-center lg:justify-start px-4 md:px-6 lg:px-10">
 
         <form
           onSubmit={handleSubmit}
-          className="relative z-10 w-full max-w-[950px] h-auto lg:min-h-[600px] rounded-[32px] bg-white/95 shadow-[0_40px_120px_rgba(0,0,0,0.18)]"
+          className="relative z-10 w-full max-w-[950px] h-auto lg:min-h-[600px] rounded-[8px] bg-white/95 shadow-[0_40px_120px_rgba(0,0,0,0.18)] m-auto lg:rounded-[15px]"
         >
           <div className="flex flex-col h-full p-4 md:p-6 lg:p-8">
 
@@ -346,7 +347,7 @@ export default function Cadastro() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-cyan-500 text-white py-2.5 rounded-lg font-semibold text-sm uppercase tracking-wide hover:bg-cyan-600 disabled:bg-gray-400"
+                  className="w-full mt-[15px] bg-cyan-500 text-white py-2.5 rounded-lg font-semibold text-sm uppercase tracking-wide hover:bg-cyan-600 disabled:bg-gray-400"
                 >
                   {loading ? "Cadastrando..." : "Cadastrar"}
                 </button>

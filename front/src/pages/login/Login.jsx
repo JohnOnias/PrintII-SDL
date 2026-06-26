@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginAuth } from "../../services/authService.js";
-import bg from "../../assets/imgs/bg.png";
+import bgImg from "../../assets/imgs/bg.png";
 import Input from "../../components/Input/Input.jsx";
 import Entrar from "../../components/Button/Entrar.jsx";
 
@@ -38,11 +38,18 @@ export default function Login() {
 
   return (
     <div
-      className="flex flex-row justify-start items-center h-screen w-screen bg-cover bg-center bg-no-repeat font-[Poppins]"
-      style={{ backgroundImage: `url(${bg})` }}
-    >
-      <div className="bg-white flex flex-col content-center justify-center items-center h-[55vh] w-[20vw] rounded-[25px] ml-[10vw] m-auto shadow-lg">
-        <div className="bg-gray-100 flex justify-evenly items-center h-[4vh] w-[15vw] rounded-[7px] mb-[1vh]">
+    className="h-screen w-full overflow-hidden"
+    style={{
+      backgroundImage: `url(${bgImg})`,
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+    }}
+  >
+     <div className="relative mx-auto flex min-h-screen w-full  items-center justify-center lg:justify-start px-4 md:px-8 lg:px-16">
+      
+      <div className="bg-white h-[450px] w-[350px]  flex flex-col content-center justify-center items-center rounded-[25px] lg:ml-[10vw] m-auto shadow-lg">
+
+        <div className="bg-gray-100 flex justify-evenly items-center h-[40px] w-[250px] md:h-[40px] md:w-[300px] rounded-[7px] mb-[5px]">
           <h3 className="font-bold text-black cursor-default">Login</h3>
           <h3
             className="text-gray-500 font-[Poppins] hover:font-bold hover:text-black cursor-pointer"
@@ -57,7 +64,7 @@ export default function Login() {
           <h5 className="font-regular text-gray-600">Por favor faça seu login!</h5>
         </div>
 
-        <form onSubmit={handleLogin} className="w-[15vw]">
+        <form onSubmit={handleLogin} className="w-[250px]">
           <Input
             placeholder={"Usuario@email.com"}
             tipo={"email"}
@@ -67,7 +74,7 @@ export default function Login() {
             erro={camposVazios || showErro}
           />
 
-          <div className="mt-4">
+          <div className="w-[250px]">
             <Input
               placeholder={"Senha"}
               tipo={"password"}
@@ -84,7 +91,7 @@ export default function Login() {
             </span>
           )}
 
-          <div className="mt-6">
+          <div className="mt-4">
             <Entrar type="submit" />
           </div>
 
@@ -101,6 +108,7 @@ export default function Login() {
         >
           Esqueci minha senha!
         </p>
+      </div>
       </div>
     </div>
   );
