@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export default function MapaImovel({ endereco }) {
+export default function MapaImovel({ endereco, minimal = false }) {
   const [loading, setLoading] = useState(true);
 
   const cleanAddress = () => {
@@ -24,29 +24,31 @@ export default function MapaImovel({ endereco }) {
   const encodedAddress = encodeURIComponent(cleanAddress());
 
   return (
-    <div className="rounded-2xl overflow-hidden border border-gray-200 shadow-sm">
+    <div className={`overflow-hidden w-full h-full ${minimal ? 'rounded-2xl' : 'rounded-2xl border border-gray-200 shadow-sm'}`}>
       {/* Header */}
-      <div className="flex items-center justify-between bg-gray-50 px-4 py-3 border-b border-gray-100">
-        <div className="flex items-center gap-2">
-          <svg className="w-5 h-5 text-[#219EBC]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
-          <span className="text-sm font-semibold text-gray-800">Localização</span>
+      {!minimal && (
+        <div className="flex items-center justify-between bg-gray-50 px-4 py-3 border-b border-gray-100">
+          <div className="flex items-center gap-2">
+            <svg className="w-5 h-5 text-[#219EBC]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span className="text-sm font-semibold text-gray-800">Localização</span>
+          </div>
+          <button
+            onClick={openGoogleMaps}
+            className="flex items-center gap-1.5 text-xs font-semibold text-[#219EBC] hover:text-[#1a86a1] transition"
+          >
+            <span>Abrir no Google Maps</span>
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+          </button>
         </div>
-        <button
-          onClick={openGoogleMaps}
-          className="flex items-center gap-1.5 text-xs font-semibold text-[#219EBC] hover:text-[#1a86a1] transition"
-        >
-          <span>Abrir no Google Maps</span>
-          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-          </svg>
-        </button>
-      </div>
+      )}
 
       {/* Mapa */}
-      <div className="relative" style={{ height: "280px" }}>
+      <div className="relative w-full h-full min-h-[200px]" style={{ height: minimal ? "100%" : "280px" }}>
         {loading && (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-100 z-10">
             <div className="flex flex-col items-center gap-3">
