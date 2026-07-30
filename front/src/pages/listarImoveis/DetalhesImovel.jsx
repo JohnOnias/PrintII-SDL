@@ -154,26 +154,6 @@ export default function DetalhesImovel({ imovel, onBack, API_BASE_URL }) {
               <span className="font-semibold text-gray-900">Descrição:</span> {imovel.descricao}
             </p>
           )}
-          {imovel.quartos !== undefined && (
-            <p className="text-sm text-gray-700 leading-snug">
-              <span className="font-semibold text-gray-900">Quartos:</span> {imovel.quartos}
-            </p>
-          )}
-          {imovel.banheiros !== undefined && (
-            <p className="text-sm text-gray-700 leading-snug">
-              <span className="font-semibold text-gray-900">Banheiros:</span> {imovel.banheiros}
-            </p>
-          )}
-          {imovel.garagem && (
-            <p className="text-sm text-gray-700 leading-snug">
-              <span className="font-semibold text-gray-900">Garagem:</span> Sim
-            </p>
-          )}
-          {imovel.suite && (
-            <p className="text-sm text-gray-700 leading-snug">
-              <span className="font-semibold text-gray-900">Suíte:</span> Sim
-            </p>
-          )}
           <p className="text-sm text-gray-700 leading-snug">
             <span className="font-semibold text-gray-900">Status:</span>{" "}
             <span className={`font-bold px-2 py-0.5 rounded-full text-xs ${statusStyle.bg} ${statusStyle.color}`}>
@@ -251,6 +231,48 @@ export default function DetalhesImovel({ imovel, onBack, API_BASE_URL }) {
       {/* MAPA — Leaflet */}
       <div className="px-4 sm:px-8 pb-5">
         <MapaImovel endereco={imovel.endereco} />
+      </div>
+
+      {/* ÍCONES DE DETALHES DO IMÓVEL (Abaixo do mapa) */}
+      <div className="px-4 sm:px-8 pb-6">
+        <div className="flex justify-between items-center py-5 border-y border-gray-100 overflow-x-auto gap-6 sm:gap-8" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+          {imovel.area && (
+            <div className="flex flex-col items-center gap-2 min-w-max text-gray-800">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" /></svg>
+              <span className="text-xs font-semibold">{imovel.area} m² útil</span>
+            </div>
+          )}
+          {imovel.banheiros !== undefined && (
+            <div className="flex flex-col items-center gap-2 min-w-max text-gray-800">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 10h18M5 10v6a2 2 0 002 2h10a2 2 0 002-2v-6M8 10V6a2 2 0 012-2h4M8 18v2M16 18v2"/></svg>
+              <span className="text-xs font-semibold">{imovel.banheiros} banheiros</span>
+            </div>
+          )}
+          {imovel.garagem && (
+            <div className="flex flex-col items-center gap-2 min-w-max text-gray-800">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 10h14l-1.5-4.5A2 2 0 0015.6 4H8.4a2 2 0 00-1.9 1.5L5 10zm0 0v6a2 2 0 002 2h10a2 2 0 002-2v-6M8 14h.01M16 14h.01"/></svg>
+              <span className="text-xs font-semibold">Com vagas</span>
+            </div>
+          )}
+          {imovel.quartos !== undefined && (
+            <div className="flex flex-col items-center gap-2 min-w-max text-gray-800">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 9h14v7H5zM5 16v2m14-2v2M5 9V7a2 2 0 012-2h10a2 2 0 012 2v2M8 9v2M16 9v2"/></svg>
+              <span className="text-xs font-semibold">{imovel.quartos} {imovel.quartos === 1 ? 'quarto' : 'quartos'}</span>
+            </div>
+          )}
+          {imovel.suite && (
+            <div className="flex flex-col items-center gap-2 min-w-max text-gray-800">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 20h6M10 20v-4h4v4M7 9a3 3 0 016 0v7a3 3 0 01-6 0V9zM7 9V5a2 2 0 012-2h2a2 2 0 012 2v4"/></svg>
+              <span className="text-xs font-semibold">Com suíte</span>
+            </div>
+          )}
+          {imovel.idade && (
+            <div className="flex flex-col items-center gap-2 min-w-max text-gray-800">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+              <span className="text-xs font-semibold">{imovel.idade} anos</span>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="px-4 sm:px-8 pb-8">
