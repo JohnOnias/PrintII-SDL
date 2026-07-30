@@ -78,83 +78,6 @@ export default function DetalhesImovel({ imovel, onBack, API_BASE_URL }) {
         </button>
       </header>
 
-      {images.length > 0 && (
-        <div className="px-4 sm:px-8 pb-6">
-          {images.slice(0, 2).length > 0 && (
-            <div className="grid grid-cols-2 gap-3 mb-3">
-              {images.slice(0, 2).map((img, idx) => (
-                <div
-                  key={idx}
-                  onClick={() => setSelectedPhotoIndex(idx)}
-                  className="relative aspect-video rounded-xl overflow-hidden cursor-pointer bg-gray-100"
-                >
-                  <img
-                    src={img}
-                    alt={"Foto " + (idx + 1)}
-                    className="w-full h-full object-cover hover:scale-105 transition-transform"
-                  />
-                </div>
-              ))}
-            </div>
-          )}
-          {images.length > 2 && (
-            <div className="grid grid-cols-3 gap-3">
-              {images.slice(2, 4).map((img, idx) => (
-                <div
-                  key={idx}
-                  onClick={() => setSelectedPhotoIndex(idx + 2)}
-                  className="relative aspect-square rounded-xl overflow-hidden cursor-pointer bg-gray-100"
-                >
-                  <img
-                    src={img}
-                    alt={"Foto " + (idx + 3)}
-                    className="w-full h-full object-cover hover:scale-105 transition-transform"
-                  />
-                </div>
-              ))}
-              <div
-                onClick={() => {
-                  if (images.length > 4) {
-                    setSelectedPhotoIndex(4);
-                  }
-                }}
-                className="relative aspect-square rounded-xl overflow-hidden cursor-pointer bg-gray-100"
-              >
-                {images.length > 4 ? (
-                  images.length > 5 ? (
-                    <div className="w-full h-full bg-gray-50 flex items-center justify-center border-2 border-dashed border-gray-200 rounded-xl">
-                      <span className="text-2xl font-bold text-gray-400">+{images.length - 4}</span>
-                    </div>
-                  ) : (
-                    <img
-                      src={images[4]}
-                      alt="Foto 5"
-                      className="w-full h-full object-cover hover:scale-105 transition-transform"
-                    />
-                  )
-                ) : (
-                  <div className="w-full h-full bg-gray-50" />
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* ENDEREÇO + MAPA */}
-      <div className="px-4 sm:px-8 pb-5">
-        <div className="flex items-start gap-1.5 mb-3 text-gray-700 text-xs sm:text-sm font-medium">
-          <svg className="w-4 h-4 mt-0.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
-          <span className="leading-snug">{imovel.endereco}</span>
-        </div>
-        <div className="w-full h-56 sm:h-80 rounded-t-2xl overflow-hidden shadow-sm border border-gray-200">
-          <MapaImovel endereco={imovel.endereco} minimal={true} />
-        </div>
-      </div>
-
       <div className="px-4 sm:px-8 pb-5">
         <div className="flex flex-col items-center">
           <div className="w-36 h-36 sm:w-40 sm:h-40 rounded-full border-4 border-[#219EBC] overflow-hidden bg-gray-100 flex items-center justify-center mb-5">
@@ -258,6 +181,76 @@ export default function DetalhesImovel({ imovel, onBack, API_BASE_URL }) {
             </span>
           </p>
         </div>
+      </div>
+
+
+
+      {images.length > 0 && (
+        <div className="px-4 sm:px-8 pb-6">
+          {images.slice(0, 2).length > 0 && (
+            <div className="grid grid-cols-2 gap-3 mb-3">
+              {images.slice(0, 2).map((img, idx) => (
+                <div
+                  key={idx}
+                  onClick={() => setSelectedPhotoIndex(idx)}
+                  className="relative aspect-video rounded-xl overflow-hidden cursor-pointer bg-gray-100"
+                >
+                  <img
+                    src={img}
+                    alt={"Foto " + (idx + 1)}
+                    className="w-full h-full object-cover hover:scale-105 transition-transform"
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+          {images.length > 2 && (
+            <div className="grid grid-cols-3 gap-3">
+              {images.slice(2, 4).map((img, idx) => (
+                <div
+                  key={idx}
+                  onClick={() => setSelectedPhotoIndex(idx + 2)}
+                  className="relative aspect-square rounded-xl overflow-hidden cursor-pointer bg-gray-100"
+                >
+                  <img
+                    src={img}
+                    alt={"Foto " + (idx + 3)}
+                    className="w-full h-full object-cover hover:scale-105 transition-transform"
+                  />
+                </div>
+              ))}
+              <div
+                onClick={() => {
+                  if (images.length > 4) {
+                    setSelectedPhotoIndex(4);
+                  }
+                }}
+                className="relative aspect-square rounded-xl overflow-hidden cursor-pointer bg-gray-100"
+              >
+                {images.length > 4 ? (
+                  images.length > 5 ? (
+                    <div className="w-full h-full bg-gray-50 flex items-center justify-center border-2 border-dashed border-gray-200 rounded-xl">
+                      <span className="text-2xl font-bold text-gray-400">+{images.length - 4}</span>
+                    </div>
+                  ) : (
+                    <img
+                      src={images[4]}
+                      alt="Foto 5"
+                      className="w-full h-full object-cover hover:scale-105 transition-transform"
+                    />
+                  )
+                ) : (
+                  <div className="w-full h-full bg-gray-50" />
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* MAPA — Leaflet */}
+      <div className="px-4 sm:px-8 pb-5">
+        <MapaImovel endereco={imovel.endereco} />
       </div>
 
       <div className="px-4 sm:px-8 pb-8">
