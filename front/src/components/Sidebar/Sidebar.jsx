@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { getUser, logout } from "../../services/userService";
+import { logout } from "../../services/userService";
+import { useUser } from "../../context/UserContext";
 import CadastroImovel from "../../pages/cadastroImovel/CadastroImovel";
 
 // Icons
@@ -15,16 +16,9 @@ import IconLocatario from "../../assets/imgs/locatario.png";
 export default function Sidebar({ isOpen = false, onClose = () => {} }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const [revision, setRevision] = useState(0);
-  const user = getUser();
+  const { user } = useUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  useEffect(() => {
-    const handler = () => setRevision((v) => v + 1);
-    window.addEventListener("user-updated", handler);
-    return () => window.removeEventListener("user-updated", handler);
-  }, []);
-  const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+  const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8001";
 
   const isLocador = user?.tipo_de_usuario === "locador";
 

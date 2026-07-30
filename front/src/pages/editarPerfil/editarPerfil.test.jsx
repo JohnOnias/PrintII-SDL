@@ -3,6 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { BrowserRouter } from 'react-router-dom';
 import EditarPerfil from './editarPerfil';
 import * as userService from '../../services/userService';
+import { UserProvider } from '../../context/UserContext';
 
 describe('EditarPerfil Page', () => {
   beforeEach(() => {
@@ -21,9 +22,11 @@ describe('EditarPerfil Page', () => {
     vi.spyOn(userService, 'getUser').mockReturnValue(mockUser);
 
     render(
-      <BrowserRouter>
-        <EditarPerfil />
-      </BrowserRouter>
+      <UserProvider>
+        <BrowserRouter>
+          <EditarPerfil />
+        </BrowserRouter>
+      </UserProvider>
     );
 
     expect(screen.getByDisplayValue('João')).toBeInTheDocument();
@@ -31,16 +34,18 @@ describe('EditarPerfil Page', () => {
   });
 
   it('updates profile successfully', async () => {
-    const mockUser = { username: 'Old Name', email: 'old@email.com' };
+    const mockUser = { username: 'Old Name', email: 'old@email.com', telefone: '11999999999' };
     const updatedMockUser = { ...mockUser, username: 'New Name' };
     
     vi.spyOn(userService, 'getUser').mockReturnValue(mockUser);
     const updateSpy = vi.spyOn(userService, 'updateUser').mockResolvedValue(updatedMockUser);
 
     render(
-      <BrowserRouter>
-        <EditarPerfil />
-      </BrowserRouter>
+      <UserProvider>
+        <BrowserRouter>
+          <EditarPerfil />
+        </BrowserRouter>
+      </UserProvider>
     );
 
     const nameInput = screen.getByDisplayValue('Old Name');
@@ -51,7 +56,9 @@ describe('EditarPerfil Page', () => {
 
     await waitFor(() => {
       expect(updateSpy).toHaveBeenCalled();
-      expect(window.alert).toHaveBeenCalledWith('Perfil atualizado com sucesso!');
+      // O componente agora usa popup visual em vez de window.alert
+      expect(screen.getByText('Alterações salvas!')).toBeInTheDocument();
     });
   });
 });
+

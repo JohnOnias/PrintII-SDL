@@ -2,6 +2,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import Sidebar from './Sidebar';
+import { UserProvider } from '../../context/UserContext';
 
 // Mock useNavigate
 const mockNavigate = vi.fn();
@@ -20,9 +21,11 @@ describe('Sidebar Component', () => {
 
   it('renders navigation items', () => {
     render(
-      <MemoryRouter>
-        <Sidebar />
-      </MemoryRouter>
+      <UserProvider>
+        <MemoryRouter>
+          <Sidebar />
+        </MemoryRouter>
+      </UserProvider>
     );
 
     expect(screen.getAllByText('Inicio')[0]).toBeInTheDocument();
@@ -32,9 +35,11 @@ describe('Sidebar Component', () => {
 
   it('navigates to correct path when a button is clicked', () => {
     render(
-      <MemoryRouter>
-        <Sidebar />
-      </MemoryRouter>
+      <UserProvider>
+        <MemoryRouter>
+          <Sidebar />
+        </MemoryRouter>
+      </UserProvider>
     );
 
     const perfilButtons = screen.getAllByText('Perfil');
@@ -46,13 +51,16 @@ describe('Sidebar Component', () => {
 
   it('highlights the active item', () => {
     render(
-      <MemoryRouter initialEntries={['/perfil']}>
-        <Sidebar />
-      </MemoryRouter>
+      <UserProvider>
+        <MemoryRouter initialEntries={['/perfil']}>
+          <Sidebar />
+        </MemoryRouter>
+      </UserProvider>
     );
 
-    // Get the button that contains the text 'Perfil'
-    const perfilButton = screen.getByText('Perfil').closest('button');
-    expect(perfilButton).toHaveClass('bg-[#091A64]/40');
+    // Sidebar tem versão desktop e mobile, então 'Perfil' aparece duas vezes
+    const perfilButtons = screen.getAllByText('Perfil').map(el => el.closest('button'));
+    const activeButton = perfilButtons.find(btn => btn && btn.className.includes('bg-[#091A64]/40'));
+    expect(activeButton).toBeTruthy();
   });
 });

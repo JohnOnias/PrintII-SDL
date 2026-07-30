@@ -14,19 +14,22 @@ from pathlib import Path
 import os
 import sys
 from datetime import timedelta
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Carregar variáveis de ambiente do arquivo .env
+load_dotenv(BASE_DIR / '.env')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-@_xo=v9(@ocpjnydv74h^=-qeso03f61&&(jd=-u(l^7!$eiy='
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-@_xo=v9(@ocpjnydv74h^=-qeso03f61&&(jd=-u(l^7!$eiy=')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
 ALLOWED_HOSTS = ['*']
 
@@ -134,8 +137,8 @@ WSGI_APPLICATION = 'back.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': os.environ.get('DB_ENGINE', 'django.db.backends.sqlite3'),
+        'NAME': os.environ.get('DB_NAME', BASE_DIR / 'db.sqlite3'),
     }
 }
 
@@ -180,19 +183,26 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 MEDIA_URL = '/midias/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'imoveis', 'midias')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Email configuration
-# Segurança: As credenciais são lidas das variáveis de ambiente do sistema.
-# Se não estiverem configuradas, o sistema usa o console como fallback.
-EMAIL_HOST_USER = os.environ.get('EMAIL_USER')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp-relay.brevo.com')
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
+# O usuário do Brevo SMTP é geralmente o e-mail da conta
+EMAIL_HOST_USER = os.environ.get('EMAIL_USER', os.environ.get('DEFAULT_FROM_EMAIL', ''))
+# A senha do Brevo SMTP é a API Key
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD', os.environ.get('BREVO_API_KEY', ''))
+EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'true').lower() == 'true'
+EMAIL_USE_SSL = os.environ.get('EMAIL_USE_SSL', 'false').lower() == 'true'
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'noreply@printii.com')
 
-if os.environ.get('GITHUB_ACTIONS') == 'true' or not (EMAIL_HOST_USER and EMAIL_HOST_PASSWORD):
+# URL do Frontend para links de redefinição de senha
+FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:5173')
+
+# Fallback para console em desenvolvimento se não houver credenciais
+if DEBUG and not (EMAIL_HOST_USER and EMAIL_HOST_PASSWORD) and EMAIL_HOST == 'localhost':
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-else:
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST = os.environ.get('EMAIL_HOST', 'sandbox.smtp.mailtrap.io')
-    EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 2525))
-    EMAIL_USE_TLS = True
-    DEFAULT_FROM_EMAIL = 'noreply@printii.com'
+
+if os.environ.get('GITHUB_ACTIONS') == 'true':
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

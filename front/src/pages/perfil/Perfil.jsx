@@ -1,25 +1,26 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import { getProfile } from "../../services/userService";
+import { useUser } from "../../context/UserContext";
 import UserPerfil from "../../assets/imgs/UserPerfil.png";
 
 export default function Perfil() {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
-  const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+  const { user, setUserData } = useUser();
+  const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8001";
 
   useEffect(() => {
     async function loadUser() {
       try {
         const data = await getProfile();
-        setUser(data);
+        setUserData(data);
       } catch (err) {
         console.error("ERRO AO BUSCAR USER:", err);
         // Se falhar a busca online, tenta pegar do local
         const localUser = JSON.parse(localStorage.getItem("user"));
         if (localUser) {
-          setUser(localUser);
+          setUserData(localUser);
         } else {
           navigate("/login");
         }

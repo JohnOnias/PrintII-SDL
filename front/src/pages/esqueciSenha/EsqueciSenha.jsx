@@ -8,6 +8,7 @@ import Entrar from "../../components/Button/Entrar.jsx";
 export default function EsqueciSenha() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [debugLink, setDebugLink] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -16,11 +17,15 @@ export default function EsqueciSenha() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
+    setDebugLink("");
     setError("");
     setLoading(true);
     try {
       const data = await requestPasswordReset(email);
       setMessage(data.message || "Link de recuperação enviado!");
+      if (data.link_debug) {
+        setDebugLink(data.link_debug);
+      }
     } catch (err) {
       console.error("Erro no esqueci senha:", err);
       setError(err.message || "Erro ao enviar o link. Verifique o e-mail digitado.");
@@ -57,6 +62,19 @@ export default function EsqueciSenha() {
             <p className="flex justify-center font-[Poppins] text-green-600 text-center text-sm mt-4">
               {message}
             </p>
+          )}
+          {debugLink && (
+            <div className="mt-2 p-2 bg-gray-100 rounded border border-gray-300 text-center">
+              <p className="text-xs text-gray-500 mb-1">Link de Redefinição (Dev Mode):</p>
+              <a 
+                href={debugLink} 
+                className="text-blue-600 hover:underline text-xs break-all"
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
+                Clique aqui para redefinir
+              </a>
+            </div>
           )}
           {error && (
             <p className="flex justify-center font-[Poppins] text-red-600 text-center text-sm mt-4">

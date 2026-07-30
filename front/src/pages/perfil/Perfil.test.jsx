@@ -3,6 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { BrowserRouter } from 'react-router-dom';
 import Perfil from './Perfil';
 import * as userService from '../../services/userService';
+import { UserProvider } from '../../context/UserContext';
 
 describe('Perfil Page', () => {
   beforeEach(() => {
@@ -14,9 +15,11 @@ describe('Perfil Page', () => {
     vi.spyOn(userService, 'getProfile').mockReturnValue(new Promise(() => {}));
 
     render(
-      <BrowserRouter>
-        <Perfil />
-      </BrowserRouter>
+      <UserProvider>
+        <BrowserRouter>
+          <Perfil />
+        </BrowserRouter>
+      </UserProvider>
     );
 
     expect(screen.getByText('Carregando...')).toBeInTheDocument();
@@ -40,9 +43,11 @@ describe('Perfil Page', () => {
     vi.spyOn(userService, 'getProfile').mockResolvedValue(mockUser);
 
     render(
-      <BrowserRouter>
-        <Perfil />
-      </BrowserRouter>
+      <UserProvider>
+        <BrowserRouter>
+          <Perfil />
+        </BrowserRouter>
+      </UserProvider>
     );
 
     await waitFor(() => {
@@ -62,9 +67,11 @@ describe('Perfil Page', () => {
     vi.spyOn(userService, 'getProfile').mockResolvedValue(incompleteUser);
 
     render(
-      <BrowserRouter>
-        <Perfil />
-      </BrowserRouter>
+      <UserProvider>
+        <BrowserRouter>
+          <Perfil />
+        </BrowserRouter>
+      </UserProvider>
     );
 
     await waitFor(() => {

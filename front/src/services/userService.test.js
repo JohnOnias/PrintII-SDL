@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { getUser, getProfile, updateUser, logout } from './userService';
 
-const API_URL = "http://localhost:8000";
+const API_URL = "http://localhost:8001";
 
 describe('userService', () => {
   beforeEach(() => {

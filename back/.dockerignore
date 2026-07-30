@@ -1,0 +1,7 @@
+venv/
+venv_final_test/
+*.pyc
+__pycache__/
+db.sqlite3
+.env
+.git/

@@ -2,7 +2,7 @@
 // 📦 USER LOCAL STORAGE
 // ===============================
 
-const API_URL = "http://localhost:8000";
+const API_URL = "http://localhost:8001";
 
 export function getUser() {
   const user = localStorage.getItem("user");

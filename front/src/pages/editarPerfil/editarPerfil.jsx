@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
-import { getUser, updateUser } from "../../services/userService";
+import { updateUser } from "../../services/userService";
+import { useUser } from "../../context/UserContext";
 import UserPerfil from "../../assets/imgs/UserPerfil.png";
 
 export default function EditarPerfil() {
@@ -18,35 +19,33 @@ export default function EditarPerfil() {
     rede_social_3: "",
   });
 
-  const [user, setUser] = useState(null);
+  const { user, setUserData } = useUser();
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [showErrorPopup, setShowErrorPopup] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({});
   const fileInputRef = useRef(null);
-  const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+  const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8001";
 
   useEffect(() => {
-    const userData = getUser();
-    if (userData) {
-      setUser(userData);
+    if (user) {
       setForm({
-        username: userData.username || "",
-        email: userData.email || "",
-        telefone: userData.telefone || "",
-        locacao: userData.locacao || "",
-        cpf: userData.cpf || "",
-        sexo: userData.sexo || "",
-        profissao: userData.profissao || "",
-        nascimento: userData.nascimento || "",
-        endereco: userData.endereco || "",
-        rede_social_1: userData.rede_social_1 || "",
-        rede_social_2: userData.rede_social_2 || "",
-        rede_social_3: userData.rede_social_3 || "",
+        username: user.username || "",
+        email: user.email || "",
+        telefone: user.telefone || "",
+        locacao: user.locacao || "",
+        cpf: user.cpf || "",
+        sexo: user.sexo || "",
+        profissao: user.profissao || "",
+        nascimento: user.nascimento || "",
+        endereco: user.endereco || "",
+        rede_social_1: user.rede_social_1 || "",
+        rede_social_2: user.rede_social_2 || "",
+        rede_social_3: user.rede_social_3 || "",
       });
     }
-  }, []);
+  }, [user]);
 
   function handleChange(e) {
     setForm({
@@ -92,7 +91,7 @@ export default function EditarPerfil() {
       }
 
       const updatedUser = await updateUser(dataToSubmit);
-      setUser(updatedUser);
+      setUserData(updatedUser);
       setForm({
         username: updatedUser.username || "",
         email: updatedUser.email || "",
@@ -107,6 +106,8 @@ export default function EditarPerfil() {
         rede_social_2: updatedUser.rede_social_2 || "",
         rede_social_3: updatedUser.rede_social_3 || "",
       });
+      setSelectedFile(null);
+      setPreviewUrl(null);
       setFieldErrors({});
       setShowSuccessPopup(true);
     } catch (err) {

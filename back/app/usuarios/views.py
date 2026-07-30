@@ -9,8 +9,9 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.conf import settings
-from .serializer import TypeUserSerializer, UserSerializer, LoginSerializer, PublicUserSerializer, UpdateUserSerializer
+from .email_handler import EmailService
 from .models import User
+from .serializer import UserSerializer, TypeUserSerializer, PublicUserSerializer, LoginSerializer, UpdateUserSerializer
 
 # IsAuthenticated - só usuário logado pode acessar
 # AllowAny - qualquer usuário pode acessar
@@ -196,34 +197,40 @@ def request_password_reset(request):
         return Response({'error': 'Email é obrigatório'}, status=status.HTTP_400_BAD_REQUEST)
     
     try:
-        user = User.objects.get(email=email)
+        # Usar iexact para busca insensível a maiúsculas/minúsculas
+        user = User.objects.get(email__iexact=email)
         token = default_token_generator.make_token(user)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         
-        # Link para o frontend
-        reset_link = f"http://localhost:5173/redefinir-senha?uid={uid}&token={token}"
+        # Link para o frontend (padrão Vite: 5173)
+        frontend_url = getattr(settings, 'FRONTEND_URL', 'http://localhost:5173')
+        reset_link = f"{frontend_url}/redefinir-senha?uid={uid}&token={token}"
         
-        subject = "Redefinição de Senha - PrintII"
-        message = f"Olá {user.username},\n\nVocê solicitou a redefinição de sua senha. Clique no link abaixo para cadastrar uma nova senha:\n\n{reset_link}\n\nSe você não solicitou isso, ignore este e-mail."
-
         # IMPRIMIR NO CONSOLE PARA FACILITAR TESTES
         print("\n" + "="*50)
-        print(f"🔗 LINK DE REDEFINIÇÃO DE SENHA GERADO:")
+        print(f"🔗 LINK DE REDEFINIÇÃO DE SENHA GERADO PARA {email}:")
         print(f"{reset_link}")
         print("="*50 + "\n")
 
-        try:
-            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL or 'noreply@printii.com', [email])
+        # Enviar e-mail usando o serviço dedicado
+        email_sent = EmailService.send_password_reset_email(user, reset_link)
+
+        if email_sent:
             return Response({'message': 'E-mail de redefinição enviado com sucesso'}, status=status.HTTP_200_OK)
-        except Exception as e:
-            print(f"ERRO AO ENVIAR E-MAIL: {str(e)}")
-            print(f"LINK DE RECUPERAÇÃO (FALLBACK): {reset_link}")
+        else:
+            # Se falhar o envio de e-mail (comum em dev), retornamos o link se estiver em DEBUG
+            if settings.DEBUG:
+                return Response({
+                    'message': 'O servidor de e-mail falhou (comum em desenvolvimento), mas o link foi gerado no console.',
+                    'link_debug': reset_link
+                }, status=status.HTTP_200_OK)
+            
             return Response({
-                'error': 'O servidor de e-mail falhou, mas o link foi gerado no console do backend.',
-                'link_debug': reset_link if settings.DEBUG else None
+                'error': 'Falha ao enviar e-mail de redefinição. Tente novamente mais tarde.'
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     except User.DoesNotExist:
+        # Por segurança, retornamos 200 mesmo se o usuário não existir para evitar enumeração de e-mails
         return Response({'message': 'Se o e-mail existir, um link de redefinição será enviado.'}, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
