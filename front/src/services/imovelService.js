@@ -1,4 +1,4 @@
-const API_URL = `${import.meta.env.VITE_API_URL || "http://localhost:8000"}/imoveis/`;
+const API_URL = `${import.meta.env.VITE_API_URL || "http://localhost:8001"}/imoveis/`;
 
 const getHeaders = (isFormData = false) => {
   const token = localStorage.getItem("access") || localStorage.getItem("access_token");
@@ -81,4 +81,27 @@ export async function deleteImovel(id) {
     throw new Error(data.detail || "Erro ao deletar imóvel");
   }
   return true;
+}
+
+export async function filterImoveis(filtros = {}) {
+  const params = new URLSearchParams();
+
+  if (filtros.categoria) params.append("categoria", filtros.categoria);
+  if (filtros.tipo) params.append("tipo", filtros.tipo);
+  if (filtros.valor_min) params.append("valor_min", filtros.valor_min);
+  if (filtros.valor_max) params.append("valor_max", filtros.valor_max);
+  if (filtros.garagem) params.append("garagem", "true");
+  if (filtros.suite) params.append("suite", "true");
+  if (filtros.quartos) params.append("quartos", filtros.quartos);
+  if (filtros.endereco) params.append("endereco", filtros.endereco);
+
+  const response = await fetch(`${API_URL}filter/?${params.toString()}`, {
+    headers: getHeaders(),
+  });
+
+  if (!response.ok) {
+    const data = await response.json();
+    throw new Error(data.detail || "Erro ao filtrar imóveis");
+  }
+  return response.json();
 }

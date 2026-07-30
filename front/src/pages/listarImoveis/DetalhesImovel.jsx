@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import MapaImovel from "../../components/MapaImovel/MapaImovel";
 
 export default function DetalhesImovel({ imovel, onBack, API_BASE_URL }) {
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(null);
@@ -153,6 +154,26 @@ export default function DetalhesImovel({ imovel, onBack, API_BASE_URL }) {
               <span className="font-semibold text-gray-900">Descrição:</span> {imovel.descricao}
             </p>
           )}
+          {imovel.quartos !== undefined && (
+            <p className="text-sm text-gray-700 leading-snug">
+              <span className="font-semibold text-gray-900">Quartos:</span> {imovel.quartos}
+            </p>
+          )}
+          {imovel.banheiros !== undefined && (
+            <p className="text-sm text-gray-700 leading-snug">
+              <span className="font-semibold text-gray-900">Banheiros:</span> {imovel.banheiros}
+            </p>
+          )}
+          {imovel.garagem && (
+            <p className="text-sm text-gray-700 leading-snug">
+              <span className="font-semibold text-gray-900">Garagem:</span> Sim
+            </p>
+          )}
+          {imovel.suite && (
+            <p className="text-sm text-gray-700 leading-snug">
+              <span className="font-semibold text-gray-900">Suíte:</span> Sim
+            </p>
+          )}
           <p className="text-sm text-gray-700 leading-snug">
             <span className="font-semibold text-gray-900">Status:</span>{" "}
             <span className={`font-bold px-2 py-0.5 rounded-full text-xs ${statusStyle.bg} ${statusStyle.color}`}>
@@ -160,6 +181,11 @@ export default function DetalhesImovel({ imovel, onBack, API_BASE_URL }) {
             </span>
           </p>
         </div>
+      </div>
+
+      {/* MAPA — Leaflet */}
+      <div className="px-4 sm:px-8 pb-5">
+        <MapaImovel endereco={imovel.endereco} />
       </div>
 
       {images.length > 0 && (
@@ -287,3 +313,4 @@ export default function DetalhesImovel({ imovel, onBack, API_BASE_URL }) {
     </div>
   );
 }
+

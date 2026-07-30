@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useLocation } from "react-router-dom";
-import { getImoveis } from "../../services/imovelService";
+import { getImoveis, filterImoveis } from "../../services/imovelService";
 import { getProfile, getUser } from "../../services/userService";
 import DetalhesImovel from "./DetalhesImovel";
+import ModalFiltros from "../filtro-imoveis/ModalFiltros";
 
 export default function ListarImoveis() {
   const location = useLocation();
@@ -13,8 +14,10 @@ export default function ListarImoveis() {
   const [selectedImovel, setSelectedImovel] = useState(null);
   const [showFavorites, setShowFavorites] = useState(false);
   const [imgErrors, setImgErrors] = useState({});
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [activeFilters, setActiveFilters] = useState({});
 
-  const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+  const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8001";
 
   const filteredImoveis = useMemo(() => {
     let result = imoveis;
@@ -56,6 +59,27 @@ export default function ListarImoveis() {
     }
     loadData();
   }, []);
+
+  const handleAplicarFiltros = async (filtros) => {
+    setActiveFilters(filtros);
+    setLoading(true);
+    try {
+      const hasFilters = Object.keys(filtros).length > 0;
+      if (hasFilters) {
+        const data = await filterImoveis(filtros);
+        setImoveis(data);
+      } else {
+        const data = await getImoveis();
+        setImoveis(data);
+      }
+    } catch (error) {
+      console.error("Erro ao filtrar imóveis:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const hasActiveFilters = Object.keys(activeFilters).length > 0;
 
   const parseEndereco = (endereco) => {
     if (!endereco) return { rua: "", cidade: "" };
@@ -134,7 +158,7 @@ export default function ListarImoveis() {
             {searchTerm && (
               <button
                 onClick={() => setSearchTerm("")}
-                className="absolute right-14 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -142,15 +166,60 @@ export default function ListarImoveis() {
               </button>
             )}
           </div>
+
           <button
-            className="h-11 w-11 flex items-center justify-center bg-gray-50 border border-gray-200 rounded-xl hover:bg-gray-100 transition shrink-0"
-            aria-label="Filtros"
+            onClick={() => setShowFilterModal(true)}
+            className={`h-11 w-11 flex items-center justify-center rounded-xl transition shrink-0 ${
+              hasActiveFilters
+                ? "bg-[#219EBC] text-white border border-[#219EBC]"
+                : "bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-100"
+            }`}
+            aria-label="Filtros avançados"
           >
-            <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
             </svg>
           </button>
         </div>
+
+        {/* Active filters badge */}
+        {hasActiveFilters && (
+          <div className="flex items-center gap-2 mt-3 flex-wrap">
+            <span className="text-xs text-gray-500 font-medium">Filtros ativos:</span>
+            {activeFilters.categoria && (
+              <span className="text-xs bg-[#219EBC]/10 text-[#219EBC] px-2.5 py-1 rounded-full font-medium">
+                {activeFilters.categoria.split(",").map(c => c === "residencial" ? "Residência" : c === "comercial" ? "Comercial" : c).join(", ")}
+              </span>
+            )}
+            {activeFilters.tipo && (
+              <span className="text-xs bg-[#219EBC]/10 text-[#219EBC] px-2.5 py-1 rounded-full font-medium">
+                {activeFilters.tipo.split(",").map(t => t.charAt(0).toUpperCase() + t.slice(1)).join(", ")}
+              </span>
+            )}
+            {(activeFilters.valor_min || activeFilters.valor_max) && (
+              <span className="text-xs bg-[#219EBC]/10 text-[#219EBC] px-2.5 py-1 rounded-full font-medium">
+                R$ {activeFilters.valor_min || "0"} — R$ {activeFilters.valor_max || "∞"}
+              </span>
+            )}
+            {activeFilters.garagem && (
+              <span className="text-xs bg-[#219EBC]/10 text-[#219EBC] px-2.5 py-1 rounded-full font-medium">Garagem</span>
+            )}
+            {activeFilters.suite && (
+              <span className="text-xs bg-[#219EBC]/10 text-[#219EBC] px-2.5 py-1 rounded-full font-medium">Suíte</span>
+            )}
+            {activeFilters.quartos && (
+              <span className="text-xs bg-[#219EBC]/10 text-[#219EBC] px-2.5 py-1 rounded-full font-medium">
+                {activeFilters.quartos}+ quartos
+              </span>
+            )}
+            <button
+              onClick={() => handleAplicarFiltros({})}
+              className="text-xs text-red-400 hover:text-red-600 font-medium ml-1 transition"
+            >
+              Limpar todos
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="flex-1 px-4 sm:px-8 pb-8">
@@ -161,7 +230,9 @@ export default function ListarImoveis() {
                 ? "Nenhum imóvel favoritado ainda"
                 : searchTerm
                   ? "Nenhum imóvel encontrado para esta busca"
-                  : "Nenhum imóvel disponível no momento"}
+                  : hasActiveFilters
+                    ? "Nenhum imóvel encontrado com os filtros aplicados"
+                    : "Nenhum imóvel disponível no momento"}
             </p>
           </div>
         ) : (
@@ -218,6 +289,28 @@ export default function ListarImoveis() {
                         <span className="font-semibold text-gray-800">Descrição:</span> {imovel.descricao}
                       </p>
                     )}
+                    <div className="flex gap-4 pt-1 flex-wrap">
+                      {imovel.quartos !== undefined && (
+                        <p className="leading-snug">
+                          <span className="font-semibold text-gray-800">Quartos:</span> {imovel.quartos}
+                        </p>
+                      )}
+                      {imovel.banheiros !== undefined && (
+                        <p className="leading-snug">
+                          <span className="font-semibold text-gray-800">Banheiros:</span> {imovel.banheiros}
+                        </p>
+                      )}
+                      {imovel.garagem && (
+                        <p className="leading-snug">
+                          <span className="font-semibold text-gray-800">Garagem:</span> Sim
+                        </p>
+                      )}
+                      {imovel.suite && (
+                        <p className="leading-snug">
+                          <span className="font-semibold text-gray-800">Suíte:</span> Sim
+                        </p>
+                      )}
+                    </div>
                   </div>
 
                   <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-50">
@@ -233,6 +326,13 @@ export default function ListarImoveis() {
           </div>
         )}
       </div>
+
+      {/* Modal de Filtros */}
+      <ModalFiltros
+        isOpen={showFilterModal}
+        onClose={() => setShowFilterModal(false)}
+        onAplicar={handleAplicarFiltros}
+      />
     </div>
   );
 }

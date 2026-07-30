@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:8000";
+const API_URL = "http://localhost:8001";
 
 /* =========================
    LOGIN
@@ -16,9 +16,9 @@ export async function loginAuth(email, password) {
 
   if (!response.ok) {
     console.log("🔥 ERRO BACKEND COMPLETO:", data);
-
     throw new Error(
       data.detail ||
+      data.error ||
       JSON.stringify(data) ||
       "Erro no login"
     );
@@ -33,18 +33,16 @@ export async function loginAuth(email, password) {
     refresh: data.refresh ? data.refresh.substring(0, 20) + "..." : null
   });
 
-  // 🔥 salva usuário (IMPORTANTE)
+  // 🔥 salva usuário
   if (data.usuario) {
     localStorage.setItem("user", JSON.stringify(data.usuario));
   } else if (data.user) {
     localStorage.setItem("user", JSON.stringify(data.user));
   } else {
-    // fallback caso backend não envie user
     const fakeUser = {
       email,
       username: email.split("@")[0],
     };
-
     localStorage.setItem("user", JSON.stringify(fakeUser));
   }
 
@@ -55,7 +53,7 @@ export async function loginAuth(email, password) {
    CADASTRO
 ========================= */
 export async function cadastroAuth(formData) {
-  const response = await fetch("http://localhost:8000/usuarios/register", {
+  const response = await fetch(`${API_URL}/usuarios/register`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json; charset=utf-8",
@@ -65,24 +63,18 @@ export async function cadastroAuth(formData) {
 
   const data = await response.json();
 
-  // 🔥 MOSTRA EXATAMENTE O QUE O BACKEND ESTÁ DIZENDO
   if (!response.ok) {
     console.log("🔥 ERRO COMPLETO DO DJANGO:", data);
-
     throw new Error(
-      JSON.stringify(data, null, 2)
+      data.error || JSON.stringify(data, null, 2)
     );
   }
 
-  // 🔥 salva token para auto-login
   if (data.access && data.refresh) {
     localStorage.setItem("access", data.access);
     localStorage.setItem("refresh", data.refresh);
-    
-    console.log("✅ Auto-login: Token salvo no localStorage");
   }
 
-  // 🔥 salva usuário
   if (data.usuario) {
     localStorage.setItem("user", JSON.stringify(data.usuario));
   }
@@ -109,12 +101,12 @@ export async function refreshTokenAuth(refreshToken) {
   }
 
   return data;
-  }
+}
 
-  /* =========================
+/* =========================
    REDEFINIR SENHA
-  ========================= */
-  export async function requestPasswordReset(email) {
+========================= */
+export async function requestPasswordReset(email) {
   const response = await fetch(`${API_URL}/usuarios/esqueci-senha`, {
     method: "POST",
     headers: {
@@ -130,9 +122,9 @@ export async function refreshTokenAuth(refreshToken) {
   }
 
   return data;
-  }
+}
 
-  export async function confirmPasswordReset(uid, token, new_password) {
+export async function confirmPasswordReset(uid, token, new_password) {
   const response = await fetch(`${API_URL}/usuarios/redefinir-senha`, {
     method: "POST",
     headers: {
@@ -148,4 +140,4 @@ export async function refreshTokenAuth(refreshToken) {
   }
 
   return data;
-  }
+}

@@ -23,6 +23,10 @@ class Imovel(models.Model):
     endereco = models.CharField(max_length=255)
     descricao = models.TextField()
     valor = models.DecimalField(max_digits=10, decimal_places=2)
+    quartos = models.IntegerField(default=0)
+    banheiros = models.IntegerField(default=0)
+    garagem = models.BooleanField(default=False, verbose_name='Garagem')
+    suite = models.BooleanField(default=False, verbose_name='Suíte')
     status = models.CharField(max_length=20, choices=StatusChoices.choices, default=StatusChoices.DISPONIVEL)
     
     created_at = models.DateTimeField(auto_now_add=True)

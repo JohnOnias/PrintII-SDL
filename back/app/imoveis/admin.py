@@ -3,8 +3,8 @@ from .models import Imovel, ImovelMidia
 
 @admin.register(Imovel)
 class ImovelAdmin(admin.ModelAdmin):
-    list_display = ('tipo', 'categoria', 'endereco', 'valor', 'locador', 'status')
-    list_filter = ('tipo', 'categoria', 'status')
+    list_display = ('tipo', 'categoria', 'endereco', 'valor', 'quartos', 'garagem', 'suite', 'locador', 'status')
+    list_filter = ('tipo', 'categoria', 'status', 'garagem', 'suite')
     search_fields = ('endereco', 'descricao')
 
 @admin.register(ImovelMidia)

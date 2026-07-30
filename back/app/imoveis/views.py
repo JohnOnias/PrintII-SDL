@@ -24,16 +24,21 @@ def _validate_numeric_field(value, field_name):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def filter_imovel(request):
-    """Filtra imóveis por endereco, categoria, tipo e valor.
+    """Filtra imóveis por endereco, categoria, tipo, valor (min/max), garagem, suite e quartos.
         GET /filter/?endereco=rua
-        GET /filter/?categoria=residencial&valor=1200.00
-        GET /filter/?tipo=casa&categoria=comercial&endereco=centro
+        GET /filter/?categoria=residencial&valor_min=100&valor_max=500
+        GET /filter/?tipo=casa,apartamento&garagem=true&suite=true&quartos=3
     """
     queryset = Imovel.objects.all()
     endereco = request.GET.get('endereco')
     categoria = request.GET.get('categoria')
     tipo = request.GET.get('tipo')
     valor = request.GET.get('valor')
+    valor_min = request.GET.get('valor_min')
+    valor_max = request.GET.get('valor_max')
+    garagem = request.GET.get('garagem')
+    suite = request.GET.get('suite')
+    quartos = request.GET.get('quartos')
 
     if endereco:
         try:
@@ -42,9 +47,15 @@ def filter_imovel(request):
             return Response({'detail': str(error)}, status=status.HTTP_400_BAD_REQUEST)
         queryset = queryset.filter(endereco__icontains=endereco)
     if categoria:
-        queryset = queryset.filter(categoria__iexact=categoria)
+        # Suporta múltiplas categorias separadas por vírgula
+        categorias = [c.strip() for c in categoria.split(',') if c.strip()]
+        if categorias:
+            queryset = queryset.filter(categoria__in=categorias)
     if tipo:
-        queryset = queryset.filter(tipo__iexact=tipo)
+        # Suporta múltiplos tipos separados por vírgula
+        tipos = [t.strip() for t in tipo.split(',') if t.strip()]
+        if tipos:
+            queryset = queryset.filter(tipo__in=tipos)
     if valor:
         try:
             valor_decimal = Decimal(valor)
@@ -52,6 +63,37 @@ def filter_imovel(request):
         except (InvalidOperation, ValueError):
             return Response(
                 {'detail': 'Valor inválido. Use um número válido para o parâmetro valor.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+    if valor_min:
+        try:
+            valor_min_decimal = Decimal(valor_min)
+            queryset = queryset.filter(valor__gte=valor_min_decimal)
+        except (InvalidOperation, ValueError):
+            return Response(
+                {'detail': 'Valor mínimo inválido.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+    if valor_max:
+        try:
+            valor_max_decimal = Decimal(valor_max)
+            queryset = queryset.filter(valor__lte=valor_max_decimal)
+        except (InvalidOperation, ValueError):
+            return Response(
+                {'detail': 'Valor máximo inválido.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+    if garagem and garagem.lower() == 'true':
+        queryset = queryset.filter(garagem=True)
+    if suite and suite.lower() == 'true':
+        queryset = queryset.filter(suite=True)
+    if quartos:
+        try:
+            quartos_int = int(quartos)
+            queryset = queryset.filter(quartos__gte=quartos_int)
+        except ValueError:
+            return Response(
+                {'detail': 'Número de quartos inválido.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -126,7 +168,8 @@ class ImovelViewSet(viewsets.ModelViewSet):
             return [IsLocador()]
         if self.action in ['update', 'partial_update', 'destroy']:
             return [IsAuthenticated()]
-        return [AllowAny()]
+        # list e retrieve também exigem autenticação
+        return [IsAuthenticated()]
 
     def perform_create(self, serializer):
         serializer.save(locador=self.request.user)

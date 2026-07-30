@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:8000";
+const API_URL = "http://localhost:8001";
 
 export async function authFetch(endpoint, options = {}) {
   const token = localStorage.getItem("access");
