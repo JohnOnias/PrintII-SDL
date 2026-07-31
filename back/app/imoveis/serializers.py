@@ -22,7 +22,7 @@ class ImovelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Imovel
-        fields = ['id', 'locador', 'locador_telefone', 'tipo', 'categoria', 'endereco', 'descricao', 'valor', 'quartos', 'banheiros', 'garagem', 'suite', 'status', 'midias', 'midias_upload', 'midias_remover', 'created_at', 'updated_at']
+        fields = ['id', 'locador', 'locador_telefone', 'tipo', 'categoria', 'endereco', 'descricao', 'valor', 'area', 'quartos', 'banheiros', 'garagem', 'suite', 'status', 'midias', 'midias_upload', 'midias_remover', 'created_at', 'updated_at']
         read_only_fields = ['locador']
 
     def get_locador_telefone(self, obj):

@@ -39,6 +39,7 @@ def filter_imovel(request):
     garagem = request.GET.get('garagem')
     suite = request.GET.get('suite')
     quartos = request.GET.get('quartos')
+    area_min = request.GET.get('area_min')
 
     if endereco:
         try:
@@ -94,6 +95,15 @@ def filter_imovel(request):
         except ValueError:
             return Response(
                 {'detail': 'Número de quartos inválido.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+    if area_min:
+        try:
+            area_min_int = int(area_min)
+            queryset = queryset.filter(area__gte=area_min_int)
+        except ValueError:
+            return Response(
+                {'detail': 'Área mínima inválida.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 

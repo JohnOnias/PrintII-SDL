@@ -9,6 +9,7 @@ export default function ModalFiltros({ isOpen, onClose, onAplicar }) {
     garagem: false,
     suite: false,
     quartos: 0,
+    areaMin: "",
   });
 
   const toggleCategoria = (cat) => {
@@ -60,6 +61,9 @@ export default function ModalFiltros({ isOpen, onClose, onAplicar }) {
     if (filtros.quartos > 0) {
       filtrosParaEnviar.quartos = filtros.quartos;
     }
+    if (filtros.areaMin) {
+      filtrosParaEnviar.area_min = parseInt(filtros.areaMin);
+    }
 
     await onAplicar(filtrosParaEnviar);
     onClose();
@@ -74,6 +78,7 @@ export default function ModalFiltros({ isOpen, onClose, onAplicar }) {
       garagem: false,
       suite: false,
       quartos: 0,
+      areaMin: "",
     });
     await onAplicar({});
     onClose();
@@ -156,6 +161,26 @@ export default function ModalFiltros({ isOpen, onClose, onAplicar }) {
                   />
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Divider */}
+          <hr className="border-gray-100" />
+
+          {/* Área Útil */}
+          <div>
+            <h3 className="text-sm font-bold text-slate-800 mb-3">Área Mínima (m²)</h3>
+            <div className="relative">
+              <input
+                type="number"
+                min="0"
+                value={filtros.areaMin}
+                onChange={(e) =>
+                  setFiltros((prev) => ({ ...prev, areaMin: e.target.value }))
+                }
+                placeholder="Ex: 50"
+                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-700 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#219EBC] focus:border-transparent transition [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+              />
             </div>
           </div>
 

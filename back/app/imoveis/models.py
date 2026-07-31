@@ -23,6 +23,7 @@ class Imovel(models.Model):
     endereco = models.CharField(max_length=255)
     descricao = models.TextField()
     valor = models.DecimalField(max_digits=10, decimal_places=2)
+    area = models.IntegerField(null=True, blank=True, verbose_name='Área Útil')
     quartos = models.IntegerField(default=0)
     banheiros = models.IntegerField(default=0)
     garagem = models.BooleanField(default=False, verbose_name='Garagem')

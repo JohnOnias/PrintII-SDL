@@ -93,6 +93,7 @@ export async function filterImoveis(filtros = {}) {
   if (filtros.garagem) params.append("garagem", "true");
   if (filtros.suite) params.append("suite", "true");
   if (filtros.quartos) params.append("quartos", filtros.quartos);
+  if (filtros.area_min) params.append("area_min", filtros.area_min);
   if (filtros.endereco) params.append("endereco", filtros.endereco);
 
   const response = await fetch(`${API_URL}filter/?${params.toString()}`, {

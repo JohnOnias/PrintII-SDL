@@ -12,6 +12,7 @@ const initialForm = {
   cidade: "",
   descricao: "",
   valor: "",
+  area: "",
   quartos: "",
   banheiros: "",
   garagem: false,
@@ -55,6 +56,7 @@ export default function CadastroImovel({ isOpen, onClose, imovelData = null }) {
           referencia: (match[5] || "").trim(),
           descricao: imovelData.descricao || "",
           valor: imovelData.valor || "",
+          area: imovelData.area !== undefined ? imovelData.area : "",
           quartos: imovelData.quartos !== undefined ? imovelData.quartos : "",
           banheiros: imovelData.banheiros !== undefined ? imovelData.banheiros : "",
           garagem: imovelData.garagem || false,
@@ -77,6 +79,7 @@ export default function CadastroImovel({ isOpen, onClose, imovelData = null }) {
           cidade: cityStatePart.split('-')[0]?.trim() || "",
           descricao: imovelData.descricao || "",
           valor: imovelData.valor || "",
+          area: imovelData.area !== undefined ? imovelData.area : "",
           quartos: imovelData.quartos !== undefined ? imovelData.quartos : "",
           banheiros: imovelData.banheiros !== undefined ? imovelData.banheiros : "",
           garagem: imovelData.garagem || false,
@@ -155,7 +158,7 @@ export default function CadastroImovel({ isOpen, onClose, imovelData = null }) {
 
   const validateForm = () => {
     const newErrors = {};
-    const skipFields = ['garagem', 'suite', 'banheiros'];
+    const skipFields = ['garagem', 'suite', 'banheiros', 'area'];
     Object.entries(form).forEach(([key, value]) => {
       if (skipFields.includes(key)) return;
       if (value === undefined || value === null || (typeof value === 'string' && !value.trim())) {
@@ -190,6 +193,7 @@ export default function CadastroImovel({ isOpen, onClose, imovelData = null }) {
       formData.append("tipo", form.tipo);
       formData.append("descricao", form.descricao);
       formData.append("valor", form.valor);
+      formData.append("area", form.area || "");
       formData.append("quartos", form.quartos || 0);
       formData.append("banheiros", form.banheiros || 0);
       formData.append("garagem", form.garagem);
@@ -313,6 +317,25 @@ export default function CadastroImovel({ isOpen, onClose, imovelData = null }) {
                   ))}
                 </select>
                 {errors.quartos && <p className="mt-0.5 text-[10px] text-red-500">{errors.quartos}</p>}
+              </div>
+
+              {/* Linha 2.5 esquerda: Número de banheiros */}
+              <div>
+                <label htmlFor="banheiros" className="mb-0.5 block text-xs font-semibold text-slate-700">Número de banheiros</label>
+                <select id="banheiros" value={form.banheiros} onChange={(e) => handleChange("banheiros", e.target.value)} className={selectClass("banheiros")}>
+                  <option value="">Selecione</option>
+                  {[...Array(11)].map((_, i) => (
+                    <option key={i} value={i}>{String(i).padStart(2, "0")}</option>
+                  ))}
+                </select>
+                {errors.banheiros && <p className="mt-0.5 text-[10px] text-red-500">{errors.banheiros}</p>}
+              </div>
+
+              {/* Linha 2.5 direita: Área */}
+              <div>
+                <label htmlFor="area" className="mb-0.5 block text-xs font-semibold text-slate-700">Área Útil (m²)</label>
+                <input id="area" type="number" value={form.area} onChange={(e) => handleChange("area", e.target.value)} placeholder="Ex: 100" className={`${inputClass("area")} [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`} />
+                {errors.area && <p className="mt-0.5 text-[10px] text-red-500">{errors.area}</p>}
               </div>
 
               {/* Linha 3 esquerda: CEP */}
